@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\TestScripts.cs" />
+    <Compile Include="Assets\SW_Scene\Script\PlayerController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
