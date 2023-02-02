@@ -32,6 +32,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundMask;
     //=========================================
 
+    //============ Bool Checker ===============
+    [SerializeField] private bool isMoving;
+    //=========================================
+
     private void Awake()
     {
         normalSpeed = 20;
@@ -112,23 +116,35 @@ public class PlayerController : MonoBehaviour
             transform.forward = Vector3.Lerp(transform.forward, moveVec, 0.5f);
         }
 
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
-            Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
-        {
-            anim.SetBool("isMoving", true);
-        }
+        bool vermove = Input.GetAxisRaw("Vertical") != 0 ? true : false;
+        bool hormove = Input.GetAxisRaw("Horizontal") != 0 ? true : false;
 
-        else if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) ||
-                Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
-        {
-            anim.SetBool("isMoving", false);
-        }
+        isMoving = vermove || hormove ? true : false;
+        anim.SetBool("isMoving", isMoving);
 
+        //if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
+        //    Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+        //{
+        //    anim.SetBool("isMoving", true);
+        //}
+
+        //else if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) ||
+        //        Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
+        //{
+        //    anim.SetBool("isMoving", false);
+        //}
     }
 
     private void Dash()
     {
         moveSpeed = Input.GetKey(KeyCode.LeftShift) ? normalSpeed * moveDash : normalSpeed;
+    }
+
+    private void InputMoveKey()
+    {
+        isMoving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
+                   Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) ?
+                   true : false;
     }
 
     private void Jump()
