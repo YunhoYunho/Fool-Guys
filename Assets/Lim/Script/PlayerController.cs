@@ -157,7 +157,11 @@ public class PlayerController : MonoBehaviour
     private void FixedJump()
     {
         if (jumpOrder)
+        {
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            jumpOrder = false;
+        }
+
     }
 
     private void Attack()
@@ -185,7 +189,8 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        jumpOrder = Input.GetButtonDown("Jump") && isGrounded;
+        if(Input.GetButtonDown("Jump") && isGrounded)
+            jumpOrder = true;
     }
 
     private void HitTest()
