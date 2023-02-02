@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed = 20;
     [SerializeField] private float maxSpeed = 5;
     [SerializeField] private float moveDash;
-    [SerializeField] private float jumpPower;
+    [SerializeField] private float jumpPower = 10f;
     [SerializeField] private float normalSpeed;
     [SerializeField] private Vector3 velocity;
     [SerializeField] private Vector3 moveVec;
@@ -44,7 +44,6 @@ public class PlayerController : MonoBehaviour
         moveSpeed = normalSpeed;
         
         moveDash = 1.5f;
-        jumpPower = 10f;
     }
 
     private void Start()
