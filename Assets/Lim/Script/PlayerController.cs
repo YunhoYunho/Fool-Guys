@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpPower;
     [SerializeField] private float normalSpeed;
     [SerializeField] private Vector3 velocity;
-    [SerializeField] Vector3 MoveVec;
+    [SerializeField] private Vector3 moveVec;
 
     private float maxVelocityX = 2, maxVelocityZ = 2;
     //=================================
@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour
 
     //============ Bool Checker ===============
     [SerializeField] private bool isMoving;
+    [SerializeField] private bool jumpOrder;
     //=========================================
 
     private void Awake()
@@ -65,24 +66,22 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         FixedMove();
+        FixedJump();
     }
 
     private void Move()
     {
-
         Vector3 fowardVec = new Vector3(Camera.main.transform.forward.x, 0f, Camera.main.transform.forward.z).normalized;
         Vector3 rightVec = new Vector3(Camera.main.transform.right.x, 0f, Camera.main.transform.right.z).normalized;
 
         Vector3 moveInput = Vector3.forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal");
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
-        Vector3 moveVec = fowardVec * moveInput.z + rightVec * moveInput.x;
+        moveVec = fowardVec * moveInput.z + rightVec * moveInput.x;
 
-        MoveVec = moveVec;
-
-        if (rigid.velocity.magnitude > maxSpeed)
-        {
-            rigid.velocity = rigid.velocity.normalized * maxSpeed;
-        }
+        //if (rigid.velocity.magnitude > maxSpeed)
+        //{
+        //    rigid.velocity = rigid.velocity.normalized * maxSpeed;
+        //}
 
         // GetAxisRaw 의 입력값이 있는지의 여부를 bool로 판단하여 저장 
         bool vermove = Input.GetAxisRaw("Vertical") != 0 ? true : false;
@@ -94,18 +93,50 @@ public class PlayerController : MonoBehaviour
         //InputMoveKey();
         // ㄴ 기존 방식의 함수화
 
-        anim.SetBool("isMoving", isMoving);
-
+        //anim.SetBool("isMoving", isMoving);
+        MaxSpeed();
     }
+
+    private void MaxSpeed()
+    {
+        if (rigid.velocity.x > maxVelocityX)
+        {
+            rigid.velocity = new Vector3(maxVelocityX, rigid.velocity.y, rigid.velocity.z);
+        }
+
+        if (rigid.velocity.x < (maxVelocityX * -1))
+        {
+            rigid.velocity = new Vector3((maxVelocityX * -1), rigid.velocity.y, rigid.velocity.z);
+        }
+
+        if (rigid.velocity.z > maxVelocityZ)
+        {
+            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, maxVelocityZ);
+        }
+
+        if (rigid.velocity.z < (maxVelocityZ * -1))
+        {
+            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, (maxVelocityZ * -1));
+        }
+    }
+
 
     private void FixedMove()
     {
-        rigid.AddForce(MoveVec * moveSpeed);
-        if (MoveVec.sqrMagnitude != 0)
+        rigid.AddForce(moveVec * moveSpeed);
+        if (moveVec.sqrMagnitude != 0)
         {
-            transform.forward = Vector3.Lerp(transform.forward, MoveVec, Time.fixedDeltaTime * 10);
+            transform.forward = Vector3.Lerp(transform.forward, moveVec, Time.fixedDeltaTime * 10);
         }
+    }
 
+    private void FixedJump()
+    {
+        if (jumpOrder)
+        {
+            rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            jumpOrder = false;
+        }
     }
 
     private void Dash()
@@ -126,7 +157,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            jumpOrder = true;
         }
     }
 
