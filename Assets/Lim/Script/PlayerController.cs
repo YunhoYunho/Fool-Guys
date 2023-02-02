@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpPower;
     [SerializeField] private float normalSpeed;
     [SerializeField] private Vector3 velocity;
+    [SerializeField] Vector3 MoveVec;
 
     private float maxVelocityX = 2, maxVelocityZ = 2;
     //=================================
@@ -38,7 +39,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        normalSpeed = 20;
+        normalSpeed = 300;
         moveSpeed = normalSpeed;
         
         moveDash = 1.5f;
@@ -59,49 +60,15 @@ public class PlayerController : MonoBehaviour
         Jump();
         Dash();
         IsGrounded();
-        Checkvelocity();
     }
 
-    private void Checkvelocity()
+    private void FixedUpdate()
     {
-        if (rigid.velocity.x > maxSpeed)
-            rigid.velocity.Set(maxSpeed, rigid.velocity.y, rigid.velocity.z);
-
-        if (rigid.velocity.z > maxSpeed)
-            rigid.velocity.Set(rigid.velocity.x, rigid.velocity.y, maxSpeed);
-
-        velocity = rigid.velocity;
-
-    }
-
-
-    void limitMoveSpeed()
-    {
-        if (rigid.velocity.x > maxVelocityX)
-        {
-            rigid.velocity = new Vector3(maxVelocityX, rigid.velocity.y, rigid.velocity.z);
-        }
-        if (rigid.velocity.x < (maxVelocityX * -1))
-        {
-            rigid.velocity = new Vector3((maxVelocityX * -1), rigid.velocity.y, rigid.velocity.z);
-        }
-
-        if (rigid.velocity.z > maxVelocityZ)
-        {
-            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, maxVelocityZ);
-        }
-        if (rigid.velocity.z < (maxVelocityZ * -1))
-        {
-            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, (maxVelocityZ * -1));
-        }
+        FixedMove();
     }
 
     private void Move()
     {
-        //float x = Input.GetAxisRaw("Horizontal");
-        //float z = Input.GetAxisRaw("Vertical");
-        //Vector3 moveVec = new Vector3(x, 0, z) * moveSpeed * Time.deltaTime;
-        //rigid.AddForce(moveVec, ForceMode.Impulse);
 
         Vector3 fowardVec = new Vector3(Camera.main.transform.forward.x, 0f, Camera.main.transform.forward.z).normalized;
         Vector3 rightVec = new Vector3(Camera.main.transform.right.x, 0f, Camera.main.transform.right.z).normalized;
@@ -109,11 +76,12 @@ public class PlayerController : MonoBehaviour
         Vector3 moveInput = Vector3.forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal");
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
         Vector3 moveVec = fowardVec * moveInput.z + rightVec * moveInput.x;
-        rigid.AddForce(moveVec * moveSpeed);
-        limitMoveSpeed();
-        if (moveVec.sqrMagnitude != 0)
+
+        MoveVec = moveVec;
+
+        if (rigid.velocity.magnitude > maxSpeed)
         {
-            transform.forward = Vector3.Lerp(transform.forward, moveVec, 0.5f);
+            rigid.velocity = rigid.velocity.normalized * maxSpeed;
         }
 
         // GetAxisRaw 의 입력값이 있는지의 여부를 bool로 판단하여 저장 
@@ -128,17 +96,16 @@ public class PlayerController : MonoBehaviour
 
         anim.SetBool("isMoving", isMoving);
 
-        //if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
-        //    Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
-        //{
-        //    anim.SetBool("isMoving", true);
-        //}
+    }
 
-        //else if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) ||
-        //        Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
-        //{
-        //    anim.SetBool("isMoving", false);
-        //}
+    private void FixedMove()
+    {
+        rigid.AddForce(MoveVec * moveSpeed);
+        if (MoveVec.sqrMagnitude != 0)
+        {
+            transform.forward = Vector3.Lerp(transform.forward, MoveVec, Time.fixedDeltaTime * 10);
+        }
+
     }
 
     private void Dash()
@@ -168,3 +135,8 @@ public class PlayerController : MonoBehaviour
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
     }
 }
+
+
+
+
+
