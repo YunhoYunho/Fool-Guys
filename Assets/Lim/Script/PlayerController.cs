@@ -1,72 +1,106 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
 
-    //========= Player Move ===========
+    //============= Player Move ===============
     [Header("Player Move")]
     [SerializeField] private float moveSpeed = 20;
     [SerializeField] private float maxSpeed = 5;
-    [SerializeField] private float moveDash;
     [SerializeField] private float jumpPower;
-    [SerializeField] private float normalSpeed;
     [SerializeField] private Vector3 velocity;
     [SerializeField] private Vector3 moveVec;
+    [SerializeField] private float maxVelocity = 2;
+    //=========================================
+    [Space]
 
-    private float maxVelocityX = 2, maxVelocityZ = 2;
-    //=================================
-
+    //================ Attack =================
+    [SerializeField] private GameObject attackCollider;
+    private Coroutine attackcoroutine;
+    //=========================================
 
     //=========== Player Controller ===========
     private Rigidbody rigid;
     private Animator anim;
     //=========================================
 
+    [Header("Velocity And GroundCheck")]
     //======= Velocity And GroundCheck ========
     [SerializeField] private Transform groundChecker;
     [SerializeField] private bool isGrounded;
     [SerializeField] private float groundDistance;
     [SerializeField] private LayerMask groundMask;
     //=========================================
+    [Space]
 
     //============ Bool Checker ===============
     [SerializeField] private bool isMoving;
     [SerializeField] private bool jumpOrder;
+    [SerializeField] private bool attackOrder;
+    //=========================================
+
+    //=========== Animator String =============
+    private List<string> animlist;
+    private string idleanim = "idle";
+    private string moveanim = "isMovig";
     //=========================================
 
     private void Awake()
     {
-        normalSpeed = 300;
-        moveSpeed = normalSpeed;
-        
-        moveDash = 1.5f;
+        moveSpeed = 300;
         jumpPower = 10f;
+        attackcoroutine = null;
+        animlist = new List<string>();
     }
 
     private void Start()
     {
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
+        SetAnimList();
 
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void SetAnimList()
+    {
+        animlist.Add(idleanim);
+        animlist.Add(moveanim);
     }
 
     private void Update()
     {
         Move();
         Jump();
-        Dash();
+        Attack();
         IsGrounded();
+        HitTest();
+        //AnimationUpdate();
     }
 
     private void FixedUpdate()
     {
         FixedMove();
         FixedJump();
+        FixedAttack();
+    }
+
+    private void AnimationUpdate()
+    {
+        string updateAnim;
+        if (isMoving)
+            updateAnim = moveanim;
+        else
+            updateAnim = idleanim;
+
+        for (int i=0; i< animlist.Count; i++)
+        {
+            bool playAnim = animlist[i] == updateAnim ? true : false;
+            anim.SetBool(updateAnim, playAnim);
+        }
     }
 
     private void Move()
@@ -78,45 +112,35 @@ public class PlayerController : MonoBehaviour
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
         moveVec = fowardVec * moveInput.z + rightVec * moveInput.x;
 
-        //if (rigid.velocity.magnitude > maxSpeed)
-        //{
-        //    rigid.velocity = rigid.velocity.normalized * maxSpeed;
-        //}
-
         // GetAxisRaw 의 입력값이 있는지의 여부를 bool로 판단하여 저장 
         bool vermove = Input.GetAxisRaw("Vertical") != 0 ? true : false;
         bool hormove = Input.GetAxisRaw("Horizontal") != 0 ? true : false;
 
         isMoving = vermove || hormove ? true : false;
         // ver, hor 둘 중 하나라도 true일 경우 true 저장
-
-        //InputMoveKey();
-        // ㄴ 기존 방식의 함수화
-
-        //anim.SetBool("isMoving", isMoving);
         MaxSpeed();
     }
 
     private void MaxSpeed()
     {
-        if (rigid.velocity.x > maxVelocityX)
+        if (rigid.velocity.x > maxVelocity)
         {
-            rigid.velocity = new Vector3(maxVelocityX, rigid.velocity.y, rigid.velocity.z);
+            rigid.velocity = new Vector3(maxVelocity, rigid.velocity.y, rigid.velocity.z);
         }
 
-        if (rigid.velocity.x < (maxVelocityX * -1))
+        if (rigid.velocity.x < (maxVelocity * -1))
         {
-            rigid.velocity = new Vector3((maxVelocityX * -1), rigid.velocity.y, rigid.velocity.z);
+            rigid.velocity = new Vector3((maxVelocity * -1), rigid.velocity.y, rigid.velocity.z);
         }
 
-        if (rigid.velocity.z > maxVelocityZ)
+        if (rigid.velocity.z > maxVelocity)
         {
-            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, maxVelocityZ);
+            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, maxVelocity);
         }
 
-        if (rigid.velocity.z < (maxVelocityZ * -1))
+        if (rigid.velocity.z < (maxVelocity * -1))
         {
-            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, (maxVelocityZ * -1));
+            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, (maxVelocity * -1));
         }
     }
 
@@ -133,31 +157,51 @@ public class PlayerController : MonoBehaviour
     private void FixedJump()
     {
         if (jumpOrder)
-        {
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
-            jumpOrder = false;
+    }
+
+    private void Attack()
+    {
+        if (Input.GetButtonDown("Fire1") && isGrounded)
+            attackOrder = true;
+    }
+
+    private void FixedAttack()
+    {
+        if(attackOrder && attackcoroutine == null)
+        {
+            attackCollider.SetActive(true);
+            attackcoroutine = StartCoroutine(OffAttackCollier());
         }
     }
 
-    private void Dash()
+    private IEnumerator OffAttackCollier()
     {
-        moveSpeed = Input.GetKey(KeyCode.LeftShift) ? normalSpeed * moveDash : normalSpeed;
-    }
-
-    private void InputMoveKey()
-    {
-        isMoving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
-                   Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) ?
-                   true : false;
-
-        // 키 WASD 4개중 하나라도 입력이 있다면 true 아니라면 false
+        yield return new WaitForSeconds(0.5f);
+        attackCollider.SetActive(false);
+        attackOrder = false;
+        attackcoroutine = null;
     }
 
     private void Jump()
     {
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        jumpOrder = Input.GetButtonDown("Jump") && isGrounded;
+    }
+
+    private void HitTest()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+            OnHit();
+    }
+    private void OnHit()
+    {
+        if(rigid.constraints == RigidbodyConstraints.None)
         {
-            jumpOrder = true;
+            rigid.constraints = RigidbodyConstraints.FreezeRotation;
+        }
+        else
+        {
+            rigid.constraints = RigidbodyConstraints.None;
         }
     }
 
@@ -166,8 +210,3 @@ public class PlayerController : MonoBehaviour
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
     }
 }
-
-
-
-
-
