@@ -116,10 +116,16 @@ public class PlayerController : MonoBehaviour
             transform.forward = Vector3.Lerp(transform.forward, moveVec, 0.5f);
         }
 
+        // GetAxisRaw 의 입력값이 있는지의 여부를 bool로 판단하여 저장 
         bool vermove = Input.GetAxisRaw("Vertical") != 0 ? true : false;
         bool hormove = Input.GetAxisRaw("Horizontal") != 0 ? true : false;
 
         isMoving = vermove || hormove ? true : false;
+        // ver, hor 둘 중 하나라도 true일 경우 true 저장
+
+        //InputMoveKey();
+        // ㄴ 기존 방식의 함수화
+
         anim.SetBool("isMoving", isMoving);
 
         //if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
@@ -145,6 +151,8 @@ public class PlayerController : MonoBehaviour
         isMoving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
                    Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) ?
                    true : false;
+
+        // 키 WASD 4개중 하나라도 입력이 있다면 true 아니라면 false
     }
 
     private void Jump()
