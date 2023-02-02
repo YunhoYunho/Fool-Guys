@@ -44,8 +44,7 @@ public class PlayerController : MonoBehaviour
 
     //=========== Animator String =============
     private List<string> animlist;
-    private string idleanim = "idle";
-    private string moveanim = "isMovig";
+    private string moveanim = "isMoving";
     //=========================================
 
     private void Awake()
@@ -67,7 +66,6 @@ public class PlayerController : MonoBehaviour
 
     private void SetAnimList()
     {
-        animlist.Add(idleanim);
         animlist.Add(moveanim);
     }
 
@@ -78,7 +76,7 @@ public class PlayerController : MonoBehaviour
         Attack();
         IsGrounded();
         HitTest();
-        //AnimationUpdate();
+        AnimationUpdate();
     }
 
     private void FixedUpdate()
@@ -90,17 +88,19 @@ public class PlayerController : MonoBehaviour
 
     private void AnimationUpdate()
     {
-        string updateAnim;
-        if (isMoving)
-            updateAnim = moveanim;
-        else
-            updateAnim = idleanim;
+        //string updateAnim;
+        //if (isMoving)
+        //    updateAnim = moveanim;
 
-        for (int i=0; i< animlist.Count; i++)
-        {
-            bool playAnim = animlist[i] == updateAnim ? true : false;
-            anim.SetBool(updateAnim, playAnim);
-        }
+
+
+        //for (int i=0; i< animlist.Count; i++)
+        //{
+        //    bool playAnim = animlist[i] == updateAnim ? true : false;
+        //    anim.SetBool(updateAnim, playAnim);
+        //}
+
+        anim.SetBool(moveanim, isMoving);
     }
 
     private void Move()

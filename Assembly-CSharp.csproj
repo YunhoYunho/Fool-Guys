@@ -8,9 +8,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
-    <ProjectGuid>{F72D66EF-217B-706A-F39A-87C21FCDB6BB}</ProjectGuid>
+    <RootNamespace></RootNamespace>
+    <ProjectGuid>{86F69643-7BC9-D386-5E58-DC5BC4E7B40D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -57,8 +56,16 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Lim\Import\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesDestroyer.cs" />
     <Compile Include="Assets\Lim\Script\PlayerController.cs" />
+    <Compile Include="Assets\Lim\Import\HYPEPOLY - Battle Royale Show\Scripts\WNDMoover.cs" />
+    <Compile Include="Assets\Lim\Import\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesSpawner.cs" />
     <Compile Include="Assets\Scripts\TestScripts.cs" />
+    <Compile Include="Assets\Lim\Import\HYPEPOLY - Battle Royale Show\Scripts\WNDPrefabVariator.cs" />
+    <Compile Include="Assets\Lim\Import\HYPEPOLY - Battle Royale Show\Demo\Scripts\WNDDisabler.cs" />
+    <Compile Include="Assets\Lim\Script\PhsicsObject.cs" />
+    <Compile Include="Assets\Lim\Import\HYPEPOLY - Battle Royale Show\Scripts\WNDDispenser.cs" />
+    <Compile Include="Assets\Lim\Import\HYPEPOLY - Battle Royale Show\Scripts\WNDRotator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
