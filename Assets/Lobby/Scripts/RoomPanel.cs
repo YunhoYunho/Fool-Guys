@@ -80,7 +80,9 @@ public class RoomPanel : MonoBehaviour
         //PhotonNetwork.CurrentRoom.IsVisible = false;
 
         PhotonNetwork.AutomaticallySyncScene = true;
-        PhotonNetwork.LoadLevel("SW_Scene");
+        //PhotonNetwork.LoadLevel("SW_Scene");
+
+        PhotonNetwork.LoadLevel("Stage1");
 
         //SceneManager.LoadScene
     }

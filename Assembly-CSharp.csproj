@@ -84,6 +84,32 @@
     <Compile Include="Assets\Lobby\Scripts\RoomPanel.cs" />
     <Compile Include="Assets\Lobby\Scripts\InConnectPanel.cs" />
     <Compile Include="Assets\Resources\Scripts\Stone.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesDestroyer.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDDispenser.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDRotator.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Demo\Scripts\WNDDisabler.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDMoover.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesSpawner.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDPrefabVariator.cs" />
+    <Compile Include="Assets\Obstacle.cs" />
+    <Compile Include="Assets\Mini UI\Script\ItemDescription.cs" />
+    <Compile Include="Assets\Mini UI\Script\Notification.cs" />
+    <Compile Include="Assets\Mini UI\Script\ViewSelector.cs" />
+    <Compile Include="Assets\Mini UI\Script\LoadingScript.cs" />
+    <Compile Include="Assets\Mini UI\Script\StartScript.cs" />
+    <Compile Include="Assets\Mini UI\Script\CloseButton.cs" />
+    <Compile Include="Assets\Mini UI\Script\Store_Controller.cs" />
+    <Compile Include="Assets\Mini UI\Script\TextPressed.cs" />
+    <Compile Include="Assets\Mini UI\Script\SlideAnimation.cs" />
+    <Compile Include="Assets\Mini UI\Script\Menus.cs" />
+    <Compile Include="Assets\Mini UI\Script\AddFriendScript.cs" />
+    <Compile Include="Assets\Mini UI\Script\CustomButton.cs" />
+    <Compile Include="Assets\Mini UI\Script\ItemDescriptionShow.cs" />
+    <Compile Include="Assets\Mini UI\Script\Switch_Slide.cs" />
+    <Compile Include="Assets\Mini UI\Script\ProgressBarScript.cs" />
+    <Compile Include="Assets\Mini UI\Script\Map.cs" />
+    <Compile Include="Assets\Mini UI\Script\ItemDescriptionCloseButton.cs" />
+    <Compile Include="Assets\Mini UI\Script\OnOff.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
