@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float normalSpeed;
     [SerializeField] private Vector3 velocity;
     //=================================
+    [SerializeField] private float maxVelocityX;
+    [SerializeField] private float maxVelocityZ;
 
 
     //=========== Player Controller ===========
@@ -34,6 +36,8 @@ public class PlayerController : MonoBehaviour
         moveSpeed = normalSpeed;
         moveDash = 1.5f;
         jumpPower = 10f;
+        maxVelocityX = 30.0f;
+        maxVelocityZ = 30.0f;
     }
 
     private void Start()
@@ -54,6 +58,29 @@ public class PlayerController : MonoBehaviour
         velocity = rig.velocity;
     }
 
+    private void MaxSpeed()
+    {
+        if (rig.velocity.x > maxVelocityX)
+        {
+            rig.velocity = new Vector3(maxVelocityX, rig.velocity.y, rig.velocity.z);
+        }
+
+        if (rig.velocity.x < (maxVelocityX * -1))
+        {
+            rig.velocity = new Vector3((maxVelocityX * -1), rig.velocity.y, rig.velocity.z);
+        }
+
+        if (rig.velocity.z > maxVelocityZ)
+        {
+            rig.velocity = new Vector3(rig.velocity.x, rig.velocity.y, maxVelocityZ);
+        }
+
+        if (rig.velocity.z < (maxVelocityZ * -1))
+        {
+            rig.velocity = new Vector3(rig.velocity.x, rig.velocity.y, (maxVelocityZ * -1));
+        }
+    }
+
     private void Move()
     {
         Vector3 forwardVec = new Vector3(Camera.main.transform.forward.x, 0, Camera.main.transform.forward.z).normalized;
@@ -65,6 +92,7 @@ public class PlayerController : MonoBehaviour
         Vector3 moveVec = forwardVec * moveInput.z + rightVec * moveInput.x;
 
         rig.AddForce(moveVec * moveSpeed);
+        MaxSpeed();
     }
 
     private void Dash()
