@@ -1,75 +1,124 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
-    //========= Player Move ===========
+    //============= Player Move ===============
     [Header("Player Move")]
     [SerializeField] private float moveSpeed = 20;
     [SerializeField] private float maxSpeed = 5;
-    [SerializeField] private float moveDash;
-    [SerializeField] private float jumpPower = 10f;
-    [SerializeField] private float normalSpeed;
+    [SerializeField] private float jumpPower;
     [SerializeField] private Vector3 velocity;
     [SerializeField] private Vector3 moveVec;
+    [SerializeField] private float maxVelocity = 2;
+    //=========================================
+    [Space]
 
-    private float maxVelocityX = 2, maxVelocityZ = 2;
-    //=================================
+    //============ Player Model ===============
+    [SerializeField] private GameObject normalModel;
+    [SerializeField] private GameObject ragdollModel;
+    //=========================================
 
+    //================ Attack =================
+    [SerializeField] private GameObject attackCollider;
+    private Coroutine attackcoroutine;
+    private Coroutine getUpCoroutine;
+    //=========================================
 
     //=========== Player Controller ===========
     private Rigidbody rigid;
-    private Animator anim;
+    [SerializeField] private Animator anim;
     //=========================================
 
+    [Header("Velocity And GroundCheck")]
     //======= Velocity And GroundCheck ========
     [SerializeField] private Transform groundChecker;
     [SerializeField] private bool isGrounded;
     [SerializeField] private float groundDistance;
     [SerializeField] private LayerMask groundMask;
     //=========================================
+    [Space]
 
     //============ Bool Checker ===============
     [SerializeField] private bool isMoving;
     [SerializeField] private bool jumpOrder;
+    [SerializeField] private bool attackOrder;
+    [SerializeField] private bool getUp;
+    //=========================================
+
+    //=========== Animator String =============
+    private List<string> animlist;
+    private string moveanim = "isMoving";
     //=========================================
 
     private void Awake()
     {
-        normalSpeed = 300;
-        moveSpeed = normalSpeed;
-        
-        moveDash = 1.5f;
+        moveSpeed = 300;
+        jumpPower = 10f;
+        attackcoroutine = null;
+        getUpCoroutine = null;
+        animlist = new List<string>();
+        getUp = true;
     }
 
     private void Start()
     {
         rigid = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
+        SetAnimList();
 
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void SetAnimList()
+    {
+        animlist.Add(moveanim);
     }
 
     private void Update()
     {
         Move();
         Jump();
-        Dash();
+        Attack();
         IsGrounded();
+        HitTest();
+        AnimationUpdate();
     }
 
     private void FixedUpdate()
     {
         FixedMove();
         FixedJump();
+        FixedAttack();
+    }
+
+    private void AnimationUpdate()
+    {
+        //string updateAnim;
+        //if (isMoving)
+        //    updateAnim = moveanim;
+
+
+
+        //for (int i=0; i< animlist.Count; i++)
+        //{
+        //    bool playAnim = animlist[i] == updateAnim ? true : false;
+        //    anim.SetBool(updateAnim, playAnim);
+        //}
+
+        // ㄴ 애니메이션이 더 늘어날 경우 사용할 내용
+        //    현재는 bool 값이 하나라서 밑의 내용으로 충분하기 때문에
+        //    사용하지 않고 있음
+
+        anim.SetBool(moveanim, isMoving);
     }
 
     private void Move()
     {
+        if (!getUp)
+            return;
+
         Vector3 fowardVec = new Vector3(Camera.main.transform.forward.x, 0f, Camera.main.transform.forward.z).normalized;
         Vector3 rightVec = new Vector3(Camera.main.transform.right.x, 0f, Camera.main.transform.right.z).normalized;
 
@@ -77,10 +126,7 @@ public class PlayerController : MonoBehaviour
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
         moveVec = fowardVec * moveInput.z + rightVec * moveInput.x;
 
-        //if (rigid.velocity.magnitude > maxSpeed)
-        //{
-        //    rigid.velocity = rigid.velocity.normalized * maxSpeed;
-        //}
+        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, Time.fixedDeltaTime * 10);
 
         // GetAxisRaw 의 입력값이 있는지의 여부를 bool로 판단하여 저장 
         bool vermove = Input.GetAxisRaw("Vertical") != 0 ? true : false;
@@ -88,45 +134,38 @@ public class PlayerController : MonoBehaviour
 
         isMoving = vermove || hormove ? true : false;
         // ver, hor 둘 중 하나라도 true일 경우 true 저장
-
-        //InputMoveKey();
-        // ㄴ 기존 방식의 함수화
-
-        //anim.SetBool("isMoving", isMoving);
         MaxSpeed();
     }
 
     private void MaxSpeed()
     {
-        if (rigid.velocity.x > maxVelocityX)
+        if (rigid.velocity.x > maxVelocity)
         {
-            rigid.velocity = new Vector3(maxVelocityX, rigid.velocity.y, rigid.velocity.z);
+            rigid.velocity = new Vector3(maxVelocity, rigid.velocity.y, rigid.velocity.z);
         }
 
-        if (rigid.velocity.x < (maxVelocityX * -1))
+        if (rigid.velocity.x < (maxVelocity * -1))
         {
-            rigid.velocity = new Vector3((maxVelocityX * -1), rigid.velocity.y, rigid.velocity.z);
+            rigid.velocity = new Vector3((maxVelocity * -1), rigid.velocity.y, rigid.velocity.z);
         }
 
-        if (rigid.velocity.z > maxVelocityZ)
+        if (rigid.velocity.z > maxVelocity)
         {
-            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, maxVelocityZ);
+            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, maxVelocity);
         }
 
-        if (rigid.velocity.z < (maxVelocityZ * -1))
+        if (rigid.velocity.z < (maxVelocity * -1))
         {
-            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, (maxVelocityZ * -1));
+            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, (maxVelocity * -1));
         }
     }
 
 
     private void FixedMove()
     {
+        if (!getUp)
+            return;
         rigid.AddForce(moveVec * moveSpeed);
-        if (moveVec.sqrMagnitude != 0)
-        {
-            transform.forward = Vector3.Lerp(transform.forward, moveVec, Time.fixedDeltaTime * 10);
-        }
     }
 
     private void FixedJump()
@@ -136,27 +175,79 @@ public class PlayerController : MonoBehaviour
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             jumpOrder = false;
         }
+
     }
 
-    private void Dash()
+    private void Attack()
     {
-        moveSpeed = Input.GetKey(KeyCode.LeftShift) ? normalSpeed * moveDash : normalSpeed;
+        if (Input.GetButtonDown("Fire1") && isGrounded)
+            attackOrder = true;
     }
 
-    private void InputMoveKey()
+    private void FixedAttack()
     {
-        isMoving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
-                   Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) ?
-                   true : false;
+        if(attackOrder && attackcoroutine == null)
+        {
+            attackCollider.GetComponent<BoxCollider>().enabled = true;
+            attackcoroutine = StartCoroutine(OffAttackCollier());
+        }
+    }
 
-        // 키 WASD 4개중 하나라도 입력이 있다면 true 아니라면 false
+    private IEnumerator OffAttackCollier()
+    {
+        yield return new WaitForSeconds(0.5f);
+        attackCollider.GetComponent<BoxCollider>().enabled = false;
+        attackOrder = false;
+        attackcoroutine = null;
     }
 
     private void Jump()
     {
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
+        if(Input.GetButtonDown("Jump") && isGrounded)
             jumpOrder = true;
+    }
+
+    private void HitTest()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+            OnHit();
+    }
+    private void OnHit()
+    {
+        getUp = false;
+        ChangeRagDoll();
+    }
+
+    private IEnumerator GetUp()
+    {
+        yield return new WaitForSeconds(1.5f);
+        getUp = true;
+        ChangeRagDoll();
+        getUpCoroutine = null;
+    }
+
+    private void ChangeRagDoll()
+    {
+        normalModel.SetActive(getUp);
+        ragdollModel.SetActive(!getUp);
+        if(!getUp)
+            ChangeModelTransformCopy(normalModel.transform, ragdollModel.transform);
+        else
+            ChangeModelTransformCopy(ragdollModel.transform, normalModel.transform);
+        if (getUpCoroutine == null)
+            getUpCoroutine = StartCoroutine(GetUp());
+    }
+
+    private void ChangeModelTransformCopy(Transform ChangeStart, Transform ChangeEnd)
+    {
+        for (int i = 0; i < ChangeStart.transform.childCount; i++)
+        {
+            if (ChangeStart.transform.childCount != 0)
+            {
+                ChangeModelTransformCopy(ChangeStart.transform.GetChild(i), ChangeEnd.transform.GetChild(i));
+            }
+            ChangeEnd.transform.GetChild(i).localPosition = ChangeStart.transform.GetChild(i).localPosition;
+            ChangeEnd.transform.GetChild(i).localRotation = ChangeStart.transform.GetChild(i).localRotation;
         }
     }
 
@@ -164,9 +255,14 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag.Equals(""))
+        {
+            OnHit();
+            Vector3 direction = (transform.position - collision.transform.position).normalized;
+            rigid.AddForce(direction * collision.rigidbody.mass * 10, ForceMode.Impulse);
+        }
+    }
 }
-
-
-
-
-

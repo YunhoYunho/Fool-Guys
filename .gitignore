@@ -364,6 +364,7 @@ FodyWeavers.xsd
 /Library
 /Temp
 /UserSettings
+/Assets/Lim/Import
 /Assets/Imports
 /Assets/Lim/Import/BitGem/NPC_Character
 /Assembly-CSharp-Editor.csproj
