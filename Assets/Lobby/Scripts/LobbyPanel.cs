@@ -26,7 +26,7 @@ public class LobbyPanel : MonoBehaviour
         }
         roomEntries.Clear();
 
-        foreach(RoomInfo room in roomList)
+        foreach (RoomInfo room in roomList)
         {
             RoomEntry entry = Instantiate(roomEntryPrefab, roomContent);
             entry.Initialized(room.Name, room.PlayerCount, room.MaxPlayers);

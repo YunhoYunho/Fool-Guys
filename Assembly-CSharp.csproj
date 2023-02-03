@@ -56,60 +56,60 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Lim\Script\PlayerController.cs" />
-    <Compile Include="Assets\Scripts\TestScripts.cs" />
     <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatGui.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\IgnoreUiRaycastWhenInactive.cs" />
-    <Compile Include="Assets\Photon\PhotonLibs\WebSocket\WebSocket.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\FriendItem.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\Common\TextButtonTransition.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChannelSelector.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatAppIdCheckerUI.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\AppSettingsExtensions.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\Common\EventSystemSpawner.cs" />
-    <Compile Include="Assets\Photon\PhotonLibs\WebSocket\SocketWebTcp.cs" />
-    <Compile Include="Assets\Photon\PhotonChat\Demos\Common\TextToggleIsOnTransition.cs" />
-    <Compile Include="Assets\Lobby\Scripts\PlayerEntry.cs" />
-    <Compile Include="Assets\Resources\Scripts\PlayerController.cs" />
-    <Compile Include="Assets\Lobby\Scripts\LobbyManager.cs" />
-    <Compile Include="Assets\Lobby\Scripts\LoginPanel.cs" />
-    <Compile Include="Assets\Game\Scripts\GameManager.cs" />
-    <Compile Include="Assets\Lobby\Scripts\LobbyPanel.cs" />
-    <Compile Include="Assets\Lobby\Scripts\StatePanel.cs" />
-    <Compile Include="Assets\Lobby\Scripts\RoomEntry.cs" />
-    <Compile Include="Assets\Resources\Scripts\Bullet.cs" />
-    <Compile Include="Assets\Lobby\Scripts\RoomPanel.cs" />
-    <Compile Include="Assets\Lobby\Scripts\InConnectPanel.cs" />
-    <Compile Include="Assets\Resources\Scripts\Stone.cs" />
-    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesDestroyer.cs" />
-    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDDispenser.cs" />
-    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDRotator.cs" />
-    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Demo\Scripts\WNDDisabler.cs" />
-    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDMoover.cs" />
-    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesSpawner.cs" />
-    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDPrefabVariator.cs" />
-    <Compile Include="Assets\Obstacle.cs" />
-    <Compile Include="Assets\Mini UI\Script\ItemDescription.cs" />
-    <Compile Include="Assets\Mini UI\Script\Notification.cs" />
-    <Compile Include="Assets\Mini UI\Script\ViewSelector.cs" />
-    <Compile Include="Assets\Mini UI\Script\LoadingScript.cs" />
-    <Compile Include="Assets\Mini UI\Script\StartScript.cs" />
-    <Compile Include="Assets\Mini UI\Script\CloseButton.cs" />
-    <Compile Include="Assets\Mini UI\Script\Store_Controller.cs" />
     <Compile Include="Assets\Mini UI\Script\TextPressed.cs" />
     <Compile Include="Assets\Mini UI\Script\SlideAnimation.cs" />
-    <Compile Include="Assets\Mini UI\Script\Menus.cs" />
-    <Compile Include="Assets\Mini UI\Script\AddFriendScript.cs" />
-    <Compile Include="Assets\Mini UI\Script\CustomButton.cs" />
-    <Compile Include="Assets\Mini UI\Script\ItemDescriptionShow.cs" />
-    <Compile Include="Assets\Mini UI\Script\Switch_Slide.cs" />
+    <Compile Include="Assets\Photon\PhotonLibs\WebSocket\SocketWebTcp.cs" />
+    <Compile Include="Assets\Lobby\Scripts\RoomPanel.cs" />
+    <Compile Include="Assets\Lobby\Scripts\RoomEntry.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatAppIdCheckerUI.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\AppSettingsExtensions.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesDestroyer.cs" />
+    <Compile Include="Assets\Resources\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Mini UI\Script\ProgressBarScript.cs" />
-    <Compile Include="Assets\Mini UI\Script\Map.cs" />
-    <Compile Include="Assets\Mini UI\Script\ItemDescriptionCloseButton.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChannelSelector.cs" />
+    <Compile Include="Assets\Mini UI\Script\ViewSelector.cs" />
+    <Compile Include="Assets\Lobby\Scripts\PlayerEntry.cs" />
+    <Compile Include="Assets\Game\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Resources\Scripts\Stone.cs" />
+    <Compile Include="Assets\Mini UI\Script\Store_Controller.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Common\EventSystemSpawner.cs" />
+    <Compile Include="Assets\Lim\Script\PlayerController.cs" />
+    <Compile Include="Assets\Mini UI\Script\LoadingScript.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDMoover.cs" />
+    <Compile Include="Assets\Mini UI\Script\StartScript.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesSpawner.cs" />
+    <Compile Include="Assets\Lobby\Scripts\StatePanel.cs" />
+    <Compile Include="Assets\Mini UI\Script\ItemDescriptionShow.cs" />
+    <Compile Include="Assets\Obstacle.cs" />
+    <Compile Include="Assets\Lobby\Scripts\LobbyManager.cs" />
+    <Compile Include="Assets\Mini UI\Script\CustomButton.cs" />
+    <Compile Include="Assets\Mini UI\Script\ItemDescription.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDPrefabVariator.cs" />
+    <Compile Include="Assets\Mini UI\Script\Switch_Slide.cs" />
+    <Compile Include="Assets\Photon\PhotonLibs\WebSocket\WebSocket.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Common\TextButtonTransition.cs" />
+    <Compile Include="Assets\Mini UI\Script\AddFriendScript.cs" />
+    <Compile Include="Assets\Resources\Scripts\Bullet.cs" />
     <Compile Include="Assets\Mini UI\Script\OnOff.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs" />
+    <Compile Include="Assets\Lobby\Scripts\LobbyPanel.cs" />
+    <Compile Include="Assets\Mini UI\Script\Map.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Demo\Scripts\WNDDisabler.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\IgnoreUiRaycastWhenInactive.cs" />
+    <Compile Include="Assets\Mini UI\Script\Notification.cs" />
+    <Compile Include="Assets\Mini UI\Script\Menus.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\FriendItem.cs" />
+    <Compile Include="Assets\Mini UI\Script\CloseButton.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatGui.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDDispenser.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Common\TextToggleIsOnTransition.cs" />
+    <Compile Include="Assets\Lobby\Scripts\LoginPanel.cs" />
+    <Compile Include="Assets\Lobby\Scripts\InConnectPanel.cs" />
+    <Compile Include="Assets\Scripts\TestScripts.cs" />
+    <Compile Include="Assets\Mini UI\Script\ItemDescriptionCloseButton.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDRotator.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -392,6 +392,12 @@
     <Reference Include="UnityEditor.UnityConnectModule">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.14f1\Editor\Data\Managed\UnityEngine\UnityEditor.UnityConnectModule.dll</HintPath>
     </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>Assets\Photon\PhotonLibs\WebSocket\websocket-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Photon3Unity3D">
+      <HintPath>Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.7.8\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
     </Reference>
@@ -400,12 +406,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="websocket-sharp">
-      <HintPath>Assets\Photon\PhotonLibs\WebSocket\websocket-sharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Photon3Unity3D">
-      <HintPath>Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Android.Types">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.14f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>
@@ -812,17 +812,11 @@
     <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection">
-      <HintPath>Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.VisualScripting.Flow">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.PlasticSCM.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
@@ -830,14 +824,20 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection">
+      <HintPath>Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.PlasticSCM.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Services.Core">
       <HintPath>Library\ScriptAssemblies\Unity.Services.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.VisualScripting.Core">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.EditorCoroutines.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.EditorCoroutines.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Core">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cinemachine">
       <HintPath>Library\ScriptAssemblies\Cinemachine.dll</HintPath>
@@ -865,37 +865,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="PhotonUnityNetworking.csproj">
-      <Project>{0B12D7A9-8665-9AA0-4704-C526A9B8A1AC}</Project>
-      <Name>PhotonUnityNetworking</Name>
-    </ProjectReference>
-    <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj">
-      <Project>{A9CA9FD2-9587-2DC8-6474-9D366B030029}</Project>
-      <Name>PunDemos.DemoSlotcarEditor</Name>
+    <ProjectReference Include="PhotonChat.csproj">
+      <Project>{07D9D363-1BFD-96D5-8757-6872995FA9B0}</Project>
+      <Name>PhotonChat</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
       <Project>{F2308264-0774-6433-3A88-EC1EBD6CAE78}</Project>
       <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>
     </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
-      <Project>{50C8601B-2C84-4A95-9EE5-87009540F0A0}</Project>
-      <Name>PhotonUnityNetworking.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Demos.csproj">
-      <Project>{D532372E-1FC1-9CBC-14C1-2D8209689637}</Project>
-      <Name>PhotonUnityNetworking.Demos</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonChat.csproj">
-      <Project>{07D9D363-1BFD-96D5-8757-6872995FA9B0}</Project>
-      <Name>PhotonChat</Name>
+    <ProjectReference Include="PhotonUnityNetworking.Editor.csproj">
+      <Project>{26ED7566-F3EC-8394-8104-8CFBC2AAA387}</Project>
+      <Name>PhotonUnityNetworking.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
       <Project>{68A1FFAB-D266-FA0F-3033-92D0DEA29C92}</Project>
       <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Editor.csproj">
-      <Project>{26ED7566-F3EC-8394-8104-8CFBC2AAA387}</Project>
-      <Name>PhotonUnityNetworking.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PunDemos.DemoHubEditor.csproj">
       <Project>{E6ADAE84-9F5D-32AD-3C0F-DFF10E71AB46}</Project>
@@ -904,6 +888,22 @@
     <ProjectReference Include="PhotonRealtime.csproj">
       <Project>{7C633B3D-8188-821F-C033-86BF229B8A28}</Project>
       <Name>PhotonRealtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
+      <Project>{50C8601B-2C84-4A95-9EE5-87009540F0A0}</Project>
+      <Name>PhotonUnityNetworking.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.csproj">
+      <Project>{0B12D7A9-8665-9AA0-4704-C526A9B8A1AC}</Project>
+      <Name>PhotonUnityNetworking</Name>
+    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Demos.csproj">
+      <Project>{D532372E-1FC1-9CBC-14C1-2D8209689637}</Project>
+      <Name>PhotonUnityNetworking.Demos</Name>
+    </ProjectReference>
+    <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj">
+      <Project>{A9CA9FD2-9587-2DC8-6474-9D366B030029}</Project>
+      <Name>PunDemos.DemoSlotcarEditor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
