@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -180,7 +180,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 88681359}
-  m_LocalRotation: {x: 0.31378806, y: 0.000000063274236, z: -0.000000020910845, w: 0.94949305}
+  m_LocalRotation: {x: 0.3137881, y: 1.0021206e-17, z: -7.7863186e-16, w: 0.94949305}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -615,7 +615,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 626537439}
-  m_LocalRotation: {x: 0.3137881, y: 0.00000008948329, z: -0.0000000295724, w: 0.94949305}
+  m_LocalRotation: {x: 0.31378815, y: -0.000000028297102, z: 0.000000009351616, w: 0.94949305}
   m_LocalPosition: {x: 0, y: 9, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1569,7 +1569,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1635346157}
-  m_LocalRotation: {x: 0.29651123, y: 0.000000016432596, z: -0.0000000051018847, w: 0.95502937}
+  m_LocalRotation: {x: 0.29651123, y: -0.000000016432603, z: 0.0000000051018865, w: 0.95502937}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2258,7 +2258,7 @@ Terrain:
   m_GameObject: {fileID: 1965056764}
   m_Enabled: 1
   serializedVersion: 6
-  m_TerrainData: {fileID: 15600000, guid: a044164079ab4c943a88d20859367049, type: 2}
+  m_TerrainData: {fileID: 0}
   m_TreeDistance: 5000
   m_TreeBillboardDistance: 50
   m_TreeCrossFadeLength: 5

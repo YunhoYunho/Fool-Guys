@@ -210,7 +210,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
             OnHit();
     }
-    private void OnHit()
+    public void OnHit()
     {
         getUp = false;
         ChangeRagDoll();
