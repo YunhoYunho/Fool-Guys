@@ -8,7 +8,6 @@ public class Interactor : MonoBehaviour
 {
 
     [Header("Setting")]
-
     [SerializeField]
     private Transform viewPoint;
     [SerializeField]
