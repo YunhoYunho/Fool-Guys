@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
     //============= Player Move ===============
     [Header("Player Move")]
     [SerializeField] private float moveSpeed = 20;
@@ -17,14 +16,20 @@ public class PlayerController : MonoBehaviour
     //=========================================
     [Space]
 
+    //============ Player Model ===============
+    [SerializeField] private GameObject normalModel;
+    [SerializeField] private GameObject ragdollModel;
+    //=========================================
+
     //================ Attack =================
     [SerializeField] private GameObject attackCollider;
     private Coroutine attackcoroutine;
+    private Coroutine getUpCoroutine;
     //=========================================
 
     //=========== Player Controller ===========
     private Rigidbody rigid;
-    private Animator anim;
+    [SerializeField] private Animator anim;
     //=========================================
 
     [Header("Velocity And GroundCheck")]
@@ -40,12 +45,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isMoving;
     [SerializeField] private bool jumpOrder;
     [SerializeField] private bool attackOrder;
+    [SerializeField] private bool getUp;
     //=========================================
 
     //=========== Animator String =============
     private List<string> animlist;
-    private string idleanim = "idle";
-    private string moveanim = "isMovig";
+    private string moveanim = "isMoving";
     //=========================================
 
     private void Awake()
@@ -53,13 +58,14 @@ public class PlayerController : MonoBehaviour
         moveSpeed = 300;
         jumpPower = 10f;
         attackcoroutine = null;
+        getUpCoroutine = null;
         animlist = new List<string>();
+        getUp = true;
     }
 
     private void Start()
     {
         rigid = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
         SetAnimList();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -67,7 +73,6 @@ public class PlayerController : MonoBehaviour
 
     private void SetAnimList()
     {
-        animlist.Add(idleanim);
         animlist.Add(moveanim);
     }
 
@@ -78,7 +83,7 @@ public class PlayerController : MonoBehaviour
         Attack();
         IsGrounded();
         HitTest();
-        //AnimationUpdate();
+        AnimationUpdate();
     }
 
     private void FixedUpdate()
@@ -90,27 +95,38 @@ public class PlayerController : MonoBehaviour
 
     private void AnimationUpdate()
     {
-        string updateAnim;
-        if (isMoving)
-            updateAnim = moveanim;
-        else
-            updateAnim = idleanim;
+        //string updateAnim;
+        //if (isMoving)
+        //    updateAnim = moveanim;
 
-        for (int i=0; i< animlist.Count; i++)
-        {
-            bool playAnim = animlist[i] == updateAnim ? true : false;
-            anim.SetBool(updateAnim, playAnim);
-        }
+
+
+        //for (int i=0; i< animlist.Count; i++)
+        //{
+        //    bool playAnim = animlist[i] == updateAnim ? true : false;
+        //    anim.SetBool(updateAnim, playAnim);
+        //}
+
+        // ㄴ 애니메이션이 더 늘어날 경우 사용할 내용
+        //    현재는 bool 값이 하나라서 밑의 내용으로 충분하기 때문에
+        //    사용하지 않고 있음
+
+        anim.SetBool(moveanim, isMoving);
     }
 
     private void Move()
     {
+        if (!getUp)
+            return;
+
         Vector3 fowardVec = new Vector3(Camera.main.transform.forward.x, 0f, Camera.main.transform.forward.z).normalized;
         Vector3 rightVec = new Vector3(Camera.main.transform.right.x, 0f, Camera.main.transform.right.z).normalized;
 
         Vector3 moveInput = Vector3.forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal");
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
         moveVec = fowardVec * moveInput.z + rightVec * moveInput.x;
+
+        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, Time.fixedDeltaTime * 10);
 
         // GetAxisRaw 의 입력값이 있는지의 여부를 bool로 판단하여 저장 
         bool vermove = Input.GetAxisRaw("Vertical") != 0 ? true : false;
@@ -148,10 +164,6 @@ public class PlayerController : MonoBehaviour
     private void FixedMove()
     {
         rigid.AddForce(moveVec * moveSpeed);
-        if (moveVec.sqrMagnitude != 0)
-        {
-            transform.forward = Vector3.Lerp(transform.forward, moveVec, Time.fixedDeltaTime * 10);
-        }
     }
 
     private void FixedJump()
@@ -174,7 +186,7 @@ public class PlayerController : MonoBehaviour
     {
         if(attackOrder && attackcoroutine == null)
         {
-            attackCollider.SetActive(true);
+            attackCollider.GetComponent<BoxCollider>().enabled = true;
             attackcoroutine = StartCoroutine(OffAttackCollier());
         }
     }
@@ -182,7 +194,7 @@ public class PlayerController : MonoBehaviour
     private IEnumerator OffAttackCollier()
     {
         yield return new WaitForSeconds(0.5f);
-        attackCollider.SetActive(false);
+        attackCollider.GetComponent<BoxCollider>().enabled = false;
         attackOrder = false;
         attackcoroutine = null;
     }
@@ -200,13 +212,40 @@ public class PlayerController : MonoBehaviour
     }
     private void OnHit()
     {
-        if(rigid.constraints == RigidbodyConstraints.None)
-        {
-            rigid.constraints = RigidbodyConstraints.FreezeRotation;
-        }
+        getUp = false;
+        ChangeRagDoll();
+    }
+
+    private IEnumerator GetUp()
+    {
+        yield return new WaitForSeconds(1.5f);
+        getUp = true;
+        ChangeRagDoll();
+        getUpCoroutine = null;
+    }
+
+    private void ChangeRagDoll()
+    {
+        normalModel.SetActive(getUp);
+        ragdollModel.SetActive(!getUp);
+        if(!getUp)
+            ChangeModelTransformCopy(normalModel.transform, ragdollModel.transform);
         else
+            ChangeModelTransformCopy(ragdollModel.transform, normalModel.transform);
+        if (getUpCoroutine == null)
+            getUpCoroutine = StartCoroutine(GetUp());
+    }
+
+    private void ChangeModelTransformCopy(Transform ChangeStart, Transform ChangeEnd)
+    {
+        for (int i = 0; i < ChangeStart.transform.childCount; i++)
         {
-            rigid.constraints = RigidbodyConstraints.None;
+            if (ChangeStart.transform.childCount != 0)
+            {
+                ChangeModelTransformCopy(ChangeStart.transform.GetChild(i), ChangeEnd.transform.GetChild(i));
+            }
+            ChangeEnd.transform.GetChild(i).localPosition = ChangeStart.transform.GetChild(i).localPosition;
+            ChangeEnd.transform.GetChild(i).localRotation = ChangeStart.transform.GetChild(i).localRotation;
         }
     }
 
