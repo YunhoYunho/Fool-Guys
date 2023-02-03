@@ -212,7 +212,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
             OnHit();
     }
-    private void OnHit()
+    public void OnHit()
     {
         getUp = false;
         ChangeRagDoll();
@@ -258,11 +258,11 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag.Equals(""))
-        {
-            OnHit();
-            Vector3 direction = (transform.position - collision.transform.position).normalized;
-            rigid.AddForce(direction * collision.rigidbody.mass * 10, ForceMode.Impulse);
-        }
+        //if(collision.gameObject.tag.Equals(""))
+        //{
+        //    OnHit();
+        //    Vector3 direction = (transform.position - collision.transform.position).normalized;
+        //    rigid.AddForce(direction * collision.rigidbody.mass * 10, ForceMode.Impulse);
+        //}
     }
 }
