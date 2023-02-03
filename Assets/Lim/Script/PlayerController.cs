@@ -163,6 +163,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedMove()
     {
+        if (!getUp)
+            return;
         rigid.AddForce(moveVec * moveSpeed);
     }
 
@@ -252,5 +254,15 @@ public class PlayerController : MonoBehaviour
     private void IsGrounded()
     {
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag.Equals(""))
+        {
+            OnHit();
+            Vector3 direction = (transform.position - collision.transform.position).normalized;
+            rigid.AddForce(direction * collision.rigidbody.mass * 10, ForceMode.Impulse);
+        }
     }
 }
