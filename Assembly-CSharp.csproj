@@ -63,10 +63,10 @@
     <Compile Include="Assets\Lim\Script\PlayerController.cs" />
     <Compile Include="Assets\Lim\Import\HYPEPOLY - Battle Royale Show\Scripts\WNDPrefabVariator.cs" />
     <Compile Include="Assets\Lim\Import\HYPEPOLY - Battle Royale Show\Demo\Scripts\WNDDisabler.cs" />
+    <Compile Include="Assets\Lim\Script\Obstacle.cs" />
     <Compile Include="Assets\Lim\Script\PhsicsObject.cs" />
     <Compile Include="Assets\Lim\Import\HYPEPOLY - Battle Royale Show\Scripts\WNDDispenser.cs" />
     <Compile Include="Assets\Lim\Import\HYPEPOLY - Battle Royale Show\Scripts\WNDRotator.cs" />
-    <Compile Include="Assets\Lim\Script\Obstacle.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

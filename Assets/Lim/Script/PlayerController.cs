@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -8,17 +9,20 @@ public class PlayerController : MonoBehaviour
     //============= Player Move ===============
     [Header("Player Move")]
     [SerializeField] private float moveSpeed = 20;
-    [SerializeField] private float maxSpeed = 5;
     [SerializeField] private float jumpPower;
     [SerializeField] private Vector3 velocity;
     [SerializeField] private Vector3 moveVec;
-    [SerializeField] private float maxVelocity = 2;
+    [SerializeField] private float maxVelocity = 5;
     //=========================================
     [Space]
 
     //============ Player Model ===============
     [SerializeField] private GameObject normalModel;
     [SerializeField] private GameObject ragdollModel;
+    [SerializeField] private Transform hipBones;
+    [SerializeField] private BoneTransform[] ragdollBoneTransform;
+    [SerializeField] private BoneTransform[] animBoneTransform;
+    [SerializeField] private Transform[] bones;
     //=========================================
 
     //================ Attack =================
@@ -48,25 +52,42 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool getUp;
     //=========================================
 
-    //=========== Animator String =============
+    //=============== Animator =================
     private List<string> animlist;
     private string moveanim = "isMoving";
+    [SerializeField] string getupClipName;
     //=========================================
 
     private void Awake()
     {
-        moveSpeed = 300;
+        moveSpeed = 20;
         jumpPower = 10f;
+
         attackcoroutine = null;
         getUpCoroutine = null;
+
+        bones = hipBones.GetComponentsInChildren<Transform>();
+        animBoneTransform = new BoneTransform[bones.Length];
+        ragdollBoneTransform = new BoneTransform[bones.Length];
+
+        StartAnimTransformCopy(getupClipName, animBoneTransform);
+
+        for (int bone = 0; bone < bones.Length; bone++)
+        {
+            animBoneTransform[bone] = new BoneTransform();
+            ragdollBoneTransform[bone] = new BoneTransform();
+        }
+
         animlist = new List<string>();
         getUp = true;
     }
 
     private void Start()
     {
+        anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody>();
         SetAnimList();
+        hipBones = anim.GetBoneTransform(HumanBodyBones.Hips);
 
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -84,6 +105,9 @@ public class PlayerController : MonoBehaviour
         IsGrounded();
         HitTest();
         AnimationUpdate();
+
+        if (!getUp)
+            FollowRagDollPosision();
     }
 
     private void FixedUpdate()
@@ -126,14 +150,15 @@ public class PlayerController : MonoBehaviour
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
         moveVec = fowardVec * moveInput.z + rightVec * moveInput.x;
 
-        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, Time.fixedDeltaTime * 10);
+        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, 0.8f);
 
         // GetAxisRaw 의 입력값이 있는지의 여부를 bool로 판단하여 저장 
         bool vermove = Input.GetAxisRaw("Vertical") != 0 ? true : false;
         bool hormove = Input.GetAxisRaw("Horizontal") != 0 ? true : false;
-
+        velocity = rigid.velocity;
         isMoving = vermove || hormove ? true : false;
         // ver, hor 둘 중 하나라도 true일 경우 true 저장
+        rigid.AddForce(moveVec * moveSpeed);
         MaxSpeed();
     }
 
@@ -165,7 +190,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!getUp)
             return;
-        rigid.AddForce(moveVec * moveSpeed);
+        
     }
 
     private void FixedJump()
@@ -223,17 +248,14 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         getUp = true;
         ChangeRagDoll();
+        PopulateBonesTransform(ragdollBoneTransform);
         getUpCoroutine = null;
     }
 
     private void ChangeRagDoll()
     {
-        normalModel.SetActive(getUp);
-        ragdollModel.SetActive(!getUp);
-        if(!getUp)
-            ChangeModelTransformCopy(normalModel.transform, ragdollModel.transform);
-        else
-            ChangeModelTransformCopy(ragdollModel.transform, normalModel.transform);
+        gameObject.GetComponent<Animator>().enabled = getUp;
+
         if (getUpCoroutine == null)
             getUpCoroutine = StartCoroutine(GetUp());
     }
@@ -251,18 +273,58 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void FollowRagDollPosision()
+    {
+        Vector3 originPos = hipBones.transform.position;
+
+        transform.position = Vector3.Lerp(transform.position, hipBones.transform.position, Time.fixedDeltaTime * 10);
+
+        hipBones.transform.position = originPos;
+
+        //if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit))
+        //transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
+
+    }
+
+    private void PopulateBonesTransform(BoneTransform[] bonetransforms)
+    {
+         for(int bone =0; bone< bones.Length; bone++)
+        {
+            bonetransforms[bone].posision = bones[bone].localPosition;
+            bonetransforms[bone].rotation = bones[bone].localRotation;
+        }
+    }
+
+    private void StartAnimTransformCopy(string clipname, BoneTransform[] bone)
+    {
+        Vector3 vec = transform.position;
+        Quaternion qua = transform.rotation;
+
+        foreach (AnimationClip clip in anim.runtimeAnimatorController.animationClips)
+        {
+            if(clipname == clip.name)
+            {
+                clip.SampleAnimation(gameObject,0);
+                PopulateBonesTransform(animBoneTransform);
+                break;
+            }
+        }
+
+        transform.position = vec;
+        transform.rotation = qua; 
+    }
+
+
     private void IsGrounded()
     {
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    class BoneTransform
     {
-        //if(collision.gameObject.tag.Equals(""))
-        //{
-        //    OnHit();
-        //    Vector3 direction = (transform.position - collision.transform.position).normalized;
-        //    rigid.AddForce(direction * collision.rigidbody.mass * 10, ForceMode.Impulse);
-        //}
+        public Vector3 posision { get; set; }
+
+        public Quaternion rotation { get; set; }
     }
+
 }
