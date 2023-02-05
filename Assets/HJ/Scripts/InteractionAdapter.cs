@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class InteractionAdapter : MonoBehaviour, IInteractable
+namespace HJ
 {
-    public UnityEvent<PlayerController> OnInteract;
-    public void Interaction(PlayerController player)
+    public class InteractionAdapter : MonoBehaviour, IInteractable
     {
-        OnInteract?.Invoke(player);
+        public UnityEvent<PlayerController> OnInteract;
+        public void Interaction(PlayerController player)
+        {
+            OnInteract?.Invoke(player);
+        }
     }
 }
+

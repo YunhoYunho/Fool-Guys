@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public interface IInteractable
+namespace HJ
 {
-    void Interaction(PlayerController player);
+    public interface IInteractable
+    {
+        void Interaction(PlayerController player);
+    }
 }
+
 
 
 
