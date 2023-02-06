@@ -1,24 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     //============= Player Move ===============
     [Header("Player Move")]
-    [SerializeField] public float moveSpeed = 20;
-    [SerializeField] private float maxSpeed = 5;
+    [SerializeField] private float moveSpeed = 20;
     [SerializeField] private float jumpPower;
     [SerializeField] private Vector3 velocity;
     [SerializeField] private Vector3 moveVec;
-    [SerializeField] private float maxVelocity = 2;
+    [SerializeField] private float maxVelocity = 5;
     //=========================================
     [Space]
 
     //============ Player Model ===============
     [SerializeField] private GameObject normalModel;
     [SerializeField] private GameObject ragdollModel;
+    [SerializeField] private Transform hipBones;
+    [SerializeField] private BoneTransform[] ragdollBoneTransform;
+    [SerializeField] private BoneTransform[] animBoneTransform;
+    [SerializeField] private Transform[] bones;
+    [SerializeField] private Collider[] playerColliders;
+    [SerializeField] private CapsuleCollider playercol;
     //=========================================
 
     //================ Attack =================
@@ -48,25 +54,48 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool getUp;
     //=========================================
 
-    //=========== Animator String =============
+    //=============== Animator =================
     private List<string> animlist;
     private string moveanim = "isMoving";
+    [SerializeField] string getupClipName;
     //=========================================
 
     private void Awake()
     {
-        moveSpeed = 300;
+        moveSpeed = 20;
         jumpPower = 10f;
+
         attackcoroutine = null;
         getUpCoroutine = null;
+
+        bones = hipBones.GetComponentsInChildren<Transform>();
+        animBoneTransform = new BoneTransform[bones.Length];
+        ragdollBoneTransform = new BoneTransform[bones.Length];
+
+        StartAnimTransformCopy(getupClipName, animBoneTransform);
+
+        for (int bone = 0; bone < bones.Length; bone++)
+        {
+            animBoneTransform[bone] = new BoneTransform();
+            ragdollBoneTransform[bone] = new BoneTransform();
+        }
+
         animlist = new List<string>();
         getUp = true;
     }
 
     private void Start()
     {
+        anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody>();
+        playercol = GetComponent<CapsuleCollider>();
+        //playerColliders = gameObject.GetComponentsInChildren<Collider>();
+        playerColliders = normalModel.GetComponentsInChildren<Collider>();
         SetAnimList();
+        hipBones = anim.GetBoneTransform(HumanBodyBones.Hips);
+
+        SetJoint();
+        JointEnable();
 
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -84,6 +113,12 @@ public class PlayerController : MonoBehaviour
         IsGrounded();
         HitTest();
         AnimationUpdate();
+
+        if (!getUp)
+        {
+            FollowCamera();
+            FollowRagDollPosision();
+        }
     }
 
     private void FixedUpdate()
@@ -114,6 +149,25 @@ public class PlayerController : MonoBehaviour
         anim.SetBool(moveanim, isMoving);
     }
 
+    private void SetJoint()
+    {
+        for (int i = 0; i < playerColliders.Length; i++)
+        {
+            playerColliders[i].enabled = !getUp;
+        }
+        playercol.enabled = getUp;
+    }
+
+    private void JointEnable()
+    {
+        CharacterJoint[] joints = normalModel.GetComponentsInChildren<CharacterJoint>();
+        
+        for(int i=0; i< joints.Length; i++)
+        {
+            joints[i].enableProjection = true;
+        }
+    }
+
     private void Move()
     {
         if (!getUp)
@@ -126,12 +180,12 @@ public class PlayerController : MonoBehaviour
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
         moveVec = fowardVec * moveInput.z + rightVec * moveInput.x;
 
-        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, Time.fixedDeltaTime * 10);
+        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, 0.8f);
 
         // GetAxisRaw 의 입력값이 있는지의 여부를 bool로 판단하여 저장 
         bool vermove = Input.GetAxisRaw("Vertical") != 0 ? true : false;
         bool hormove = Input.GetAxisRaw("Horizontal") != 0 ? true : false;
-
+        velocity = rigid.velocity;
         isMoving = vermove || hormove ? true : false;
         // ver, hor 둘 중 하나라도 true일 경우 true 저장
         MaxSpeed();
@@ -163,6 +217,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedMove()
     {
+        if (!getUp)
+            return;
         rigid.AddForce(moveVec * moveSpeed);
     }
 
@@ -209,6 +265,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P))
             OnHit();
+
     }
     public void OnHit()
     {
@@ -221,17 +278,14 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         getUp = true;
         ChangeRagDoll();
+        PopulateBonesTransform(ragdollBoneTransform);
         getUpCoroutine = null;
     }
 
     private void ChangeRagDoll()
     {
-        normalModel.SetActive(getUp);
-        ragdollModel.SetActive(!getUp);
-        if(!getUp)
-            ChangeModelTransformCopy(normalModel.transform, ragdollModel.transform);
-        else
-            ChangeModelTransformCopy(ragdollModel.transform, normalModel.transform);
+        SetJoint();
+        gameObject.GetComponent<Animator>().enabled = getUp;
         if (getUpCoroutine == null)
             getUpCoroutine = StartCoroutine(GetUp());
     }
@@ -249,8 +303,70 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void FollowRagDollPosision()
+    {
+        Vector3 originPos = hipBones.transform.position;
+
+        transform.position = Vector3.Lerp(transform.position, hipBones.transform.position, Time.fixedDeltaTime * 10);
+
+        Vector3 pos = animBoneTransform[0].posision;
+        pos.y = 0;
+        pos = transform.rotation * pos;
+        transform.position -= pos;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit))
+            transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
+
+
+        hipBones.transform.position = originPos;
+    }
+
+    private void PopulateBonesTransform(BoneTransform[] bonetransforms)
+    {
+         for(int bone =0; bone< bones.Length; bone++)
+        {
+            bonetransforms[bone].posision = bones[bone].localPosition;
+            bonetransforms[bone].rotation = bones[bone].localRotation;
+        }
+    }
+
+    private void StartAnimTransformCopy(string clipname, BoneTransform[] bone)
+    {
+        Vector3 vec = transform.position;
+        Quaternion qua = transform.rotation;
+
+        foreach (AnimationClip clip in anim.runtimeAnimatorController.animationClips)
+        {
+            if(clipname == clip.name)
+            {
+                clip.SampleAnimation(gameObject,0);
+                PopulateBonesTransform(animBoneTransform);
+                break;
+            }
+        }
+
+        transform.position = vec;
+        transform.rotation = qua; 
+    }
+
+    private void FollowCamera()
+    {
+        Camera cam = Camera.main;
+
+        cam.transform.position = rigid.position;
+    }
+
+
     private void IsGrounded()
     {
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
     }
+
+    class BoneTransform
+    {
+        public Vector3 posision { get; set; }
+
+        public Quaternion rotation { get; set; }
+    }
+
 }
