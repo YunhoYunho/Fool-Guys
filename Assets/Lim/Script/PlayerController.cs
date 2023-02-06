@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     //============= Player Move ===============
     [Header("Player Move")]
-    [SerializeField] private float moveSpeed = 20;
+    [SerializeField] public float moveSpeed = 20;
     [SerializeField] private float maxSpeed = 5;
     [SerializeField] private float jumpPower;
     [SerializeField] private Vector3 velocity;
