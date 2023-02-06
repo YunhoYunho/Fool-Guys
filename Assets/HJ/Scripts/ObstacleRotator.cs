@@ -4,25 +4,33 @@ using UnityEngine;
 
 public class ObstacleRotator : MonoBehaviour
 {
-    public Vector3 rotationVelocity;
-    public Vector3 controlledVelocity;
+    [SerializeField]
+    private Vector3 rotationVelocity;
 
-    private Rigidbody rigid;
+    [SerializeField]
+    private float forceOffset = 1f;
 
-    private void Awake()
+    private void FixedUpdate()
     {
-        rigid = GetComponent<Rigidbody>();
+        transform.Rotate(rotationVelocity);
     }
 
-    private void Update()
+    public void SetVelocity(Vector3 newVelocity)
     {
-        rigid.angularVelocity = rotationVelocity;
+        rotationVelocity = newVelocity;
     }
 
-    public void SetVelocity(float power)
+    /*private void OnCollisionStay(Collision collision)
     {
-        rotationVelocity = controlledVelocity;
-    }
+        if(collision.transform.CompareTag("Player"))
+        {
+            Vector3 normal = collision.contacts[0].normal;
+            Vector3 cross = -Vector3.Cross(rotationVelocity.normalized, normal);
+            collision.transform.GetComponent<Rigidbody>().velocity += (cross * forceOffset);
+            Debug.DrawLine(collision.contacts[0].point, collision.contacts[0].point + cross, Color.green);
+        }
+    }*/
+
 
 
 }

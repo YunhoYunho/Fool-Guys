@@ -249,7 +249,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 134678070}
-  m_LocalRotation: {x: 0.14874467, y: -0.000000017014978, z: 0.000000002559359, w: 0.9888756}
+  m_LocalRotation: {x: 0.14874467, y: 0.000000017014965, z: -0.0000000025593572, w: 0.9888756}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -316,7 +316,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7fa211b2779e72a4daa6f9c44a5c181b, type: 2}
+  - {fileID: 2100000, guid: db0886cf8df9b5e4c9c43c81214dddea, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1095,8 +1095,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51c09d99686de2941b960869e13034d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationVelocity: {x: 0, y: 0, z: 0}
-  controlledVelocity: {x: 0, y: 0, z: 10}
 --- !u!1 &818457807
 GameObject:
   m_ObjectHideFlags: 3
@@ -1166,7 +1164,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 818457807}
-  m_LocalRotation: {x: 0.20469368, y: -0.000000032614494, z: 0.000000006820395, w: 0.9788261}
+  m_LocalRotation: {x: 0.2046937, y: -2.2019951e-15, z: 8.156843e-16, w: 0.9788261}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1388,19 +1386,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0166e5e4ace2aab48bef68ef8665eab7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0
-  moveDash: 0
-  jumpPower: 0
-  normalSpeed: 0
-  velocity: {x: 0, y: 0, z: 0}
-  groundChecker: {fileID: 305359113}
-  isGrounded: 0
-  groundDistance: 1
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 64
-  maxVelocity: 15
-  magnitude: 0
 --- !u!114 &1051956325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1413,21 +1398,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aba2d25d595d6b4fa90598fa61fb542, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 20
-  maxSpeed: 5
-  moveDash: 0
-  jumpPower: 20
-  normalSpeed: 0
-  velocity: {x: 0, y: 0, z: 0}
-  moveVec: {x: 0, y: 0, z: 0}
-  groundChecker: {fileID: 1051956323}
-  isGrounded: 0
-  groundDistance: 0.2
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 64
-  isMoving: 0
-  jumpOrder: 0
 --- !u!114 &1051956326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1440,11 +1410,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93f43b2dbfb0abf4bafb77fb561d4083, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewPoint: {fileID: 1889432337}
-  checkDistance: 4
-  interactableLayer:
-    serializedVersion: 2
-    m_Bits: 2147483647
 --- !u!114 &1051956327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1911,7 +1876,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265177430}
-  m_LocalRotation: {x: 0.14874467, y: -0.000000022508695, z: 0.0000000033857122, w: 0.9888757}
+  m_LocalRotation: {x: 0.14874467, y: 0.000000022508686, z: -0.000000003385711, w: 0.9888757}
   m_LocalPosition: {x: 0, y: 9.72, z: -14.45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3050,8 +3015,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51c09d99686de2941b960869e13034d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationVelocity: {x: 0, y: 10, z: 0}
-  controlledVelocity: {x: 0, y: 0, z: 0}
 --- !u!75 &1986944591
 ConstantForce:
   m_ObjectHideFlags: 0
