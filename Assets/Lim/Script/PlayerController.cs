@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+
+
+public enum PlayerState { Idle, Attack, GetDown, GetUp, Jump }
 
 public class PlayerController : MonoBehaviour
 {
@@ -18,7 +22,6 @@ public class PlayerController : MonoBehaviour
 
     //============ Player Model ===============
     [SerializeField] private GameObject normalModel;
-    [SerializeField] private GameObject ragdollModel;
     [SerializeField] private Transform hipBones;
     [SerializeField] private BoneTransform[] ragdollBoneTransform;
     [SerializeField] private BoneTransform[] animBoneTransform;
@@ -30,12 +33,12 @@ public class PlayerController : MonoBehaviour
     //================ Attack =================
     [SerializeField] private GameObject attackCollider;
     private Coroutine attackcoroutine;
-    private Coroutine getUpCoroutine;
     //=========================================
 
     //=========== Player Controller ===========
     private Rigidbody rigid;
     [SerializeField] private Animator anim;
+    [SerializeField] private PlayerState state;
     //=========================================
 
     [Header("Velocity And GroundCheck")]
@@ -52,27 +55,34 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool jumpOrder;
     [SerializeField] private bool attackOrder;
     [SerializeField] private bool getUp;
+    [SerializeField] private bool blockMove;
+    [SerializeField] private bool playstandup;
     //=========================================
 
-    //=============== Animator =================
+    //=============== Animator ================
     private List<string> animlist;
-    private string moveanim = "isMoving";
+    private string moveAnim = "isMoving";
+    private string attackAnim = "isAttack";
+    private string getupAnim = "GetUp";
     [SerializeField] string getupClipName;
+    //=========================================
+
+    //=============== Other ===================
+    private float getupTimer = 0;
+    private float standupAnimTimer = 0;
     //=========================================
 
     private void Awake()
     {
-        moveSpeed = 20;
+        moveSpeed = 10;
         jumpPower = 10f;
 
+        state = PlayerState.Idle;
         attackcoroutine = null;
-        getUpCoroutine = null;
 
         bones = hipBones.GetComponentsInChildren<Transform>();
         animBoneTransform = new BoneTransform[bones.Length];
         ragdollBoneTransform = new BoneTransform[bones.Length];
-
-        StartAnimTransformCopy(getupClipName, animBoneTransform);
 
         for (int bone = 0; bone < bones.Length; bone++)
         {
@@ -80,13 +90,15 @@ public class PlayerController : MonoBehaviour
             ragdollBoneTransform[bone] = new BoneTransform();
         }
 
+        StartAnimTransformCopy(getupClipName, animBoneTransform);
+
         animlist = new List<string>();
         getUp = true;
     }
 
     private void Start()
     {
-        anim = GetComponent<Animator>();
+        blockMove = false;
         rigid = GetComponent<Rigidbody>();
         playercol = GetComponent<CapsuleCollider>();
         //playerColliders = gameObject.GetComponentsInChildren<Collider>();
@@ -102,23 +114,42 @@ public class PlayerController : MonoBehaviour
 
     private void SetAnimList()
     {
-        animlist.Add(moveanim);
+        animlist.Add(moveAnim);
+        animlist.Add(attackAnim);
+        animlist.Add(getupAnim);
     }
 
     private void Update()
     {
-        Move();
-        Jump();
-        Attack();
+
+        StateUpdate();
+
+        switch (state)
+        {
+            case PlayerState.Idle:
+                Move();
+                JumpOrder();
+                AttackOrder();
+                break;
+            case PlayerState.Attack:
+                Move();
+                AttackOrder();
+                break;
+            case PlayerState.GetDown:
+                break;
+            case PlayerState.GetUp:
+                break;
+        }
+
+
+
+
+        CheckMovable();
+        
         IsGrounded();
         HitTest();
         AnimationUpdate();
-
-        if (!getUp)
-        {
-            FollowCamera();
-            FollowRagDollPosision();
-        }
+        GetUpTimer();
     }
 
     private void FixedUpdate()
@@ -128,34 +159,47 @@ public class PlayerController : MonoBehaviour
         FixedAttack();
     }
 
+    private void LateUpdate()
+    {
+        if(!getUp)
+        {
+            FollowRagDollRotation();
+            FollowRagDollPosition();
+        }
+    }
+
     private void AnimationUpdate()
     {
-        //string updateAnim;
-        //if (isMoving)
-        //    updateAnim = moveanim;
+        string updateAnim;
 
+        if (attackOrder)
+            updateAnim = attackAnim;
+        else if (isMoving)
+            updateAnim = moveAnim;
+        else if (playstandup)
+            updateAnim = getupAnim;
+        else
+            updateAnim = null;
 
+        for (int i=0; i< animlist.Count; i++)
+        {
+            bool playAnim = animlist[i] == updateAnim ? true : false;
+            anim.SetBool(animlist[i], playAnim);
+        }
+    }
 
-        //for (int i=0; i< animlist.Count; i++)
-        //{
-        //    bool playAnim = animlist[i] == updateAnim ? true : false;
-        //    anim.SetBool(updateAnim, playAnim);
-        //}
+    private void StateUpdate()
+    {
 
-        // ㄴ 애니메이션이 더 늘어날 경우 사용할 내용
-        //    현재는 bool 값이 하나라서 밑의 내용으로 충분하기 때문에
-        //    사용하지 않고 있음
-
-        anim.SetBool(moveanim, isMoving);
     }
 
     private void SetJoint()
     {
+        playercol.enabled = getUp;
         for (int i = 0; i < playerColliders.Length; i++)
         {
             playerColliders[i].enabled = !getUp;
         }
-        playercol.enabled = getUp;
     }
 
     private void JointEnable()
@@ -168,11 +212,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
+    #region 캐릭터 움직임 과 MaxSpeed로의 속도제한
     private void Move()
     {
-        if (!getUp)
-            return;
-
         Vector3 fowardVec = new Vector3(Camera.main.transform.forward.x, 0f, Camera.main.transform.forward.z).normalized;
         Vector3 rightVec = new Vector3(Camera.main.transform.right.x, 0f, Camera.main.transform.right.z).normalized;
 
@@ -188,40 +231,52 @@ public class PlayerController : MonoBehaviour
         velocity = rigid.velocity;
         isMoving = vermove || hormove ? true : false;
         // ver, hor 둘 중 하나라도 true일 경우 true 저장
-        MaxSpeed();
+
+        rigid.AddForce(moveVec * moveSpeed);
+
+        if (getUp)
+            MaxSpeed();
     }
 
     private void MaxSpeed()
     {
-        if (rigid.velocity.x > maxVelocity)
+        if (Mathf.Abs(rigid.velocity.x) > maxVelocity)
         {
-            rigid.velocity = new Vector3(maxVelocity, rigid.velocity.y, rigid.velocity.z);
+            float posSpeed = rigid.velocity.x > 0 ? 1f : -1f ;
+            rigid.velocity = new Vector3(maxVelocity * posSpeed, rigid.velocity.y, rigid.velocity.z);
         }
 
-        if (rigid.velocity.x < (maxVelocity * -1))
+        if (Mathf.Abs(rigid.velocity.z) > maxVelocity)
         {
-            rigid.velocity = new Vector3((maxVelocity * -1), rigid.velocity.y, rigid.velocity.z);
-        }
-
-        if (rigid.velocity.z > maxVelocity)
-        {
-            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, maxVelocity);
-        }
-
-        if (rigid.velocity.z < (maxVelocity * -1))
-        {
-            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, (maxVelocity * -1));
+            float posSpeed = rigid.velocity.z > 0 ? 1f : -1f;
+            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, maxVelocity * posSpeed);
         }
     }
 
+    #endregion
 
-    private void FixedMove()
+
+    #region Idle 상태에서의 행동 명령 입력
+
+    private void JumpOrder()
     {
-        if (!getUp)
-            return;
-        rigid.AddForce(moveVec * moveSpeed);
+        if (Input.GetButtonDown("Jump") && isGrounded)
+            jumpOrder = true;
     }
 
+    private void AttackOrder()
+    {
+        if (!attackOrder)
+        {
+            if (Input.GetButtonDown("Fire1") && isGrounded)
+                attackOrder = true;
+        }
+    }
+
+    #endregion
+
+
+    #region 명령받은 행동을 FixedUpdate에서 실행하기 위한 함수
     private void FixedJump()
     {
         if (jumpOrder)
@@ -231,13 +286,6 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-
-    private void Attack()
-    {
-        if (Input.GetButtonDown("Fire1") && isGrounded)
-            attackOrder = true;
-    }
-
     private void FixedAttack()
     {
         if(attackOrder && attackcoroutine == null)
@@ -247,18 +295,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    #endregion
+
     private IEnumerator OffAttackCollier()
     {
         yield return new WaitForSeconds(0.5f);
         attackCollider.GetComponent<BoxCollider>().enabled = false;
+        yield return new WaitForSeconds(0.2f);
         attackOrder = false;
         attackcoroutine = null;
-    }
-
-    private void Jump()
-    {
-        if(Input.GetButtonDown("Jump") && isGrounded)
-            jumpOrder = true;
     }
 
     private void HitTest()
@@ -270,24 +315,36 @@ public class PlayerController : MonoBehaviour
     public void OnHit()
     {
         getUp = false;
+        getupTimer = 0;
         ChangeRagDoll();
     }
 
-    private IEnumerator GetUp()
+    private void GetUp()
+    {
+        getUp = true;
+        playstandup = true;
+        standupAnimTimer = 0;
+        StartCoroutine(StandUpAnimEnd());
+        ChangeRagDoll();
+        FollowRagDollRotation();
+        FollowRagDollPosition();
+        PopulateBonesTransform(ragdollBoneTransform);
+        ResettingBones();
+    }
+
+    private IEnumerator StandUpAnimEnd()
     {
         yield return new WaitForSeconds(1.5f);
-        getUp = true;
-        ChangeRagDoll();
-        PopulateBonesTransform(ragdollBoneTransform);
-        getUpCoroutine = null;
+        playstandup = false;
+        StopCoroutine(StandUpAnimEnd());
     }
 
     private void ChangeRagDoll()
     {
         SetJoint();
         gameObject.GetComponent<Animator>().enabled = getUp;
-        if (getUpCoroutine == null)
-            getUpCoroutine = StartCoroutine(GetUp());
+        anim.Rebind();
+        GetUpTimer();
     }
 
     private void ChangeModelTransformCopy(Transform ChangeStart, Transform ChangeEnd)
@@ -303,13 +360,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void FollowRagDollPosision()
+    private void FollowRagDollPosition()
     {
         Vector3 originPos = hipBones.transform.position;
+        transform.position = hipBones.transform.position;
 
-        transform.position = Vector3.Lerp(transform.position, hipBones.transform.position, Time.fixedDeltaTime * 10);
-
-        Vector3 pos = animBoneTransform[0].posision;
+        Vector3 pos = animBoneTransform[0].position;
         pos.y = 0;
         pos = transform.rotation * pos;
         transform.position -= pos;
@@ -317,15 +373,30 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit))
             transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
 
-
         hipBones.transform.position = originPos;
+    }
+
+    private void FollowRagDollRotation()
+    {
+        Vector3 pos = hipBones.position;
+        Quaternion qua = hipBones.rotation;
+
+        Vector3 Direction = hipBones.up * -1;
+        Direction.y = 0;
+        Direction.Normalize();
+
+        Quaternion fromToRotation = Quaternion.FromToRotation(transform.forward, Direction);
+        transform.rotation *= fromToRotation;
+
+        hipBones.position = pos;
+        hipBones.rotation = qua;
     }
 
     private void PopulateBonesTransform(BoneTransform[] bonetransforms)
     {
          for(int bone =0; bone< bones.Length; bone++)
         {
-            bonetransforms[bone].posision = bones[bone].localPosition;
+            bonetransforms[bone].position = bones[bone].localPosition;
             bonetransforms[bone].rotation = bones[bone].localRotation;
         }
     }
@@ -349,22 +420,56 @@ public class PlayerController : MonoBehaviour
         transform.rotation = qua; 
     }
 
-    private void FollowCamera()
+    private void ResettingBones()
     {
-        Camera cam = Camera.main;
+        standupAnimTimer += Time.deltaTime;
+        float standupPer = 1.5f / standupAnimTimer;
 
-        cam.transform.position = rigid.position;
+        for (int bone = 0; bone < bones.Length; bone++)
+        {
+            bones[bone].localPosition = Vector3.Lerp(
+                ragdollBoneTransform[bone].position,
+                animBoneTransform[bone].position, standupPer);
+
+            bones[bone].localRotation = Quaternion.Lerp(
+                ragdollBoneTransform[bone].rotation,
+                animBoneTransform[bone].rotation, standupPer);
+        }
+
+        if (standupPer >= 1.0f)
+        {
+            anim.Play(getupAnim);
+        }
     }
-
 
     private void IsGrounded()
     {
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
     }
 
+    private void GetUpTimer()
+    {
+        if (getUp)
+        {
+            getupTimer = 0;
+            return;
+        }
+        else
+        {
+            if (Physics.CheckSphere(transform.position, 0.5f, groundMask))
+            {
+                getupTimer += Time.deltaTime;
+                if (getupTimer > 1.5f)
+                {
+                    GetUp();
+                }
+            }
+        }
+    }
+
     class BoneTransform
     {
-        public Vector3 posision { get; set; }
+        public Vector3 position { get; set; }
 
         public Quaternion rotation { get; set; }
     }
