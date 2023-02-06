@@ -107,8 +107,8 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1369012475015550324}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 4569adea05f171849a6b47fc60e3ea05, type: 3}
-  m_Controller: {fileID: 9100000, guid: 8dace5d3e00cf1745a166e902d07cfca, type: 2}
+  m_Avatar: {fileID: 9000000, guid: ffca849ba4e23054a8f714bff6241789, type: 3}
+  m_Controller: {fileID: 9100000, guid: 711c9f2fd4a36f14ebd1ec112ac2dd64, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -127,22 +127,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1369012475015550324}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ab113fc0bac11c40aa7f4da52a986c2, type: 3}
+  m_Script: {fileID: 11500000, guid: 184a8879c46d16748945d1203043161d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 20
   jumpPower: 0
   velocity: {x: 0, y: 0, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
-  maxVelocity: 2
+  maxVelocity: 5
   normalModel: {fileID: 1367794308111730879}
-  ragdollModel: {fileID: 1367794308111730879}
   hipBones: {fileID: 1365010620363932291}
   bones: []
   playerColliders: []
   playercol: {fileID: 0}
   attackCollider: {fileID: 1367771335827444947}
-  anim: {fileID: 1369012475526450643}
+  anim: {fileID: 0}
   groundChecker: {fileID: 1369012474725666608}
   isGrounded: 0
   groundDistance: 0.2
@@ -1254,7 +1253,7 @@ BoxCollider:
   m_GameObject: {fileID: 1367771335827444947}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 0.4, y: 0.4, z: 0.4}
   m_Center: {x: 0, y: 0, z: 0}

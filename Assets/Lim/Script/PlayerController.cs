@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     //============= Player Move ===============
     [Header("Player Move")]
-    [SerializeField] private float moveSpeed = 20;
+    public float moveSpeed = 20;
     [SerializeField] private float jumpPower;
     [SerializeField] private Vector3 velocity;
     [SerializeField] private Vector3 moveVec;
@@ -18,7 +18,6 @@ public class PlayerController : MonoBehaviour
 
     //============ Player Model ===============
     [SerializeField] private GameObject normalModel;
-    [SerializeField] private GameObject ragdollModel;
     [SerializeField] private Transform hipBones;
     [SerializeField] private BoneTransform[] ragdollBoneTransform;
     [SerializeField] private BoneTransform[] animBoneTransform;
@@ -30,7 +29,6 @@ public class PlayerController : MonoBehaviour
     //================ Attack =================
     [SerializeField] private GameObject attackCollider;
     private Coroutine attackcoroutine;
-    private Coroutine getUpCoroutine;
     //=========================================
 
     //=========== Player Controller ===========
@@ -54,31 +52,36 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool getUp;
     //=========================================
 
-    //=============== Animator =================
+    //=============== Animator ================
     private List<string> animlist;
-    private string moveanim = "isMoving";
+    private string moveAnim = "isMoving";
+    private string attackAnim = "isAttack";
+    private string getupAnim = "GetUp";
     [SerializeField] string getupClipName;
+    //=========================================
+
+    //=============== Other ===================
+    private float getupTimer = 0;
     //=========================================
 
     private void Awake()
     {
-        moveSpeed = 20;
+        moveSpeed = 500;
         jumpPower = 10f;
 
         attackcoroutine = null;
-        getUpCoroutine = null;
 
         bones = hipBones.GetComponentsInChildren<Transform>();
         animBoneTransform = new BoneTransform[bones.Length];
         ragdollBoneTransform = new BoneTransform[bones.Length];
-
-        StartAnimTransformCopy(getupClipName, animBoneTransform);
 
         for (int bone = 0; bone < bones.Length; bone++)
         {
             animBoneTransform[bone] = new BoneTransform();
             ragdollBoneTransform[bone] = new BoneTransform();
         }
+
+        //StartAnimTransformCopy(getupClipName, animBoneTransform);
 
         animlist = new List<string>();
         getUp = true;
@@ -102,7 +105,9 @@ public class PlayerController : MonoBehaviour
 
     private void SetAnimList()
     {
-        animlist.Add(moveanim);
+        animlist.Add(moveAnim);
+        animlist.Add(attackAnim);
+        animlist.Add(getupAnim);
     }
 
     private void Update()
@@ -113,12 +118,7 @@ public class PlayerController : MonoBehaviour
         IsGrounded();
         HitTest();
         AnimationUpdate();
-
-        if (!getUp)
-        {
-            FollowCamera();
-            FollowRagDollPosision();
-        }
+        GetUpTimer();
     }
 
     private void FixedUpdate()
@@ -128,25 +128,30 @@ public class PlayerController : MonoBehaviour
         FixedAttack();
     }
 
+    private void LateUpdate()
+    {
+        if (!getUp)
+        {
+            FollowRagDollPosision();
+        }
+    }
+
     private void AnimationUpdate()
     {
-        //string updateAnim;
-        //if (isMoving)
-        //    updateAnim = moveanim;
+        string updateAnim;
 
+        if (attackOrder)
+            updateAnim = attackAnim;
+        else if (isMoving)
+            updateAnim = moveAnim;
+        else
+            updateAnim = null;
 
-
-        //for (int i=0; i< animlist.Count; i++)
-        //{
-        //    bool playAnim = animlist[i] == updateAnim ? true : false;
-        //    anim.SetBool(updateAnim, playAnim);
-        //}
-
-        // ㄴ 애니메이션이 더 늘어날 경우 사용할 내용
-        //    현재는 bool 값이 하나라서 밑의 내용으로 충분하기 때문에
-        //    사용하지 않고 있음
-
-        anim.SetBool(moveanim, isMoving);
+        for (int i=0; i< animlist.Count; i++)
+        {
+            bool playAnim = animlist[i] == updateAnim ? true : false;
+            anim.SetBool(animlist[i], playAnim);
+        }
     }
 
     private void SetJoint()
@@ -170,7 +175,7 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        if (!getUp)
+        if (!getUp || attackOrder)
             return;
 
         Vector3 fowardVec = new Vector3(Camera.main.transform.forward.x, 0f, Camera.main.transform.forward.z).normalized;
@@ -193,24 +198,16 @@ public class PlayerController : MonoBehaviour
 
     private void MaxSpeed()
     {
-        if (rigid.velocity.x > maxVelocity)
+        if (Mathf.Abs(rigid.velocity.x) > maxVelocity)
         {
-            rigid.velocity = new Vector3(maxVelocity, rigid.velocity.y, rigid.velocity.z);
+            float posSpeed = rigid.velocity.x > 0 ? 1f : -1f ;
+            rigid.velocity = new Vector3(maxVelocity * posSpeed, rigid.velocity.y, rigid.velocity.z);
         }
 
-        if (rigid.velocity.x < (maxVelocity * -1))
+        if (Mathf.Abs(rigid.velocity.z) > maxVelocity)
         {
-            rigid.velocity = new Vector3((maxVelocity * -1), rigid.velocity.y, rigid.velocity.z);
-        }
-
-        if (rigid.velocity.z > maxVelocity)
-        {
-            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, maxVelocity);
-        }
-
-        if (rigid.velocity.z < (maxVelocity * -1))
-        {
-            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, (maxVelocity * -1));
+            float posSpeed = rigid.velocity.z > 0 ? 1f : -1f;
+            rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, maxVelocity * posSpeed);
         }
     }
 
@@ -270,24 +267,22 @@ public class PlayerController : MonoBehaviour
     public void OnHit()
     {
         getUp = false;
+        getupTimer = 0;
         ChangeRagDoll();
     }
 
-    private IEnumerator GetUp()
+    private void GetUp()
     {
-        yield return new WaitForSeconds(1.5f);
         getUp = true;
         ChangeRagDoll();
         PopulateBonesTransform(ragdollBoneTransform);
-        getUpCoroutine = null;
     }
 
     private void ChangeRagDoll()
     {
         SetJoint();
         gameObject.GetComponent<Animator>().enabled = getUp;
-        if (getUpCoroutine == null)
-            getUpCoroutine = StartCoroutine(GetUp());
+        GetUpTimer();
     }
 
     private void ChangeModelTransformCopy(Transform ChangeStart, Transform ChangeEnd)
@@ -307,7 +302,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 originPos = hipBones.transform.position;
 
-        transform.position = Vector3.Lerp(transform.position, hipBones.transform.position, Time.fixedDeltaTime * 10);
+        transform.position = hipBones.transform.position;
 
         Vector3 pos = animBoneTransform[0].posision;
         pos.y = 0;
@@ -316,7 +311,6 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit))
             transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
-
 
         hipBones.transform.position = originPos;
     }
@@ -360,6 +354,26 @@ public class PlayerController : MonoBehaviour
     private void IsGrounded()
     {
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
+    }
+
+    private void GetUpTimer()
+    {
+        if (getUp)
+        {
+            getupTimer = 0;
+            return;
+        }
+        else
+        {
+            if (Physics.CheckSphere(transform.position, 0.5f, groundMask))
+            {
+                getupTimer += Time.deltaTime;
+                if (getupTimer > 1.5f)
+                {
+                    GetUp();
+                }
+            }
+        }
     }
 
     class BoneTransform

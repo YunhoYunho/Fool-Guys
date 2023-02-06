@@ -75,7 +75,6 @@
     <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDMoover.cs" />
     <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesSpawner.cs" />
     <Compile Include="Assets\Lobby\Scripts\StatePanel.cs" />
-    <Compile Include="Assets\SW_Scene\Script\Obstacle.cs" />
     <Compile Include="Assets\Lobby\Scripts\LobbyManager.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Interface\IItem.cs" />
     <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDPrefabVariator.cs" />
