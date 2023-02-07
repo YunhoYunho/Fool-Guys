@@ -8,8 +8,9 @@ namespace HJ
     {
         private enum State { Create, Preparing, Ready, Shoot, Rest }
 
-        
+
         //================ Prefab =================
+        [Header("Setting")]
         [SerializeField] private GameObject projectilePrefab;
         [SerializeField] private Transform projectPosition;
 
@@ -57,8 +58,10 @@ namespace HJ
         {
             GameObject projectile = Instantiate(projectilePrefab, projectPosition);
 
-            if (projectile.GetComponent<WNDPrefabVariator>() != null)
-                projectile.GetComponent<WNDPrefabVariator>().RandomPrefab();
+            if (projectile.GetComponent<ColorSelector>() != null)
+                projectile.GetComponent<ColorSelector>().SetRandomStyle();
+
+            Debug.Log("»ö º¯°æ");
 
             projectile.GetComponent<Rigidbody>().isKinematic = true;
             projectile.transform.localScale = Vector3.zero;
