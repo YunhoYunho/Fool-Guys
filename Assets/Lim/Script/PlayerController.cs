@@ -107,6 +107,7 @@ public class PlayerController : MonoBehaviour
         SetAnimList();
         SetJoint();
         JointEnable();
+        SetMass();
 
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -135,7 +136,6 @@ public class PlayerController : MonoBehaviour
                 GetUpTimer();
                 break;
             case PlayerState.GetUp:
-                PopulateBonesTransform(ragdollBoneTransform);
                 ResettingBones();
                 break;
         }
@@ -159,7 +159,6 @@ public class PlayerController : MonoBehaviour
             Vector3 pos = hipBones.position;
             transform.position = hipBones.position;
             hipBones.position = pos;
-
         }
     }
 
@@ -181,6 +180,8 @@ public class PlayerController : MonoBehaviour
             bool playAnim = animlist[i] == updateAnim ? true : false;
             anim.SetBool(animlist[i], playAnim);
         }
+
+
     }
 
     private void SetJoint()
@@ -306,11 +307,21 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
+    private void SetMass()
+    {
+        Rigidbody[] rig = hipBones.GetComponentsInChildren<Rigidbody>();
+        foreach(Rigidbody rb in rig)
+        {
+            rb.mass = 0.01f;
+        }
+    }
     public void OnHit()
     {
         getUp = false;
         ragdoll = true;
         getupTimer = 0;
+        transform.position = transform.localPosition;
         ChangeRagDoll();
         state = PlayerState.GetDown;
     }
@@ -319,6 +330,9 @@ public class PlayerController : MonoBehaviour
     {
         getUp = true;
         playstandup = true;
+        PopulateBonesTransform(ragdollBoneTransform);
+        Quaternion qua = Quaternion.Euler(0f, hipBones.localRotation.y, 0f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, qua, 0.5f);
         state = PlayerState.GetUp;
     }
 
@@ -326,6 +340,7 @@ public class PlayerController : MonoBehaviour
     {
         SetJoint();
         gameObject.GetComponent<Animator>().enabled = getUp;
+        gameObject.GetComponent<Rigidbody>().useGravity = getUp;
         anim.Rebind();
     }
 
@@ -354,7 +369,7 @@ public class PlayerController : MonoBehaviour
         }
 
         transform.position = vec;
-        transform.rotation = qua; 
+        transform.rotation = qua;
     }
 
     private void ResettingBones()
@@ -362,6 +377,7 @@ public class PlayerController : MonoBehaviour
         standupAnimTimer += Time.deltaTime;
         float standupPer = standupAnimTimer / 0.5f ;
         SetJoint();
+        gameObject.GetComponent<Rigidbody>().useGravity = true;
 
         for (int bone = 0; bone < bones.Length; bone++)
         {
