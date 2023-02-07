@@ -90,6 +90,7 @@ public class RoomPanel : MonoBehaviour
     public void OnLeaveRoomButtonClicked()
     {
         PhotonNetwork.LeaveRoom();
+        //PhotonNetwork.JoinLobby();
     }
 
 }

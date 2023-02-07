@@ -24,5 +24,8 @@ public class LoginPanel : MonoBehaviour
 
         PhotonNetwork.LocalPlayer.NickName = idInputField.text;
         PhotonNetwork.ConnectUsingSettings();
+        //PhotonNetwork.JoinLobby();
     }
+
+
 }
