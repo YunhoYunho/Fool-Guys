@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
+using UnityEditorInternal;
 using UnityEngine;
 
 
-public enum PlayerState { Idle, Attack, GetDown, GetUp, Jump }
+public enum PlayerState { Idle, Attack, GetDown, GetUp, ReSettingBones, Jump }
 
 public class PlayerController : MonoBehaviour
 {
@@ -55,7 +56,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool jumpOrder;
     [SerializeField] private bool attackOrder;
     [SerializeField] private bool getUp;
-    [SerializeField] private bool blockMove;
     [SerializeField] private bool playstandup;
     //=========================================
 
@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
 
         state = PlayerState.Idle;
         attackcoroutine = null;
-
+        hipBones = anim.GetBoneTransform(HumanBodyBones.Hips);
         bones = hipBones.GetComponentsInChildren<Transform>();
         animBoneTransform = new BoneTransform[bones.Length];
         ragdollBoneTransform = new BoneTransform[bones.Length];
@@ -98,14 +98,11 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        blockMove = false;
         rigid = GetComponent<Rigidbody>();
         playercol = GetComponent<CapsuleCollider>();
         //playerColliders = gameObject.GetComponentsInChildren<Collider>();
         playerColliders = normalModel.GetComponentsInChildren<Collider>();
         SetAnimList();
-        hipBones = anim.GetBoneTransform(HumanBodyBones.Hips);
-
         SetJoint();
         JointEnable();
 
@@ -121,9 +118,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-
-        StateUpdate();
-
         switch (state)
         {
             case PlayerState.Idle:
@@ -136,32 +130,32 @@ public class PlayerController : MonoBehaviour
                 AttackOrder();
                 break;
             case PlayerState.GetDown:
+                GetUpTimer();
                 break;
             case PlayerState.GetUp:
+                StartCoroutine(StandUpAnimEnd());
+                break;
+            case PlayerState.ReSettingBones:
+                PopulateBonesTransform(ragdollBoneTransform);
+                ResettingBones();
                 break;
         }
 
 
-
-
-        CheckMovable();
-        
         IsGrounded();
         HitTest();
         AnimationUpdate();
-        GetUpTimer();
     }
 
     private void FixedUpdate()
     {
-        FixedMove();
         FixedJump();
         FixedAttack();
     }
 
     private void LateUpdate()
     {
-        if(!getUp)
+        if (gameObject.GetComponent<Animator>().enabled == false)
         {
             FollowRagDollRotation();
             FollowRagDollPosition();
@@ -181,16 +175,11 @@ public class PlayerController : MonoBehaviour
         else
             updateAnim = null;
 
-        for (int i=0; i< animlist.Count; i++)
+        for (int i = 0; i < animlist.Count; i++)
         {
             bool playAnim = animlist[i] == updateAnim ? true : false;
             anim.SetBool(animlist[i], playAnim);
         }
-    }
-
-    private void StateUpdate()
-    {
-
     }
 
     private void SetJoint()
@@ -205,8 +194,8 @@ public class PlayerController : MonoBehaviour
     private void JointEnable()
     {
         CharacterJoint[] joints = normalModel.GetComponentsInChildren<CharacterJoint>();
-        
-        for(int i=0; i< joints.Length; i++)
+
+        for (int i = 0; i < joints.Length; i++)
         {
             joints[i].enableProjection = true;
         }
@@ -242,7 +231,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Mathf.Abs(rigid.velocity.x) > maxVelocity)
         {
-            float posSpeed = rigid.velocity.x > 0 ? 1f : -1f ;
+            float posSpeed = rigid.velocity.x > 0 ? 1f : -1f;
             rigid.velocity = new Vector3(maxVelocity * posSpeed, rigid.velocity.y, rigid.velocity.z);
         }
 
@@ -288,7 +277,7 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedAttack()
     {
-        if(attackOrder && attackcoroutine == null)
+        if (attackOrder && attackcoroutine == null)
         {
             attackCollider.GetComponent<BoxCollider>().enabled = true;
             attackcoroutine = StartCoroutine(OffAttackCollier());
@@ -317,25 +306,21 @@ public class PlayerController : MonoBehaviour
         getUp = false;
         getupTimer = 0;
         ChangeRagDoll();
+        state = PlayerState.GetDown;
     }
 
     private void GetUp()
     {
         getUp = true;
         playstandup = true;
-        standupAnimTimer = 0;
-        StartCoroutine(StandUpAnimEnd());
-        ChangeRagDoll();
-        FollowRagDollRotation();
-        FollowRagDollPosition();
-        PopulateBonesTransform(ragdollBoneTransform);
-        ResettingBones();
+        state = PlayerState.ReSettingBones;
     }
 
     private IEnumerator StandUpAnimEnd()
     {
         yield return new WaitForSeconds(1.5f);
         playstandup = false;
+        state = PlayerState.Idle;
         StopCoroutine(StandUpAnimEnd());
     }
 
@@ -344,20 +329,6 @@ public class PlayerController : MonoBehaviour
         SetJoint();
         gameObject.GetComponent<Animator>().enabled = getUp;
         anim.Rebind();
-        GetUpTimer();
-    }
-
-    private void ChangeModelTransformCopy(Transform ChangeStart, Transform ChangeEnd)
-    {
-        for (int i = 0; i < ChangeStart.transform.childCount; i++)
-        {
-            if (ChangeStart.transform.childCount != 0)
-            {
-                ChangeModelTransformCopy(ChangeStart.transform.GetChild(i), ChangeEnd.transform.GetChild(i));
-            }
-            ChangeEnd.transform.GetChild(i).localPosition = ChangeStart.transform.GetChild(i).localPosition;
-            ChangeEnd.transform.GetChild(i).localRotation = ChangeStart.transform.GetChild(i).localRotation;
-        }
     }
 
     private void FollowRagDollPosition()
@@ -394,7 +365,7 @@ public class PlayerController : MonoBehaviour
 
     private void PopulateBonesTransform(BoneTransform[] bonetransforms)
     {
-         for(int bone =0; bone< bones.Length; bone++)
+        for (int bone = 0; bone < bones.Length; bone++)
         {
             bonetransforms[bone].position = bones[bone].localPosition;
             bonetransforms[bone].rotation = bones[bone].localRotation;
@@ -423,7 +394,7 @@ public class PlayerController : MonoBehaviour
     private void ResettingBones()
     {
         standupAnimTimer += Time.deltaTime;
-        float standupPer = 1.5f / standupAnimTimer;
+        float standupPer = standupAnimTimer / 1.5f ;
 
         for (int bone = 0; bone < bones.Length; bone++)
         {
@@ -438,6 +409,8 @@ public class PlayerController : MonoBehaviour
 
         if (standupPer >= 1.0f)
         {
+            state = PlayerState.GetUp;
+            ChangeRagDoll();
             anim.Play(getupAnim);
         }
     }
@@ -449,22 +422,16 @@ public class PlayerController : MonoBehaviour
 
     private void GetUpTimer()
     {
-        if (getUp)
+        if(Physics.CheckSphere(hipBones.position, 0.5f, groundMask))
         {
-            getupTimer = 0;
-            return;
-        }
-        else
-        {
-            if (Physics.CheckSphere(transform.position, 0.5f, groundMask))
+            getupTimer += Time.deltaTime;
+            if (getupTimer > 1.5f)
             {
-                getupTimer += Time.deltaTime;
-                if (getupTimer > 1.5f)
-                {
-                    GetUp();
-                }
+                GetUp();
             }
         }
+        else
+        { getupTimer = 0.0f; }
     }
 
     class BoneTransform
