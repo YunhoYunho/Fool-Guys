@@ -9,10 +9,8 @@ namespace HJ
 
         private void OnCollisionEnter(Collision collision)
         {
-            Debug.Log("충돌");
             if (collision.gameObject.CompareTag("Player"))
             {
-                Debug.Log("플레이어와 충돌");
                 collision.transform.parent = transform;
             }
         }

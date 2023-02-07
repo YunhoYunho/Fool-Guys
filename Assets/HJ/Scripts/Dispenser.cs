@@ -61,8 +61,6 @@ namespace HJ
             if (projectile.GetComponent<ColorSelector>() != null)
                 projectile.GetComponent<ColorSelector>().SetRandomStyle();
 
-            Debug.Log("»ö º¯°æ");
-
             projectile.GetComponent<Rigidbody>().isKinematic = true;
             projectile.transform.localScale = Vector3.zero;
 
