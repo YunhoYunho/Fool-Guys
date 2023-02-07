@@ -7,7 +7,7 @@ using UnityEditorInternal;
 using UnityEngine;
 
 
-public enum PlayerState { Idle, Attack, GetDown, GetUp, ReSettingBones, Jump }
+public enum PlayerState { Idle, Attack, GetDown, GetUp,  Jump }
 
 public class PlayerController : MonoBehaviour
 {
@@ -57,6 +57,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool attackOrder;
     [SerializeField] private bool getUp;
     [SerializeField] private bool playstandup;
+    [SerializeField] private bool ragdoll;
     //=========================================
 
     //=============== Animator ================
@@ -94,6 +95,7 @@ public class PlayerController : MonoBehaviour
 
         animlist = new List<string>();
         getUp = true;
+        ragdoll = false;
     }
 
     private void Start()
@@ -133,9 +135,6 @@ public class PlayerController : MonoBehaviour
                 GetUpTimer();
                 break;
             case PlayerState.GetUp:
-                StartCoroutine(StandUpAnimEnd());
-                break;
-            case PlayerState.ReSettingBones:
                 PopulateBonesTransform(ragdollBoneTransform);
                 ResettingBones();
                 break;
@@ -155,10 +154,12 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (gameObject.GetComponent<Animator>().enabled == false)
+        if (ragdoll)
         {
-            FollowRagDollRotation();
-            FollowRagDollPosition();
+            Vector3 pos = hipBones.position;
+            transform.position = hipBones.position;
+            hipBones.position = pos;
+
         }
     }
 
@@ -184,11 +185,11 @@ public class PlayerController : MonoBehaviour
 
     private void SetJoint()
     {
-        playercol.enabled = getUp;
         for (int i = 0; i < playerColliders.Length; i++)
         {
             playerColliders[i].enabled = !getUp;
         }
+        playercol.enabled = getUp;
     }
 
     private void JointEnable()
@@ -198,6 +199,7 @@ public class PlayerController : MonoBehaviour
         for (int i = 0; i < joints.Length; i++)
         {
             joints[i].enableProjection = true;
+            joints[i].enableCollision = true;
         }
     }
 
@@ -298,12 +300,16 @@ public class PlayerController : MonoBehaviour
     private void HitTest()
     {
         if (Input.GetKeyDown(KeyCode.P))
+        {
+            //Debug.Break();
             OnHit();
+        }
 
     }
     public void OnHit()
     {
         getUp = false;
+        ragdoll = true;
         getupTimer = 0;
         ChangeRagDoll();
         state = PlayerState.GetDown;
@@ -313,15 +319,7 @@ public class PlayerController : MonoBehaviour
     {
         getUp = true;
         playstandup = true;
-        state = PlayerState.ReSettingBones;
-    }
-
-    private IEnumerator StandUpAnimEnd()
-    {
-        yield return new WaitForSeconds(1.5f);
-        playstandup = false;
-        state = PlayerState.Idle;
-        StopCoroutine(StandUpAnimEnd());
+        state = PlayerState.GetUp;
     }
 
     private void ChangeRagDoll()
@@ -329,38 +327,6 @@ public class PlayerController : MonoBehaviour
         SetJoint();
         gameObject.GetComponent<Animator>().enabled = getUp;
         anim.Rebind();
-    }
-
-    private void FollowRagDollPosition()
-    {
-        Vector3 originPos = hipBones.transform.position;
-        transform.position = hipBones.transform.position;
-
-        Vector3 pos = animBoneTransform[0].position;
-        pos.y = 0;
-        pos = transform.rotation * pos;
-        transform.position -= pos;
-
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit))
-            transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
-
-        hipBones.transform.position = originPos;
-    }
-
-    private void FollowRagDollRotation()
-    {
-        Vector3 pos = hipBones.position;
-        Quaternion qua = hipBones.rotation;
-
-        Vector3 Direction = hipBones.up * -1;
-        Direction.y = 0;
-        Direction.Normalize();
-
-        Quaternion fromToRotation = Quaternion.FromToRotation(transform.forward, Direction);
-        transform.rotation *= fromToRotation;
-
-        hipBones.position = pos;
-        hipBones.rotation = qua;
     }
 
     private void PopulateBonesTransform(BoneTransform[] bonetransforms)
@@ -394,7 +360,8 @@ public class PlayerController : MonoBehaviour
     private void ResettingBones()
     {
         standupAnimTimer += Time.deltaTime;
-        float standupPer = standupAnimTimer / 1.5f ;
+        float standupPer = standupAnimTimer / 0.5f ;
+        SetJoint();
 
         for (int bone = 0; bone < bones.Length; bone++)
         {
@@ -409,9 +376,12 @@ public class PlayerController : MonoBehaviour
 
         if (standupPer >= 1.0f)
         {
-            state = PlayerState.GetUp;
             ChangeRagDoll();
             anim.Play(getupAnim);
+            playstandup = false;
+            ragdoll = false;
+            standupAnimTimer = 0;
+            state = PlayerState.Idle;
         }
     }
 
