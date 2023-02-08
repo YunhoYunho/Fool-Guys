@@ -8,7 +8,7 @@ namespace HJ
     public class InteractionAdapter : MonoBehaviour, IInteractable
     {
         public UnityEvent<PlayerController> OnInteract;
-        public void Interaction(PlayerController player)
+        public void InterAction(PlayerController player)
         {
             //Debug.Log("인터렉션");
             OnInteract?.Invoke(player);

@@ -3,21 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Console : MonoBehaviour, IInteractable
+namespace HJ
 {
-    [SerializeField] private float duration;
-    [SerializeField] private float coolTime;
-
-    public UnityEvent<float, float> OnActivate;
-    public void Activate()
+    public class Console : MonoBehaviour, IInteractable
     {
-        //Debug.Log("작동");
-        OnActivate?.Invoke(duration, coolTime);
-    }
+        [SerializeField] private float duration;
+        [SerializeField] private float coolTime;
 
-    public void InterAction(PlayerController player)
-    {
-        Debug.Log(player);
-        Activate();
+        public UnityEvent<float, float> OnActivate;
+
+        public void InterAction(PlayerController player)
+        {
+            Activate();
+        }
+
+        public void Activate()
+        {
+            Debug.Log("동작");
+            OnActivate?.Invoke(duration, coolTime);
+        }
     }
 }
+

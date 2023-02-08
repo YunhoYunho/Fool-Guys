@@ -52,8 +52,9 @@ namespace HJ
             if (!Input.GetKeyDown(KeyCode.E))
                 return;
 
+            Debug.Log("인터렉션");
             IInteractable interactable = obj.GetComponentInParent<IInteractable>();
-            interactable?.Interaction(player);
+            interactable?.InterAction(player);
         }
     }
 

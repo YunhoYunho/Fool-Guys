@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HJ
 {
-    public class Dispenser : MonoBehaviour
+    public class Dispenser : MonoBehaviour, IControllable
     {
         private enum State { Create, Preparing, Ready, Shoot, Rest }
 
@@ -106,6 +106,24 @@ namespace HJ
             if (endTimer > 0f) endTimer -= Time.fixedDeltaTime;
             else
                 state = State.Create;
+        }
+
+        public void Control(float duration, float coolTime)
+        {
+            StartCoroutine(ControlCoroutine(duration, coolTime));
+        }
+
+        private IEnumerator ControlCoroutine(float duration, float coolTime)
+        {
+            Debug.Log("발사 속도 빠르게");
+            float originalEndDelay = endDelay;
+            float originalShootingDelay = shootingDelay;
+
+            endDelay *= 0.5f;
+            shootingDelay *= 0.5f;
+            yield return new WaitForSeconds(duration);
+            endDelay = originalEndDelay;
+            shootingDelay = originalShootingDelay;
         }
     }
 }

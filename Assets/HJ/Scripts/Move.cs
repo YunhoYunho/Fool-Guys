@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HJ
 {
-    public class Move : MonoBehaviour, IInteractable
+    public class Move : MonoBehaviour, HJ_NoneUse.IInteractable
     {
         public void Interaction(PlayerController player)
         {
