@@ -7,7 +7,7 @@ using UnityEditorInternal;
 using UnityEngine;
 
 
-public enum PlayerState { Idle, Attack, GetDown, GetUp,  Jump }
+public enum PlayerState { Idle, Attack, GetDown, GetUp, Jump }
 
 public class PlayerController : MonoBehaviour
 {
@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform hipBones;
     [SerializeField] private BoneTransform[] ragdollBoneTransform;
     [SerializeField] private BoneTransform[] animBoneTransform;
+    [SerializeField] private BoneTransform[] currentBoneTransform;
     [SerializeField] private Transform[] bones;
     [SerializeField] private Collider[] playerColliders;
     [SerializeField] private CapsuleCollider playercol;
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rigid;
     [SerializeField] private Animator anim;
     [SerializeField] private PlayerState state;
+    private Rigidbody[] rig;
     //=========================================
 
     [Header("Velocity And GroundCheck")]
@@ -82,13 +84,17 @@ public class PlayerController : MonoBehaviour
         attackcoroutine = null;
         hipBones = anim.GetBoneTransform(HumanBodyBones.Hips);
         bones = hipBones.GetComponentsInChildren<Transform>();
+        rig = normalModel.GetComponentsInChildren<Rigidbody>();
+
         animBoneTransform = new BoneTransform[bones.Length];
         ragdollBoneTransform = new BoneTransform[bones.Length];
+        currentBoneTransform = new BoneTransform[bones.Length];
 
         for (int bone = 0; bone < bones.Length; bone++)
         {
             animBoneTransform[bone] = new BoneTransform();
             ragdollBoneTransform[bone] = new BoneTransform();
+            currentBoneTransform[bone] = new BoneTransform();
         }
 
         StartAnimTransformCopy(getupClipName, animBoneTransform);
@@ -108,7 +114,7 @@ public class PlayerController : MonoBehaviour
         SetJoint();
         JointEnable();
         SetMass();
-
+        SetRigidBodyGravity();
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -311,7 +317,7 @@ public class PlayerController : MonoBehaviour
     private void SetMass()
     {
         Rigidbody[] rig = hipBones.GetComponentsInChildren<Rigidbody>();
-        foreach(Rigidbody rb in rig)
+        foreach (Rigidbody rb in rig)
         {
             rb.mass = 0.01f;
         }
@@ -322,7 +328,7 @@ public class PlayerController : MonoBehaviour
         ragdoll = true;
         getupTimer = 0;
         transform.position = transform.localPosition;
-        ChangeRagDoll();
+        OnRagDoll();
         state = PlayerState.GetDown;
     }
 
@@ -336,10 +342,27 @@ public class PlayerController : MonoBehaviour
         state = PlayerState.GetUp;
     }
 
-    private void ChangeRagDoll()
+    private void SetRigidBodyGravity()
+    {
+        foreach (Rigidbody rb in rig)
+        {
+            rb.useGravity = !getUp;
+        }
+    }
+
+    private void OnRagDoll()
+    {
+        SetJoint();
+        SetRigidBodyGravity();
+        gameObject.GetComponent<Animator>().enabled = getUp;
+        gameObject.GetComponent<Rigidbody>().useGravity = getUp;
+    }
+
+    private void OutRagDoll()
     {
         SetJoint();
         gameObject.GetComponent<Animator>().enabled = getUp;
+        SetRigidBodyGravity();
         gameObject.GetComponent<Rigidbody>().useGravity = getUp;
         anim.Rebind();
     }
@@ -360,9 +383,9 @@ public class PlayerController : MonoBehaviour
 
         foreach (AnimationClip clip in anim.runtimeAnimatorController.animationClips)
         {
-            if(clipname == clip.name)
+            if (clipname == clip.name)
             {
-                clip.SampleAnimation(gameObject,0);
+                clip.SampleAnimation(gameObject, 0);
                 PopulateBonesTransform(animBoneTransform);
                 break;
             }
@@ -375,7 +398,7 @@ public class PlayerController : MonoBehaviour
     private void ResettingBones()
     {
         standupAnimTimer += Time.deltaTime;
-        float standupPer = standupAnimTimer / 0.5f ;
+        float standupPer = standupAnimTimer / 0.5f;
         SetJoint();
         gameObject.GetComponent<Rigidbody>().useGravity = true;
 
@@ -392,7 +415,7 @@ public class PlayerController : MonoBehaviour
 
         if (standupPer >= 1.0f)
         {
-            ChangeRagDoll();
+            OutRagDoll();
             anim.Play(getupAnim);
             playstandup = false;
             ragdoll = false;
@@ -408,7 +431,7 @@ public class PlayerController : MonoBehaviour
 
     private void GetUpTimer()
     {
-        if(Physics.CheckSphere(hipBones.position, 0.5f, groundMask))
+        if (Physics.CheckSphere(hipBones.position, 0.5f, groundMask))
         {
             getupTimer += Time.deltaTime;
             if (getupTimer > 1.5f)
