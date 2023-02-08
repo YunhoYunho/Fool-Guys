@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 public enum PlayerState { Idle, Attack, GetDown, GetUp, GettingUp, Jump }
 
@@ -54,6 +55,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool getUp;
     [SerializeField] private bool playstandup;
     [SerializeField] private bool ragdoll;
+    [SerializeField] private bool isJumping;
+    [SerializeField] private bool isFalling;
     //=========================================
 
     //=============== Animator ================
@@ -62,6 +65,8 @@ public class PlayerController : MonoBehaviour
     private string attackAnim = "isAttack";
     private string getupAnim = "GetUp";
     private string getupClipName = "Getting Up";
+    private string fallingAnim = "";
+    private string jumpAnim = "";
     //=========================================
 
     //=============== Other ===================
@@ -88,6 +93,7 @@ public class PlayerController : MonoBehaviour
         hipBones = anim.GetBoneTransform(HumanBodyBones.Hips);
         rig = normalModel.GetComponentsInChildren<Rigidbody>();
         bones = hipBones.GetComponentsInChildren<Transform>();
+        anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody>();
         playercol = GetComponent<CapsuleCollider>();
         playerColliders = normalModel.GetComponentsInChildren<Collider>();
@@ -110,6 +116,8 @@ public class PlayerController : MonoBehaviour
         animlist = new List<string>();
         getUp = true;
         ragdoll = false;
+        isJumping = false;
+        isFalling = false;
         //=========================
     }
 
@@ -135,12 +143,9 @@ public class PlayerController : MonoBehaviour
         switch (state)
         {
             case PlayerState.Idle:
-                Move();
-                JumpOrder();
-                AttackOrder();
-                break;
             case PlayerState.Attack:
                 Move();
+                JumpOrder();
                 AttackOrder();
                 break;
             case PlayerState.GetDown:
@@ -156,6 +161,7 @@ public class PlayerController : MonoBehaviour
         }
 
         IsGrounded();
+        CheckFalling();
         HitTest();
         AnimationUpdate();
     }
@@ -286,6 +292,7 @@ public class PlayerController : MonoBehaviour
         {
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             jumpOrder = false;
+            isJumping = true;
         }
 
     }
@@ -460,6 +467,16 @@ public class PlayerController : MonoBehaviour
     private void IsGrounded()
     {
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
+        if (isGrounded)
+            isJumping = false;
+    }
+
+    private void CheckFalling()
+    {
+        if(isGrounded && !isJumping)
+        {
+            isFalling = true;
+        }
     }
 
     private void GetUpTimer()
