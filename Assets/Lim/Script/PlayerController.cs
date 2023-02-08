@@ -73,43 +73,54 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        moveSpeed = 10;
+
+        //=== PlayerState SetUp ===
+        moveSpeed = 10f;
         jumpPower = 10f;
-
         state = PlayerState.Idle;
-        attackcoroutine = null;
-        hipBones = anim.GetBoneTransform(HumanBodyBones.Hips);
-        bones = hipBones.GetComponentsInChildren<Transform>();
-        rig = normalModel.GetComponentsInChildren<Rigidbody>();
+        //=========================
 
+        //==== SetUp Coroutine ====
+        attackcoroutine = null;
+        //=========================
+
+        //====== GetComponent =====
+        hipBones = anim.GetBoneTransform(HumanBodyBones.Hips);
+        rig = normalModel.GetComponentsInChildren<Rigidbody>();
+        bones = hipBones.GetComponentsInChildren<Transform>();
+        rigid = GetComponent<Rigidbody>();
+        playercol = GetComponent<CapsuleCollider>();
+        playerColliders = normalModel.GetComponentsInChildren<Collider>();
+        //=========================
+
+        //=== Bone Transform Set ===
         animBoneTransform = new BoneTransform[bones.Length];
         ragdollBoneTransform = new BoneTransform[bones.Length];
-        currentBoneTransform = new BoneTransform[bones.Length];
 
         for (int bone = 0; bone < bones.Length; bone++)
         {
             animBoneTransform[bone] = new BoneTransform();
             ragdollBoneTransform[bone] = new BoneTransform();
-            currentBoneTransform[bone] = new BoneTransform();
         }
 
         StartAnimTransformCopy(getupClipName, animBoneTransform);
+        //==========================
 
+        //=== List And Bool Set ===
         animlist = new List<string>();
         getUp = true;
         ragdoll = false;
+        //=========================
     }
 
     private void Start()
     {
-        rigid = GetComponent<Rigidbody>();
-        playercol = GetComponent<CapsuleCollider>();
-        playerColliders = normalModel.GetComponentsInChildren<Collider>();
+        // === SetUp Before Play ===
         SetAnimList();
         SetJoint();
-        JointEnable();
         SetRigidBodyGravity();
         Cursor.lockState = CursorLockMode.Locked;
+        // =========================
     }
 
     private void SetAnimList()
@@ -143,7 +154,6 @@ public class PlayerController : MonoBehaviour
                 GettingUpBehaviour();
                 break;
         }
-
 
         IsGrounded();
         HitTest();
@@ -205,18 +215,6 @@ public class PlayerController : MonoBehaviour
         }
         playercol.enabled = getUp;
     }
-
-    private void JointEnable()
-    {
-        CharacterJoint[] joints = normalModel.GetComponentsInChildren<CharacterJoint>();
-
-        for (int i = 0; i < joints.Length; i++)
-        {
-            joints[i].enableProjection = true;
-            joints[i].enableCollision = true;
-        }
-    }
-
 
     #region 캐릭터 움직임 과 MaxSpeed로의 속도제한
     private void Move()
@@ -296,13 +294,13 @@ public class PlayerController : MonoBehaviour
         if (attackOrder && attackcoroutine == null)
         {
             attackCollider.GetComponent<BoxCollider>().enabled = true;
-            attackcoroutine = StartCoroutine(OffAttackCollier());
+            attackcoroutine = StartCoroutine(Attack());
         }
     }
 
     #endregion
 
-    private IEnumerator OffAttackCollier()
+    private IEnumerator Attack()
     {
         yield return new WaitForSeconds(0.5f);
         attackCollider.GetComponent<BoxCollider>().enabled = false;
@@ -322,8 +320,11 @@ public class PlayerController : MonoBehaviour
 
     private void GettingUpBehaviour()
     {
-        if (!getUp && gettingUp > 0)
+        if (!getUp)
+        {
             gettingUp = 0;
+            return;
+        }
 
         gettingUp += Time.deltaTime;
         if(gettingUp > 1.3f)
@@ -411,11 +412,6 @@ public class PlayerController : MonoBehaviour
         Vector3 originPos = hipBones.position;
         transform.position = hipBones.position;
 
-        Vector3 positionOffset = animBoneTransform[0].position;
-        positionOffset.y = 0;
-        positionOffset = transform.rotation * positionOffset;
-        transform.position -= positionOffset;
-
         if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit))
         {
             if(hit.transform.gameObject.layer == groundMask)
@@ -468,7 +464,7 @@ public class PlayerController : MonoBehaviour
 
     private void GetUpTimer()
     {
-        if (Physics.CheckSphere(hipBones.position, 0.5f, groundMask))
+        if (Physics.CheckSphere(hipBones.position, 0.3f, groundMask))
         {
             getupTimer += Time.deltaTime;
             if (getupTimer > 1f)
