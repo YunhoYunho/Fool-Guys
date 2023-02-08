@@ -6,7 +6,7 @@ namespace HJ
 {
     public class Dispenser : MonoBehaviour
     {
-        private enum State { Create, Preparing, Ready, Shoot, Rest }
+        private enum State { Idle, Create, Preparing, Ready, Shoot, Rest }
 
 
         //================ Prefab =================
@@ -16,11 +16,9 @@ namespace HJ
 
         //================ Value =================
         [SerializeField] private float power;
-     
         [SerializeField] private float shootingDelay;
         [SerializeField] private float endDelay;
       
-
         //================ Debug ==================
         [Header("Debug")]
         [SerializeField] private State state;
@@ -29,11 +27,18 @@ namespace HJ
         [SerializeField] private float shootingTimer;
         [SerializeField] private float endTimer;
 
+        public void ReadyToCreate()
+        {
+            state = State.Create;
+        }
+
 
         public void FixedUpdate()
         {
             switch(state) 
             {
+                case State.Idle:
+                    break;
                 case State.Create:
                     CreateProjectile();
                     break;
