@@ -1,13 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
-using UnityEditorInternal;
 using UnityEngine;
-
-
-public enum PlayerState { Idle, Attack, GetDown, GetUp, Jump }
+public enum PlayerState { Idle, Attack, GetDown, GetUp, GettingUp, Jump }
 
 public class PlayerController : MonoBehaviour
 {
@@ -39,9 +33,9 @@ public class PlayerController : MonoBehaviour
 
     //=========== Player Controller ===========
     private Rigidbody rigid;
+    private Rigidbody[] rig;
     [SerializeField] private Animator anim;
     [SerializeField] private PlayerState state;
-    private Rigidbody[] rig;
     //=========================================
 
     [Header("Velocity And GroundCheck")]
@@ -67,12 +61,14 @@ public class PlayerController : MonoBehaviour
     private string moveAnim = "isMoving";
     private string attackAnim = "isAttack";
     private string getupAnim = "GetUp";
-    [SerializeField] string getupClipName;
+    private string getupClipName = "Getting Up";
     //=========================================
 
     //=============== Other ===================
     private float getupTimer = 0;
     private float standupAnimTimer = 0;
+    private float resettingBonesTimer = 0.3f;
+    private float gettingUp = 0;
     //=========================================
 
     private void Awake()
@@ -108,12 +104,10 @@ public class PlayerController : MonoBehaviour
     {
         rigid = GetComponent<Rigidbody>();
         playercol = GetComponent<CapsuleCollider>();
-        //playerColliders = gameObject.GetComponentsInChildren<Collider>();
         playerColliders = normalModel.GetComponentsInChildren<Collider>();
         SetAnimList();
         SetJoint();
         JointEnable();
-        SetMass();
         SetRigidBodyGravity();
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -144,6 +138,10 @@ public class PlayerController : MonoBehaviour
             case PlayerState.GetUp:
                 ResettingBones();
                 break;
+            case PlayerState.GettingUp:
+                GettingUpAnimationCheck();
+                GettingUpBehaviour();
+                break;
         }
 
 
@@ -168,6 +166,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void GettingUpAnimationCheck()
+    {
+        if (Input.GetAxisRaw("Horizontal") > 0 || Input.GetAxisRaw("Vertical") > 0)
+        {
+            isMoving = true;
+        }
+        else
+            isMoving = false;
+    }
+
     private void AnimationUpdate()
     {
         string updateAnim;
@@ -186,7 +194,6 @@ public class PlayerController : MonoBehaviour
             bool playAnim = animlist[i] == updateAnim ? true : false;
             anim.SetBool(animlist[i], playAnim);
         }
-
 
     }
 
@@ -308,26 +315,29 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            //Debug.Break();
-            OnHit();
+             OnHit();
         }
 
     }
 
-    private void SetMass()
+    private void GettingUpBehaviour()
     {
-        Rigidbody[] rig = hipBones.GetComponentsInChildren<Rigidbody>();
-        foreach (Rigidbody rb in rig)
+        if (!getUp && gettingUp > 0)
+            gettingUp = 0;
+
+        gettingUp += Time.deltaTime;
+        if(gettingUp > 1.3f)
         {
-            rb.mass = 0.01f;
+            gettingUp = 0;
+            state = PlayerState.Idle;
         }
     }
+
     public void OnHit()
     {
         getUp = false;
         ragdoll = true;
         getupTimer = 0;
-        transform.position = transform.localPosition;
         OnRagDoll();
         state = PlayerState.GetDown;
     }
@@ -336,9 +346,8 @@ public class PlayerController : MonoBehaviour
     {
         getUp = true;
         playstandup = true;
+        ResettingPosAndRot();
         PopulateBonesTransform(ragdollBoneTransform);
-        Quaternion qua = Quaternion.Euler(0f, hipBones.localRotation.y, 0f);
-        transform.rotation = Quaternion.Lerp(transform.rotation, qua, 0.5f);
         state = PlayerState.GetUp;
     }
 
@@ -395,10 +404,26 @@ public class PlayerController : MonoBehaviour
         transform.rotation = qua;
     }
 
+    private void ResettingPosAndRot()
+    {
+        Vector3 originPos = hipBones.position;
+        transform.position = hipBones.position;
+
+        if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit))
+        {
+            if(hit.transform.gameObject.layer == groundMask)
+            {
+                transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
+            }
+        }
+
+        hipBones.position = originPos;
+    }
+
     private void ResettingBones()
     {
         standupAnimTimer += Time.deltaTime;
-        float standupPer = standupAnimTimer / 0.5f;
+        float standupPer = standupAnimTimer / resettingBonesTimer;
         SetJoint();
         gameObject.GetComponent<Rigidbody>().useGravity = true;
 
@@ -420,7 +445,7 @@ public class PlayerController : MonoBehaviour
             playstandup = false;
             ragdoll = false;
             standupAnimTimer = 0;
-            state = PlayerState.Idle;
+            state = PlayerState.GettingUp;
         }
     }
 
@@ -434,7 +459,7 @@ public class PlayerController : MonoBehaviour
         if (Physics.CheckSphere(hipBones.position, 0.5f, groundMask))
         {
             getupTimer += Time.deltaTime;
-            if (getupTimer > 1.5f)
+            if (getupTimer > 1f)
             {
                 GetUp();
             }
@@ -449,5 +474,4 @@ public class PlayerController : MonoBehaviour
 
         public Quaternion rotation { get; set; }
     }
-
 }
