@@ -346,7 +346,9 @@ public class PlayerController : MonoBehaviour
     {
         getUp = true;
         playstandup = true;
-        ResettingPosAndRot();
+        gettingUp = 0;
+        rigid.velocity = Vector3.zero;
+        ResettingPos();
         PopulateBonesTransform(ragdollBoneTransform);
         state = PlayerState.GetUp;
     }
@@ -404,10 +406,15 @@ public class PlayerController : MonoBehaviour
         transform.rotation = qua;
     }
 
-    private void ResettingPosAndRot()
+    private void ResettingPos()
     {
         Vector3 originPos = hipBones.position;
         transform.position = hipBones.position;
+
+        Vector3 positionOffset = animBoneTransform[0].position;
+        positionOffset.y = 0;
+        positionOffset = transform.rotation * positionOffset;
+        transform.position -= positionOffset;
 
         if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit))
         {
@@ -426,6 +433,11 @@ public class PlayerController : MonoBehaviour
         float standupPer = standupAnimTimer / resettingBonesTimer;
         SetJoint();
         gameObject.GetComponent<Rigidbody>().useGravity = true;
+
+        if (Physics.Raycast(hipBones.position + (Vector3.up / 3), Vector3.down, out RaycastHit hit))
+        {
+            transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
+        }
 
         for (int bone = 0; bone < bones.Length; bone++)
         {
