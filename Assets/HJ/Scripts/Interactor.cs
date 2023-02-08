@@ -53,7 +53,7 @@ namespace HJ
                 return;
 
             IInteractable interactable = obj.GetComponentInParent<IInteractable>();
-            interactable.Interaction(player);
+            interactable?.Interaction(player);
         }
     }
 

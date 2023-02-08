@@ -10,6 +10,7 @@ namespace HJ
         public UnityEvent<PlayerController> OnInteract;
         public void Interaction(PlayerController player)
         {
+            //Debug.Log("인터렉션");
             OnInteract?.Invoke(player);
         }
     }

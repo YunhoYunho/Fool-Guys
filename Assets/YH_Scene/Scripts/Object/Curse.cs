@@ -10,7 +10,7 @@ public class Curse : MonoBehaviour, IItem
     {
         PlayerController controller = GetComponent<PlayerController>();
 
-        controller.moveSpeed -= speedDown;
+        //controller.moveSpeed -= speedDown;
 
         //StartCoroutine(SpeedDown);
 

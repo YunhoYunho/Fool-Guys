@@ -32,5 +32,6 @@ public class CycleMover : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.left * distance);
     }
 }
