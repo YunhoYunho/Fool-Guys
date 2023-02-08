@@ -119,6 +119,7 @@
     <Compile Include="Assets\HJ\Scripts\PoolManager.cs" />
     <Compile Include="Assets\HJ\Scripts\IControllable.cs" />
     <Compile Include="Assets\HJ\Scripts\Console.cs" />
+    <Compile Include="Assets\HJ\Scripts\TrueFalsePlatform.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.xml" />
