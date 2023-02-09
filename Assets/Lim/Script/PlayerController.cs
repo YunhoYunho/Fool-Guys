@@ -57,6 +57,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool ragdoll;
     [SerializeField] private bool isJumping;
     [SerializeField] private bool isFalling;
+    [SerializeField] private bool isLanding;
     //=========================================
 
     //=============== Animator ================
@@ -65,8 +66,9 @@ public class PlayerController : MonoBehaviour
     private string attackAnim = "isAttack";
     private string getupAnim = "GetUp";
     private string getupClipName = "Getting Up";
-    private string fallingAnim = "";
-    private string jumpAnim = "";
+    private string fallingAnim = "isFalling";
+    private string jumpAnim = "isJumping";
+    private string landingAnim = "isLanding";
     //=========================================
 
     //=============== Other ===================
@@ -136,6 +138,9 @@ public class PlayerController : MonoBehaviour
         animlist.Add(moveAnim);
         animlist.Add(attackAnim);
         animlist.Add(getupAnim);
+        animlist.Add(fallingAnim);
+        animlist.Add(jumpAnim);
+        animlist.Add(landingAnim);
     }
 
     private void Update()
@@ -162,6 +167,7 @@ public class PlayerController : MonoBehaviour
 
         IsGrounded();
         CheckFalling();
+        CheckLanding();
         HitTest();
         AnimationUpdate();
     }
@@ -198,6 +204,12 @@ public class PlayerController : MonoBehaviour
 
         if (attackOrder)
             updateAnim = attackAnim;
+        else if (isLanding)
+            updateAnim = landingAnim;
+        else if (isJumping)
+            updateAnim = jumpAnim;
+        else if(isFalling)
+            updateAnim = fallingAnim;
         else if (isMoving)
             updateAnim = moveAnim;
         else if (playstandup)
@@ -210,7 +222,6 @@ public class PlayerController : MonoBehaviour
             bool playAnim = animlist[i] == updateAnim ? true : false;
             anim.SetBool(animlist[i], playAnim);
         }
-
     }
 
     private void SetJoint()
@@ -293,6 +304,7 @@ public class PlayerController : MonoBehaviour
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             jumpOrder = false;
             isJumping = true;
+            isLanding = false;
         }
 
     }
@@ -466,17 +478,42 @@ public class PlayerController : MonoBehaviour
 
     private void IsGrounded()
     {
+        if (rigid.velocity.y > 0)
+            return;
+
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
-        if (isGrounded)
-            isJumping = false;
+        if (isJumping && isGrounded)
+            SetUpJumpAnimation();
+    }
+
+    private void SetUpJumpAnimation()
+    {
+        isJumping = false;
     }
 
     private void CheckFalling()
     {
-        if(isGrounded && !isJumping)
+        if(!isGrounded && !isJumping)
         {
             isFalling = true;
         }
+        if (isGrounded && rigid.velocity.y >= 0)
+            isFalling = false;
+    }
+
+    private void CheckLanding()
+    {
+        if(isGrounded && isJumping && rigid.velocity.y < 0)
+        {
+            isLanding = true;
+            StartCoroutine(LandingAnimation());
+        }
+    }
+
+    private IEnumerator LandingAnimation()
+    {
+        yield return new WaitForSeconds(0.1f);
+        isLanding = false;
     }
 
     private void GetUpTimer()
