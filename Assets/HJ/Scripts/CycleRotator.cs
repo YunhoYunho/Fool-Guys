@@ -5,17 +5,16 @@ using UnityEngine.UIElements;
 
 public class CycleRotator : MonoBehaviour, IControllable
 {
-    [SerializeField] private float limitAngle;
-    [SerializeField] private float speed;
+    [SerializeField] private float limitAngle = 30f;
+    [SerializeField] private float speed = 10f;
     [SerializeField] private float rand;
 
     [Space]
     [SerializeField] private Vector3 rotationAxis = new Vector3(0, 0, 1);
 
     [Header("Control")]
-    [SerializeField] private float controlledAngle;
-    [SerializeField] private float controlledSpeed;
-    
+    [SerializeField] private float controlledSpeed = 30f;
+
     private Vector3 startEuler;
     private float sinAngle;
     private float lerpTime = 0;
@@ -23,15 +22,19 @@ public class CycleRotator : MonoBehaviour, IControllable
     private void Start()
     {
         startEuler = transform.rotation.eulerAngles;
+        rotationAxis.Normalize();
     }
     private void Update()
     {
-        lerpTime += Time.deltaTime;
-        sinAngle = Mathf.Sin((lerpTime + rand) * speed);
 
-        //transform.localRotation = Quaternion.Euler(startEuler + rotationAxis * (limitAngle * sinAngle));
-        //transform.localEulerAngles = startEuler + rotationAxis * limitAngle * sinAngle;
-        transform.localEulerAngles = startEuler + rotationAxis * Mathf.PingPong(lerpTime * speed, limitAngle * 2);
+        lerpTime += Time.deltaTime;
+        sinAngle = Mathf.PingPong((lerpTime + rand) * speed, limitAngle * 2) - limitAngle;
+
+        transform.localRotation = Quaternion.Euler(startEuler + rotationAxis * sinAngle);
+        //transform.localEulerAngles +=  rotationAxis * sinAngle * Time.deltaTime;
+        //transform.localEulerAngles = startEuler + rotationAxis * (Mathf.PingPong(speed * lerpTime, limitAngle * 2) - limitAngle);
+        //transform.localEulerAngles += rotationAxis * lerpTime * speed;
+        //transform.localEulerAngles = startEuler + rotationAxis * Mathf.PingPong(lerpTime * speed, limitAngle * 2);
     }
 
     public void Control(float duration, float coolTime)
@@ -41,14 +44,11 @@ public class CycleRotator : MonoBehaviour, IControllable
 
     private IEnumerator ControlCoroutine(float duration, float coolTime)
     {
-        float originalAngle = limitAngle;
         float originalSpeed = speed;
-
-        limitAngle = controlledAngle;
         speed = controlledSpeed;
         yield return new WaitForSeconds(duration);
-        limitAngle = originalAngle;
         speed = originalSpeed;
+
     }
 
 }
