@@ -28,9 +28,11 @@ public class CycleRotator : MonoBehaviour, IControllable
     {
 
         lerpTime += Time.deltaTime;
-        sinAngle = Mathf.PingPong((lerpTime + rand) * speed, limitAngle * 2) - limitAngle;
+        //sinAngle = Mathf.PingPong((lerpTime + rand) * speed, limitAngle * 2) - limitAngle;
+        sinAngle = limitAngle * Mathf.Sin((lerpTime + rand) * speed);
 
         transform.localRotation = Quaternion.Euler(startEuler + rotationAxis * sinAngle);
+        //transform.localRotation = Quaternion.Euler(startEuler + rotationAxis * sinAngle);
         //transform.localEulerAngles +=  rotationAxis * sinAngle * Time.deltaTime;
         //transform.localEulerAngles = startEuler + rotationAxis * (Mathf.PingPong(speed * lerpTime, limitAngle * 2) - limitAngle);
         //transform.localEulerAngles += rotationAxis * lerpTime * speed;
@@ -48,7 +50,23 @@ public class CycleRotator : MonoBehaviour, IControllable
         speed = controlledSpeed;
         yield return new WaitForSeconds(duration);
         speed = originalSpeed;
+    }
 
+    private void OnDrawGizmos()
+    {
+        /*Gizmos.color = Color.yellow;
+
+        Vector3 limitRight = AngleToDir(transform.localEulerAngles.y + limitAngle * 0.5f);
+        Vector3 limitLeft = AngleToDir(transform.localEulerAngles.y - limitAngle * 0.5f);
+
+        Gizmos.DrawRay(transform.position, limitRight * 3f);
+        Gizmos.DrawRay(transform.position, limitLeft * 3f);*/
+    }
+
+    private Vector3 AngleToDir(float angle)
+    {
+        float radian = Mathf.Rad2Deg * angle;
+        return new Vector3(Mathf.Sin(radian), 0, Mathf.Cos(radian));
     }
 
 }

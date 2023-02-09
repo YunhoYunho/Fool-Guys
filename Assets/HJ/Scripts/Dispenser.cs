@@ -15,7 +15,7 @@ namespace HJ
         [SerializeField] private Transform projectPosition;
 
         //================ Value =================
-        [SerializeField] private float power;
+        [SerializeField] private float power = 30f;
      
         [SerializeField] private float shootingDelay;
         [SerializeField] private float endDelay;
