@@ -5,20 +5,27 @@ using UnityEngine;
 public class PatrolObject : MonoBehaviour
 {
     [Header("Patrol")]
-    [SerializeField] private float distance = 10.0f;
+    [SerializeField] private float distance = 7.0f;
     [SerializeField] private float speed = 1.0f;
+    [SerializeField] private bool isDirX = true;
 
-    private Vector3 startPosition;
+    private Vector3 startPos;
 
     private void Start()
     {
-        startPosition = transform.position;
+        startPos = transform.localPosition;
     }
 
     private void Update()
     {
-        Vector3 pos = startPosition;
-        pos.x = distance * Mathf.Sin(Time.time * speed);
-        transform.position = pos;
+        Patrolling();
+    }
+
+    private void Patrolling()
+    {
+        Vector3 dir = isDirX ? Vector3.right : Vector3.forward;
+        Vector3 pos = distance * Mathf.Sin(Time.time * speed) * dir;
+
+        transform.localPosition = pos + startPos;
     }
 }
