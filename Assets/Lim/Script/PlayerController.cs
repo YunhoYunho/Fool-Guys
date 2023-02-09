@@ -361,6 +361,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnHit()
     {
+        isFalling = false;
         getUp = false;
         ragdoll = true;
         getupTimer = 0;
@@ -567,7 +568,6 @@ public class PlayerController : MonoBehaviour
         if (isFalling)
         {
             OnHit();
-            isFalling = false;
         }
     }
 
