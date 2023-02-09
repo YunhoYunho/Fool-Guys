@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isGrounded;
     [SerializeField] private float groundDistance;
     [SerializeField] private LayerMask groundMask;
+    [SerializeField] private float groundRadious;
     //=========================================
     [Space]
 
@@ -87,6 +88,7 @@ public class PlayerController : MonoBehaviour
         moveSpeed = 10f;
         jumpPower = 10f;
         state = PlayerState.Idle;
+        groundRadious = 0.5f;
         //=========================
 
         //==== SetUp Coroutine ====
@@ -482,9 +484,6 @@ public class PlayerController : MonoBehaviour
 
     private void IsGrounded()
     {
-        if (rigid.velocity.y > 0)
-            return;
-
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
     }
 
@@ -544,7 +543,7 @@ public class PlayerController : MonoBehaviour
 
     private void GetUpTimer()
     {
-        if (Physics.CheckSphere(hipBones.position, 0.3f, groundMask))
+        if (Physics.CheckSphere(hipBones.position, groundRadious, groundMask))
         {
             getupTimer += Time.deltaTime;
             if (getupTimer > 1f)
