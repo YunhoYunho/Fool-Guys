@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     //============= Player Move ===============
     [Header("Player Move")]
-    [SerializeField] private float moveSpeed = 20;
+    [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpPower;
     [SerializeField] private Vector3 velocity;
     [SerializeField] private Vector3 moveVec;
@@ -85,10 +85,10 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         //=== PlayerState SetUp ===
-        moveSpeed = 10f;
-        jumpPower = 10f;
+        moveSpeed = 150f;
+        jumpPower = 13f;
         state = PlayerState.Idle;
-        groundRadious = 0.5f;
+        groundRadious = 0.3f;
         //=========================
 
         //==== SetUp Coroutine ====
@@ -516,7 +516,9 @@ public class PlayerController : MonoBehaviour
         {
             fallTimer += Time.deltaTime;
             if (fallTimer > 1.5f)
-                OnHit();
+            {
+                //OnHit();
+            }
         }
         else
             fallTimer = 0;
