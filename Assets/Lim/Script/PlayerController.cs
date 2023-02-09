@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 public enum PlayerState { Idle, Attack, GetDown, GetUp, GettingUp, Jump }
 
@@ -71,16 +70,16 @@ public class PlayerController : MonoBehaviour
     private string landingAnim = "isLanding";
     //=========================================
 
-    //=============== Other ===================
+    //=============== Timer ===================
     private float getupTimer = 0;
     private float standupAnimTimer = 0;
     private float resettingBonesTimer = 0.3f;
     private float gettingUp = 0;
+    private float fallTimer = 0;
     //=========================================
 
     private void Awake()
     {
-
         //=== PlayerState SetUp ===
         moveSpeed = 10f;
         jumpPower = 10f;
@@ -204,10 +203,10 @@ public class PlayerController : MonoBehaviour
 
         if (attackOrder)
             updateAnim = attackAnim;
-        else if (isLanding)
-            updateAnim = landingAnim;
         else if (isJumping)
             updateAnim = jumpAnim;
+        else if (isLanding)
+            updateAnim = landingAnim;
         else if(isFalling)
             updateAnim = fallingAnim;
         else if (isMoving)
@@ -302,9 +301,9 @@ public class PlayerController : MonoBehaviour
         if (jumpOrder)
         {
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            isLanding = false;
             jumpOrder = false;
             isJumping = true;
-            isLanding = false;
         }
 
     }
@@ -482,37 +481,42 @@ public class PlayerController : MonoBehaviour
             return;
 
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
-        if (isJumping && isGrounded)
-            SetUpJumpAnimation();
-    }
-
-    private void SetUpJumpAnimation()
-    {
-        isJumping = false;
     }
 
     private void CheckFalling()
     {
-        if(!isGrounded && !isJumping)
+        if (isJumping)
         {
-            isFalling = true;
+            fallTimer += Time.deltaTime;
+
+            if (fallTimer > 2f)
+            {
+                isFalling = true;
+                isJumping = false;
+                fallTimer = 0;
+            }
         }
-        if (isGrounded && rigid.velocity.y >= 0)
-            isFalling = false;
+        else
+            fallTimer = 0;
+
     }
 
     private void CheckLanding()
     {
-        if(isGrounded && isJumping && rigid.velocity.y < 0)
+        if (!isFalling)
         {
-            isLanding = true;
-            StartCoroutine(LandingAnimation());
+            if (isGrounded && isJumping && rigid.velocity.y < 0)
+            {
+                isLanding = true;
+                isJumping = false;
+                StartCoroutine(LandingAnimation());
+            }
         }
     }
 
     private IEnumerator LandingAnimation()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.05f);
         isLanding = false;
     }
 
@@ -536,4 +540,14 @@ public class PlayerController : MonoBehaviour
 
         public Quaternion rotation { get; set; }
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (isFalling)
+        {
+            OnHit();
+            isFalling = false;
+        }
+    }
+
 }
