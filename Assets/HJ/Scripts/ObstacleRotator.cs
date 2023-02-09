@@ -5,27 +5,17 @@ using UnityEngine;
 public class ObstacleRotator : MonoBehaviour, IControllable
 {
     [SerializeField] private Vector3 rotationVelocity;
-    [SerializeField] private Vector3 controlledVelocity;
-    private Vector3 curVelocity;
+    [SerializeField] private float changed;
     private Coroutine controlling;
-
-    [SerializeField]
-    private float forceOffset = 1f;
 
     private void Start()
     {
-        curVelocity = rotationVelocity;
         controlling = null;
     }
 
     private void FixedUpdate()
     {
-        transform.Rotate(curVelocity);
-    }
-
-    public void SetVelocity(Vector3 newVelocity)
-    {
-        rotationVelocity = newVelocity;
+        transform.Rotate(rotationVelocity);
     }
 
     public void Control(float duration, float coolTime)
@@ -38,10 +28,10 @@ public class ObstacleRotator : MonoBehaviour, IControllable
 
     private IEnumerator ControlCoroutine(float duration, float coolTime)
     {
-        curVelocity = controlledVelocity;
+        rotationVelocity *= changed;
 
         yield return new WaitForSeconds(duration);
-        curVelocity = rotationVelocity;
+        rotationVelocity /= changed;
 
         yield return new WaitForSeconds(coolTime);
         controlling = null;
