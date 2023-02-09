@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.UIElements;
 using UnityEngine;
 public enum PlayerState { Idle, Attack, GetDown, GetUp, GettingUp, Jump }
 
@@ -57,6 +58,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isJumping;
     [SerializeField] private bool isFalling;
     [SerializeField] private bool isLanding;
+    [SerializeField] private bool inMidAir;
     //=========================================
 
     //=============== Animator ================
@@ -68,6 +70,7 @@ public class PlayerController : MonoBehaviour
     private string fallingAnim = "isFalling";
     private string jumpAnim = "isJumping";
     private string landingAnim = "isLanding";
+    private string inMidAirAnim = "inMidAir";
     //=========================================
 
     //=============== Timer ===================
@@ -136,10 +139,10 @@ public class PlayerController : MonoBehaviour
     {
         animlist.Add(moveAnim);
         animlist.Add(attackAnim);
-        animlist.Add(getupAnim);
         animlist.Add(fallingAnim);
         animlist.Add(jumpAnim);
         animlist.Add(landingAnim);
+        animlist.Add(inMidAirAnim);
     }
 
     private void Update()
@@ -156,6 +159,7 @@ public class PlayerController : MonoBehaviour
                 GetUpTimer();
                 break;
             case PlayerState.GetUp:
+                GettingUpAnimationCheck();
                 ResettingBones();
                 break;
             case PlayerState.GettingUp:
@@ -189,7 +193,8 @@ public class PlayerController : MonoBehaviour
 
     private void GettingUpAnimationCheck()
     {
-        if (Input.GetAxisRaw("Horizontal") > 0 || Input.GetAxisRaw("Vertical") > 0)
+        if (Input.GetAxisRaw("Horizontal") != 0 || 
+            Input.GetAxisRaw("Vertical") != 0)
         {
             isMoving = true;
         }
@@ -207,12 +212,12 @@ public class PlayerController : MonoBehaviour
             updateAnim = jumpAnim;
         else if (isLanding)
             updateAnim = landingAnim;
-        else if(isFalling)
+        else if (isFalling)
             updateAnim = fallingAnim;
+        else if (inMidAir)
+            updateAnim = inMidAirAnim;
         else if (isMoving)
             updateAnim = moveAnim;
-        else if (playstandup)
-            updateAnim = getupAnim;
         else
             updateAnim = null;
 
@@ -345,7 +350,7 @@ public class PlayerController : MonoBehaviour
         }
 
         gettingUp += Time.deltaTime;
-        if(gettingUp > 1.3f)
+        if(gettingUp > 1.2f)
         {
             gettingUp = 0;
             state = PlayerState.Idle;
@@ -496,19 +501,36 @@ public class PlayerController : MonoBehaviour
                 fallTimer = 0;
             }
         }
+        else if (!isJumping && !isGrounded && !isFalling)
+        {
+            inMidAir = true;
+            fallTimer += Time.deltaTime;
+            if (fallTimer > 0.7f)
+            {
+                inMidAir = false;
+                isFalling = true;
+                fallTimer = 0;
+            }
+        }
+        else if(isFalling)
+        {
+            fallTimer += Time.deltaTime;
+            if (fallTimer > 1.5f)
+                OnHit();
+        }
         else
             fallTimer = 0;
-
     }
 
     private void CheckLanding()
     {
         if (!isFalling)
         {
-            if (isGrounded && isJumping && rigid.velocity.y < 0)
+            if (isGrounded && (isJumping || inMidAir) && rigid.velocity.y < 0)
             {
                 isLanding = true;
                 isJumping = false;
+                inMidAir = false;
                 StartCoroutine(LandingAnimation());
             }
         }
