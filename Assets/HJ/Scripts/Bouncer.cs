@@ -11,6 +11,7 @@ public class Bouncer : MonoBehaviour
         {
             Vector3 normal = collision.contacts[0].normal;
             collision.transform.GetComponent<Rigidbody>().AddForce(-normal * bouncePower, ForceMode.Impulse);
+            Debug.Log(string.Format("∫§≈Õ: {0}, ≈©±‚: {1}", -normal, normal.magnitude));
         }
     }
 }
