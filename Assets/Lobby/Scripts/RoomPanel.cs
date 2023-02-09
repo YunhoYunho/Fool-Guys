@@ -20,6 +20,7 @@ public class RoomPanel : MonoBehaviour
 
     private List<PlayerEntry> playerEntries;
 
+
     private void Awake()
     {
         playerEntries = new List<PlayerEntry>();
@@ -31,20 +32,23 @@ public class RoomPanel : MonoBehaviour
         {
             Destroy(entry.gameObject);
         }
+
         playerEntries.Clear();
 
         foreach (Player player in PhotonNetwork.PlayerList)
         {
             PlayerEntry entry = Instantiate(playerEntryPrefab, playerContent);
             entry.Initialize(player.ActorNumber, player.NickName);
+
             object isPlayerReady;
             if (player.CustomProperties.TryGetValue("Ready", out isPlayerReady))
             {
                 entry.SetPlayerReady((bool)isPlayerReady);
             }
-
+            //entry.SetPlayerColor();
             playerEntries.Add(entry);
         }
+
     }
 
     public void UpdateLocalPlayerPropertiesUpdate()

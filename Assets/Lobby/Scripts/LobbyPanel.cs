@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LobbyPanel : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class LobbyPanel : MonoBehaviour
     private GameObject Panel;
     [SerializeField]
     private GameObject createRoomPanel;
+    [SerializeField]
+    private GameObject customizePanel;
     [SerializeField]
     private GameObject roomEntryPrefab;
     [SerializeField]
@@ -24,6 +27,9 @@ public class LobbyPanel : MonoBehaviour
 
     [SerializeField]
     private TMP_Text nickName;
+
+    [SerializeField]
+    private Toggle VisibleCheckToggle;
 
     private Dictionary<string, RoomInfo> cachedRoomList;
     private Dictionary<string, GameObject> roomListEntries;
@@ -55,7 +61,7 @@ public class LobbyPanel : MonoBehaviour
 
         foreach (RoomInfo info in roomList)
         {
-            // Remove room from cached room list if it got closed, became invisible or was marked as removed
+            // Open 상태가 바뀐 경우 + Visible이 바뀐경우 + 룸 리스트에서 제거된 경우
             if (!info.IsOpen || !info.IsVisible || info.RemovedFromList)
             {
                 if (cachedRoomList.ContainsKey(info.Name))
@@ -66,63 +72,25 @@ public class LobbyPanel : MonoBehaviour
                 continue;
             }
 
-            // Update cached room info
+            // 캐싱된 룸 인포 업데이트
             if (cachedRoomList.ContainsKey(info.Name))
             {
                 cachedRoomList[info.Name] = info;
             }
-            // Add new room info to cache
+            
+            // 새로운 방이면 리스트에 추가
             else
             {
                 cachedRoomList.Add(info.Name, info);
             }
         }
 
-        #region
-        //StartCoroutine(DelayUpdateRoomList(roomList));
-
-        //for (int i = 0; i < roomEntries.Count; i++)
-        //{
-        //    RoomEntry room = roomEntries[i];
-        //    Destroy(room.gameObject);
-        //}
-
-        //roomEntries.Clear();
-
-        //for (int i = 0; i < roomList.Count; i++)
-        //{
-        //    RoomInfo room = roomList[i];
-        //    RoomEntry entry = Instantiate(roomEntryPrefab, roomContent);
-        //    entry.Initialized(roomEntries.Count + 1, room.Name, room.PlayerCount, room.MaxPlayers);
-        //    roomEntries.Add(entry);
-        //}
-
-
-
-        //foreach (RoomEntry room in roomEntries)
-        //{
-        //    Destroy(room.gameObject);
-        //}
-
-        //roomEntries.Clear();
-
-        //foreach (RoomInfo room in roomList)
-        //{
-        //    RoomEntry entry = Instantiate(roomEntryPrefab, roomContent);
-        //    entry.Initialized(roomEntries.Count + 1, room.Name, room.PlayerCount, room.MaxPlayers);
-        //    roomEntries.Add(entry);
-        //}
-
-        //StartCoroutine(DelayUpdateRoomList(roomList));
-        #endregion
     }
 
     public void UpdateRoomListView()
     {
         foreach (RoomInfo info in cachedRoomList.Values)
         {
-            //RoomEntry entry = Instantiate(roomEntryPrefab, roomContent);
-            //entry.transform.localScale = Vector3.one;
             GameObject entry = Instantiate(roomEntryPrefab, roomContent);
             
             entry.GetComponent<RoomEntry>().Initialize(info.Name, (byte)info.PlayerCount, info.MaxPlayers);
@@ -149,15 +117,22 @@ public class LobbyPanel : MonoBehaviour
 
     public void OnCreateRoomButtonClicked()
     {
-        //Panel.SetActive(false);
         createRoomPanel.SetActive(true);
     }
 
     public void OnCreateRoomCancelButtonClicked()
     {
-        //Panel.SetActive(true);
+        roomNameInputField.text = "";
+        MaxPlayerInputField.text = "";
+        VisibleCheckToggle.isOn = false;
         createRoomPanel.SetActive(false);
     }
+
+    public void OnCustomizeButtonClicked()
+    {
+        customizePanel.SetActive(true);
+    }
+
 
     public void OnCreateRoomConfirmButtonClicked()
     {
@@ -165,32 +140,18 @@ public class LobbyPanel : MonoBehaviour
         if (roomName == "")
             roomName = string.Format("{0}님의 방", PhotonNetwork.LocalPlayer.NickName);
 
-        int maxPlayer = MaxPlayerInputField.text == "" ? 8 : int.Parse(MaxPlayerInputField.text);
-        maxPlayer = Mathf.Clamp(maxPlayer, 1, 8);
+        int maxPlayer = MaxPlayerInputField.text == "" ? 4 : int.Parse(MaxPlayerInputField.text);
+        maxPlayer = Mathf.Clamp(maxPlayer, 1, 4);
 
-        RoomOptions options = new RoomOptions() { MaxPlayers = (byte)maxPlayer, IsVisible = true };
+        bool Visible = VisibleCheckToggle.isOn == true ? false : true;
+
+        RoomOptions options = new RoomOptions() { MaxPlayers = (byte)maxPlayer, IsVisible = Visible };
         PhotonNetwork.CreateRoom(roomName, options, null);
+        roomNameInputField.text = "";
+        MaxPlayerInputField.text = "";
+        VisibleCheckToggle.isOn = false;
         createRoomPanel.SetActive(false);
+        
     }
 
-    //private IEnumerator DelayUpdateRoomList(List<RoomInfo> roomList)
-    //{
-    //    yield return new WaitForSeconds(1f);
-
-    //    for (int i = 0; i < roomEntries.Count; i++)
-    //    {
-    //        RoomEntry room = roomEntries[i];
-    //        Destroy(room.gameObject);
-    //    }
-
-    //    roomEntries.Clear();
-
-    //    for (int i = 0; i < roomList.Count; i++)
-    //    {
-    //        RoomInfo room = roomList[i];
-    //        RoomEntry entry = Instantiate(roomEntryPrefab, roomContent);
-    //        entry.Initialized(roomEntries.Count + 1, room.Name, room.PlayerCount, room.MaxPlayers);
-    //        roomEntries.Add(entry);
-    //    }
-    //}
 }

@@ -2,6 +2,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
@@ -14,7 +15,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private RoomPanel roomPanel;
     [SerializeField]
     private LobbyPanel lobbyPanel;
+    [SerializeField]
+    private CustomizePanel customizePanel;
 
+    public Color PlayerColor;
 
     private void Start()
     {
@@ -48,7 +52,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         SetActivePanel(Panel.Lobby);
-        //PhotonNetwork.GameVersion = Application.version;
         PhotonNetwork.JoinLobby();
     }
 
@@ -77,8 +80,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         StatePanel.Instance.AddMessage("Create room!");
 
         string roomName = string.Format("Room{0}", Random.Range(1000, 10000));
-        RoomOptions options = new RoomOptions() { MaxPlayers = 8, IsVisible = true };
-        PhotonNetwork.CreateRoom(roomName, options);
+        RoomOptions options = new RoomOptions() { MaxPlayers = (byte)8, IsVisible = true };
+        PhotonNetwork.CreateRoom(roomName, options, null);
+
+        //RoomOptions options = new RoomOptions() { MaxPlayers = (byte)maxPlayer, IsVisible = Visible };
+        //PhotonNetwork.CreateRoom(roomName, options, null);
+        //createRoomPanel.SetActive(false);
     }
 
     public override void OnJoinedRoom()
@@ -88,11 +95,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
         {
             { "Ready", false },
-            { "Load", false }
+            { "Load", false },
+            { "R", (float)PlayerColor.r},
+            { "G", (float)PlayerColor.g},
+            { "B", (float)PlayerColor.b}
         };
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
 
         roomPanel.UpdateRoomState();
+
     }
 
     public override void OnLeftRoom()
@@ -104,6 +115,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         roomPanel.UpdateRoomState();
         roomPanel.UpdateLocalPlayerPropertiesUpdate();
+
     }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
@@ -129,8 +141,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        //lobbyPanel.UpdateCachedRoomList(roomList);
-        //StartCoroutine(repeatRoomUpdate(roomList));
         lobbyPanel.ClearRoomListView();
 
         lobbyPanel.UpdateCachedRoomList(roomList);

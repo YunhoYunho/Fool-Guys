@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-
 namespace Photon.Pun.Demo.Asteroids
 {
     public class RoomListEntry : MonoBehaviour

@@ -9,21 +9,19 @@ public class Obstacle : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            Collider[] colliders = Physics.OverlapSphere(transform.position, radius);
-            for (int i = 0; i < colliders.Length; i++)
+            PlayerController pc = collision.gameObject.GetComponent<PlayerController>();
+            Rigidbody rigid = collision.gameObject.GetComponent<Rigidbody>();
+
+            if (pc != null)
             {
-                PlayerController pc = colliders[i].gameObject.GetComponent<PlayerController>();
-                Rigidbody rigid = colliders[i].gameObject.GetComponent<Rigidbody>();
+                pc.EnterRagdoll();
+                Debug.Log("PlayerController 감지 후 OnHit 실행");
+            }
 
-                if (pc != null) 
-                {
-                    pc.OnHit();
-                }
-
-                if (rigid != null)
-                {
-                    rigid.AddExplosionForce(Force, transform.position, radius);
-                }
+            if (rigid != null)
+            {
+                rigid.AddExplosionForce(Force, transform.position, radius);
+                Debug.Log("rigidbody 감지 후 힘을 가함");
             }
         }
     }

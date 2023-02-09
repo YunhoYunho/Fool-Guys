@@ -65,19 +65,21 @@
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatAppIdCheckerUI.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\AppSettingsExtensions.cs" />
     <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesDestroyer.cs" />
-    <Compile Include="Assets\Resources\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\Resources\Scripts\GamePlayerController.cs" />
+    <Compile Include="Assets\Lobby\Scripts\CustomizePanel.cs" />
     <Compile Include="Assets\Mini UI\Script\ProgressBarScript.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChannelSelector.cs" />
     <Compile Include="Assets\Mini UI\Script\ViewSelector.cs" />
     <Compile Include="Assets\Lobby\Scripts\PlayerEntry.cs" />
     <Compile Include="Assets\Game\Scripts\GameManager.cs" />
     <Compile Include="Assets\Resources\Scripts\Stone.cs" />
+    <Compile Include="Assets\TestRotationObstacle.cs" />
     <Compile Include="Assets\Mini UI\Script\Store_Controller.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\EventSystemSpawner.cs" />
-    <Compile Include="Assets\Lim\Script\PlayerController.cs" />
     <Compile Include="Assets\Mini UI\Script\LoadingScript.cs" />
     <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDMoover.cs" />
     <Compile Include="Assets\Mini UI\Script\StartScript.cs" />
+    <Compile Include="Assets\SW_Scene\Script\PlayerController.cs" />
     <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesSpawner.cs" />
     <Compile Include="Assets\Lobby\Scripts\StatePanel.cs" />
     <Compile Include="Assets\Mini UI\Script\ItemDescriptionShow.cs" />
@@ -92,6 +94,7 @@
     <Compile Include="Assets\Mini UI\Script\AddFriendScript.cs" />
     <Compile Include="Assets\Resources\Scripts\Bullet.cs" />
     <Compile Include="Assets\Mini UI\Script\OnOff.cs" />
+    <Compile Include="Assets\Lobby\Scripts\CreateRoomPanel.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs" />
     <Compile Include="Assets\Lobby\Scripts\LobbyPanel.cs" />
     <Compile Include="Assets\Mini UI\Script\Map.cs" />
@@ -117,9 +120,11 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\Photon\PhotonUnityNetworking\changelog.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
+    <None Include="Assets\Fantasy Skybox FREE\Readme.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
     <None Include="Assets\Photon\PhotonLibs\WebSocket\websocket-sharp.dll" />
+    <None Include="Assets\Fantasy Skybox FREE\ReleaseNotes.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
@@ -811,6 +816,9 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.2D.Sprite.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Flow">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>

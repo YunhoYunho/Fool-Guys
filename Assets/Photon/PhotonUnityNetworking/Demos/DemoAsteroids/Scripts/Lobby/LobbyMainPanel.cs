@@ -303,15 +303,7 @@ namespace Photon.Pun.Demo.Asteroids
             return true;
         }
         
-        private void ClearRoomListView()
-        {
-            foreach (GameObject entry in roomListEntries.Values)
-            {
-                Destroy(entry.gameObject);
-            }
 
-            roomListEntries.Clear();
-        }
 
         public void LocalPlayerPropertiesUpdated()
         {
@@ -326,6 +318,16 @@ namespace Photon.Pun.Demo.Asteroids
             JoinRandomRoomPanel.SetActive(activePanel.Equals(JoinRandomRoomPanel.name));
             RoomListPanel.SetActive(activePanel.Equals(RoomListPanel.name));    // UI should call OnRoomListButtonClicked() to activate this
             InsideRoomPanel.SetActive(activePanel.Equals(InsideRoomPanel.name));
+        }
+
+        private void ClearRoomListView()
+        {
+            foreach (GameObject entry in roomListEntries.Values)
+            {
+                Destroy(entry.gameObject);
+            }
+
+            roomListEntries.Clear();
         }
 
         private void UpdateCachedRoomList(List<RoomInfo> roomList)
