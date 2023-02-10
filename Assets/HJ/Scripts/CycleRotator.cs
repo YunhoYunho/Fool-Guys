@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class CycleRotator : MonoBehaviour, IControllable
+public class CycleRotator : ControlableObstacle
 {
-    [SerializeField] private float limitAngle = 30f;
-    [SerializeField] private float speed = 10f;
+    [SerializeField] private float limitAngle = 45f;
+    [SerializeField] private float speed = 2f;
+    [SerializeField] private float changeRate = 1.5f;
     [SerializeField] private float rand;
 
     [Space]
-    [SerializeField] private Vector3 rotationAxis = new Vector3(0, 0, 1);
-
-    [Header("Control")]
-    [SerializeField] private float controlledSpeed = 30f;
+    [SerializeField] private Vector3 rotationAxis = new Vector3(0, 0, 1); 
 
     private Vector3 startEuler;
     private float sinAngle;
@@ -26,29 +24,20 @@ public class CycleRotator : MonoBehaviour, IControllable
     }
     private void Update()
     {
-
         lerpTime += Time.deltaTime;
-        sinAngle = Mathf.PingPong((lerpTime + rand) * speed, limitAngle * 2) - limitAngle;
+        sinAngle = limitAngle * Mathf.Sin((lerpTime + rand) * speed);
 
         transform.localRotation = Quaternion.Euler(startEuler + rotationAxis * sinAngle);
-        //transform.localEulerAngles +=  rotationAxis * sinAngle * Time.deltaTime;
-        //transform.localEulerAngles = startEuler + rotationAxis * (Mathf.PingPong(speed * lerpTime, limitAngle * 2) - limitAngle);
-        //transform.localEulerAngles += rotationAxis * lerpTime * speed;
-        //transform.localEulerAngles = startEuler + rotationAxis * Mathf.PingPong(lerpTime * speed, limitAngle * 2);
     }
 
-    public void Control(float duration, float coolTime)
+    protected override IEnumerator ControlCoroutine(float duration, float coolTime)
     {
-        StartCoroutine(ControlCoroutine(duration, coolTime));
-    }
+        speed *= changeRate;
 
-    private IEnumerator ControlCoroutine(float duration, float coolTime)
-    {
-        float originalSpeed = speed;
-        speed = controlledSpeed;
         yield return new WaitForSeconds(duration);
-        speed = originalSpeed;
+        speed /= changeRate;
 
+        yield return new WaitForSeconds(coolTime);
     }
 
 }

@@ -2,46 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObstacleRotator : MonoBehaviour, IControllable
+public class ObstacleRotator : ControlableObstacle
 {
     [SerializeField] private Vector3 rotationVelocity;
-    [SerializeField] private Vector3 controlledVelocity;
-    private Vector3 curVelocity;
-    private Coroutine controlling;
+    [SerializeField] private float changed;
 
-    [SerializeField]
-    private float forceOffset = 1f;
+    [SerializeField] private bool isOpposite;
+    [SerializeField] private bool startRandom;
 
     private void Start()
     {
-        curVelocity = rotationVelocity;
         controlling = null;
+
+        if(startRandom)
+        {
+            int randAngle = Random.Range(0, 360);
+            transform.localEulerAngles = rotationVelocity.normalized * randAngle;
+            Debug.Log("·£´ý°ª: " + randAngle);
+        }
     }
 
     private void FixedUpdate()
     {
-        transform.Rotate(curVelocity);
+        int rotationDir = isOpposite ? -1 : 1;
+        transform.Rotate(rotationDir * rotationVelocity);
     }
-
-    public void SetVelocity(Vector3 newVelocity)
+    protected override IEnumerator ControlCoroutine(float duration, float coolTime)
     {
-        rotationVelocity = newVelocity;
-    }
-
-    public void Control(float duration, float coolTime)
-    {
-        if (controlling != null)
-            return;
-
-        controlling = StartCoroutine(ControlCoroutine(duration, coolTime));      
-    }
-
-    private IEnumerator ControlCoroutine(float duration, float coolTime)
-    {
-        curVelocity = controlledVelocity;
+        rotationVelocity *= changed;
 
         yield return new WaitForSeconds(duration);
-        curVelocity = rotationVelocity;
+        rotationVelocity /= changed;
 
         yield return new WaitForSeconds(coolTime);
         controlling = null;
