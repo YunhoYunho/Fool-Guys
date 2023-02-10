@@ -133,6 +133,7 @@ public class PlayerController : MonoBehaviour
         SetAnimList();
         SetJoint();
         SetRigidBodyGravity();
+        SetRigidBodyCollisionDetection();
         Cursor.lockState = CursorLockMode.Locked;
         // =========================
     }
@@ -236,7 +237,7 @@ public class PlayerController : MonoBehaviour
         }
 
         bool attackOnOff = upperAttackAnim == null ? false : true;
-        anim.SetBool(upperAttackAnim, attackOnOff);
+        anim.SetBool(attackAnim, attackOnOff);
 
         upperAttackAnim = null;
     }
@@ -397,6 +398,16 @@ public class PlayerController : MonoBehaviour
         {
             rb.useGravity = !getUp;
         }
+    }
+
+    private void SetRigidBodyCollisionDetection()
+    {
+        foreach (Rigidbody rb in rig)
+        {
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        }
+
+        rigid.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
     }
 
     private void OnRagDoll()
