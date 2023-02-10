@@ -207,10 +207,9 @@ public class PlayerController : MonoBehaviour
     private void AnimationUpdate()
     {
         string updateAnim;
+        string upperAttackAnim;
 
-        if (attackOrder)
-            updateAnim = attackAnim;
-        else if (isJumping)
+        if (isJumping)
             updateAnim = jumpAnim;
         else if (isLanding)
             updateAnim = landingAnim;
@@ -220,14 +219,26 @@ public class PlayerController : MonoBehaviour
             updateAnim = inMidAirAnim;
         else if (isMoving)
             updateAnim = moveAnim;
+        else if (attackOrder)
+            updateAnim = attackAnim;
         else
             updateAnim = null;
+
+        if (attackOrder)
+            upperAttackAnim = attackAnim;
+        else
+            upperAttackAnim = null;
 
         for (int i = 0; i < animlist.Count; i++)
         {
             bool playAnim = animlist[i] == updateAnim ? true : false;
             anim.SetBool(animlist[i], playAnim);
         }
+
+        bool attackOnOff = upperAttackAnim == null ? false : true;
+        anim.SetBool(upperAttackAnim, attackOnOff);
+
+        upperAttackAnim = null;
     }
 
     private void SetJoint()
