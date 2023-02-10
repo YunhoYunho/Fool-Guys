@@ -14,11 +14,12 @@ public class Obstacle : MonoBehaviour
 
             if (pc != null)
             {
-                pc.OnHit();
+                //pc.OnHit();
             }
 
             if (rigid != null)
             {
+                Debug.Log("Æø¹ß");
                 rigid.AddExplosionForce(Force, transform.position, radius);
             }
 

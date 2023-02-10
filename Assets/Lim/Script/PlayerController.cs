@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.UIElements;
 using UnityEngine;
 public enum PlayerState { Idle, Attack, GetDown, GetUp, GettingUp, Jump }
 
@@ -44,6 +45,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isGrounded;
     [SerializeField] private float groundDistance;
     [SerializeField] private LayerMask groundMask;
+    [SerializeField] private float groundRadious;
     //=========================================
     [Space]
 
@@ -54,6 +56,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool getUp;
     [SerializeField] private bool playstandup;
     [SerializeField] private bool ragdoll;
+    [SerializeField] private bool isJumping;
+    [SerializeField] private bool isFalling;
+    [SerializeField] private bool isLanding;
+    [SerializeField] private bool inMidAir;
     //=========================================
 
     //=============== Animator ================
@@ -62,22 +68,27 @@ public class PlayerController : MonoBehaviour
     private string attackAnim = "isAttack";
     private string getupAnim = "GetUp";
     private string getupClipName = "Getting Up";
+    private string fallingAnim = "isFalling";
+    private string jumpAnim = "isJumping";
+    private string landingAnim = "isLanding";
+    private string inMidAirAnim = "inMidAir";
     //=========================================
 
-    //=============== Other ===================
+    //=============== Timer ===================
     private float getupTimer = 0;
     private float standupAnimTimer = 0;
     private float resettingBonesTimer = 0.3f;
     private float gettingUp = 0;
+    private float fallTimer = 0;
     //=========================================
 
     private void Awake()
     {
-
         //=== PlayerState SetUp ===
         moveSpeed = 10f;
         jumpPower = 10f;
         state = PlayerState.Idle;
+        groundRadious = 0.5f;
         //=========================
 
         //==== SetUp Coroutine ====
@@ -88,6 +99,7 @@ public class PlayerController : MonoBehaviour
         hipBones = anim.GetBoneTransform(HumanBodyBones.Hips);
         rig = normalModel.GetComponentsInChildren<Rigidbody>();
         bones = hipBones.GetComponentsInChildren<Transform>();
+        anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody>();
         playercol = GetComponent<CapsuleCollider>();
         playerColliders = normalModel.GetComponentsInChildren<Collider>();
@@ -110,6 +122,8 @@ public class PlayerController : MonoBehaviour
         animlist = new List<string>();
         getUp = true;
         ragdoll = false;
+        isJumping = false;
+        isFalling = false;
         //=========================
     }
 
@@ -127,7 +141,10 @@ public class PlayerController : MonoBehaviour
     {
         animlist.Add(moveAnim);
         animlist.Add(attackAnim);
-        animlist.Add(getupAnim);
+        animlist.Add(fallingAnim);
+        animlist.Add(jumpAnim);
+        animlist.Add(landingAnim);
+        animlist.Add(inMidAirAnim);
     }
 
     private void Update()
@@ -135,18 +152,16 @@ public class PlayerController : MonoBehaviour
         switch (state)
         {
             case PlayerState.Idle:
-                Move();
-                JumpOrder();
-                AttackOrder();
-                break;
             case PlayerState.Attack:
                 Move();
+                JumpOrder();
                 AttackOrder();
                 break;
             case PlayerState.GetDown:
                 GetUpTimer();
                 break;
             case PlayerState.GetUp:
+                GettingUpAnimationCheck();
                 ResettingBones();
                 break;
             case PlayerState.GettingUp:
@@ -156,6 +171,8 @@ public class PlayerController : MonoBehaviour
         }
 
         IsGrounded();
+        CheckFalling();
+        CheckLanding();
         HitTest();
         AnimationUpdate();
     }
@@ -178,7 +195,8 @@ public class PlayerController : MonoBehaviour
 
     private void GettingUpAnimationCheck()
     {
-        if (Input.GetAxisRaw("Horizontal") > 0 || Input.GetAxisRaw("Vertical") > 0)
+        if (Input.GetAxisRaw("Horizontal") != 0 || 
+            Input.GetAxisRaw("Vertical") != 0)
         {
             isMoving = true;
         }
@@ -192,10 +210,16 @@ public class PlayerController : MonoBehaviour
 
         if (attackOrder)
             updateAnim = attackAnim;
+        else if (isJumping)
+            updateAnim = jumpAnim;
+        else if (isLanding)
+            updateAnim = landingAnim;
+        else if (isFalling)
+            updateAnim = fallingAnim;
+        else if (inMidAir)
+            updateAnim = inMidAirAnim;
         else if (isMoving)
             updateAnim = moveAnim;
-        else if (playstandup)
-            updateAnim = getupAnim;
         else
             updateAnim = null;
 
@@ -204,7 +228,6 @@ public class PlayerController : MonoBehaviour
             bool playAnim = animlist[i] == updateAnim ? true : false;
             anim.SetBool(animlist[i], playAnim);
         }
-
     }
 
     private void SetJoint()
@@ -285,7 +308,9 @@ public class PlayerController : MonoBehaviour
         if (jumpOrder)
         {
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            isLanding = false;
             jumpOrder = false;
+            isJumping = true;
         }
 
     }
@@ -327,7 +352,7 @@ public class PlayerController : MonoBehaviour
         }
 
         gettingUp += Time.deltaTime;
-        if(gettingUp > 1.3f)
+        if(gettingUp > 1.2f)
         {
             gettingUp = 0;
             state = PlayerState.Idle;
@@ -336,6 +361,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnHit()
     {
+        isFalling = false;
         getUp = false;
         ragdoll = true;
         getupTimer = 0;
@@ -462,9 +488,63 @@ public class PlayerController : MonoBehaviour
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
     }
 
+    private void CheckFalling()
+    {
+        if (isJumping)
+        {
+            fallTimer += Time.deltaTime;
+
+            if (fallTimer > 2f)
+            {
+                isFalling = true;
+                isJumping = false;
+                fallTimer = 0;
+            }
+        }
+        else if (!isJumping && !isGrounded && !isFalling)
+        {
+            inMidAir = true;
+            fallTimer += Time.deltaTime;
+            if (fallTimer > 0.7f)
+            {
+                inMidAir = false;
+                isFalling = true;
+                fallTimer = 0;
+            }
+        }
+        else if(isFalling)
+        {
+            fallTimer += Time.deltaTime;
+            if (fallTimer > 1.5f)
+                OnHit();
+        }
+        else
+            fallTimer = 0;
+    }
+
+    private void CheckLanding()
+    {
+        if (!isFalling)
+        {
+            if (isGrounded && (isJumping || inMidAir) && rigid.velocity.y < 0)
+            {
+                isLanding = true;
+                isJumping = false;
+                inMidAir = false;
+                StartCoroutine(LandingAnimation());
+            }
+        }
+    }
+
+    private IEnumerator LandingAnimation()
+    {
+        yield return new WaitForSeconds(0.05f);
+        isLanding = false;
+    }
+
     private void GetUpTimer()
     {
-        if (Physics.CheckSphere(hipBones.position, 0.3f, groundMask))
+        if (Physics.CheckSphere(hipBones.position, groundRadious, groundMask))
         {
             getupTimer += Time.deltaTime;
             if (getupTimer > 1f)
@@ -482,4 +562,13 @@ public class PlayerController : MonoBehaviour
 
         public Quaternion rotation { get; set; }
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (isFalling)
+        {
+            OnHit();
+        }
+    }
+
 }

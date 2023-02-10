@@ -66,6 +66,7 @@
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\AppSettingsExtensions.cs" />
     <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesDestroyer.cs" />
     <Compile Include="Assets\Resources\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\HJ\Scripts\TrailAdder.cs" />
     <Compile Include="Assets\HJ\Scripts\CycleMover.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChannelSelector.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Interface\IInteractable.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="Assets\Scripts\TestScripts.cs" />
     <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDRotator.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
+    <Compile Include="Assets\HJ\Scripts\ControlableObstacle.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.xml" />
