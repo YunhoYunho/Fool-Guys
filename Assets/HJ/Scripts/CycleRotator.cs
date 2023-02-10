@@ -7,7 +7,7 @@ public class CycleRotator : ControlableObstacle
 {
     [SerializeField] private float limitAngle = 45f;
     [SerializeField] private float speed = 2f;
-    [SerializeField] private float changeRate = 1.5f;
+    [SerializeField] private float changeSpeed = 3f;
     [SerializeField] private float rand;
 
     [Space]
@@ -32,12 +32,14 @@ public class CycleRotator : ControlableObstacle
 
     protected override IEnumerator ControlCoroutine(float duration, float coolTime)
     {
-        speed *= changeRate;
+        float prevSpeed = speed;
+        speed = changeSpeed;
 
         yield return new WaitForSeconds(duration);
-        speed /= changeRate;
+        speed = prevSpeed;
 
         yield return new WaitForSeconds(coolTime);
+        controlling = null;
     }
 
 }
