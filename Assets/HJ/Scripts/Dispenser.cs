@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HJ
 {
-    public class Dispenser : MonoBehaviour, IControllable
+    public class Dispenser : ControlableObstacle
     {
         private enum State { Create, Preparing, Ready, Shoot, Rest }
 
@@ -108,12 +108,7 @@ namespace HJ
                 state = State.Create;
         }
 
-        public void Control(float duration, float coolTime)
-        {
-            StartCoroutine(ControlCoroutine(duration, coolTime));
-        }
-
-        private IEnumerator ControlCoroutine(float duration, float coolTime)
+        protected override IEnumerator ControlCoroutine(float duration, float coolTime)
         {
             Debug.Log("발사 속도 빠르게");
             float originalEndDelay = endDelay;

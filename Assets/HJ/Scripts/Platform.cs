@@ -6,8 +6,7 @@ namespace HJ
 {
     public class Platform : MonoBehaviour
     {
-
-        private void OnCollisionEnter(Collision collision)
+        private void OnCollisionStay(Collision collision)
         {
             if (collision.gameObject.CompareTag("Player"))
             {

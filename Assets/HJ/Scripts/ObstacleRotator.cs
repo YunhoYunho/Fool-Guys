@@ -2,31 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObstacleRotator : MonoBehaviour, IControllable
+public class ObstacleRotator : ControlableObstacle
 {
     [SerializeField] private Vector3 rotationVelocity;
     [SerializeField] private float changed;
-    private Coroutine controlling;
+
+    [SerializeField] private bool isOpposite;
+    [SerializeField] private bool startRandom;
 
     private void Start()
     {
         controlling = null;
+
+        if(startRandom)
+        {
+            int randAngle = Random.Range(0, 360);
+            transform.localEulerAngles = rotationVelocity.normalized * randAngle;
+            Debug.Log("·£´ý°ª: " + randAngle);
+        }
     }
 
     private void FixedUpdate()
     {
-        transform.Rotate(rotationVelocity);
+        int rotationDir = isOpposite ? -1 : 1;
+        transform.Rotate(rotationDir * rotationVelocity);
     }
-
-    public void Control(float duration, float coolTime)
-    {
-        if (controlling != null)
-            return;
-
-        controlling = StartCoroutine(ControlCoroutine(duration, coolTime));      
-    }
-
-    private IEnumerator ControlCoroutine(float duration, float coolTime)
+    protected override IEnumerator ControlCoroutine(float duration, float coolTime)
     {
         rotationVelocity *= changed;
 
