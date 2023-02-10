@@ -14,7 +14,7 @@ AvatarMask:
   - m_Path: Character1_Hips
     m_Weight: 1
   - m_Path: Character1_Hips/Character1_LeftUpLeg
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Character1_Hips/Character1_LeftUpLeg/Character1_LeftLeg
     m_Weight: 1
   - m_Path: Character1_Hips/Character1_LeftUpLeg/Character1_LeftLeg/Character1_LeftFoot
@@ -22,7 +22,7 @@ AvatarMask:
   - m_Path: Character1_Hips/Character1_LeftUpLeg/Character1_LeftLeg/Character1_LeftFoot/Character1_LeftToeBase
     m_Weight: 1
   - m_Path: Character1_Hips/Character1_RightUpLeg
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Character1_Hips/Character1_RightUpLeg/Character1_RightLeg
     m_Weight: 1
   - m_Path: Character1_Hips/Character1_RightUpLeg/Character1_RightLeg/Character1_RightFoot
