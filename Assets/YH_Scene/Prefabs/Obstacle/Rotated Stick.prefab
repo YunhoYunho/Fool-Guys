@@ -42,7 +42,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 503385578143984380, guid: af8e2848756f7bf4eb4c9dccc305df79, type: 3}
       propertyPath: m_Name
-      value: Rotated Stick
+      value: Stick
       objectReference: {fileID: 0}
     - target: {fileID: 5355143793316182771, guid: af8e2848756f7bf4eb4c9dccc305df79, type: 3}
       propertyPath: m_CastShadows
@@ -111,7 +111,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 503385578143984380, guid: af8e2848756f7bf4eb4c9dccc305df79, type: 3}
   m_PrefabInstance: {fileID: 1746068086566101557}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2027874301699717214
+--- !u!114 &2441125149013088165
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -120,12 +120,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 2217782196829718729}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d74a8a44afa97c4da16578230d74a9a, type: 3}
+  m_Script: {fileID: 11500000, guid: fc00aa5c62fc1e4478abd9b5978ce171, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationVelocity: {x: 0, y: -2, z: 0}
-  controlledVelocity: {x: 0, y: 0, z: 0}
-  forceOffset: 1
+  Force: 30
+  radius: 30
+--- !u!1 &6546959058913120313 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4818921144807715340, guid: af8e2848756f7bf4eb4c9dccc305df79, type: 3}
+  m_PrefabInstance: {fileID: 1746068086566101557}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5867712803746129586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6546959058913120313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc00aa5c62fc1e4478abd9b5978ce171, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Force: 30
+  radius: 30
 --- !u!4 &7629504929330178495 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8203928920311597962, guid: af8e2848756f7bf4eb4c9dccc305df79, type: 3}
@@ -206,21 +224,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 863350294751150285, guid: 9afea906108d6d148b1a5febf4b976e9, type: 3}
   m_PrefabInstance: {fileID: 9073982985693601661}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1269127277154522617
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8509129248075390896}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d74a8a44afa97c4da16578230d74a9a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationVelocity: {x: 0, y: -2, z: 0}
-  controlledVelocity: {x: 0, y: 0, z: 0}
-  forceOffset: 1
 --- !u!114 &3963730237332923078
 MonoBehaviour:
   m_ObjectHideFlags: 0
