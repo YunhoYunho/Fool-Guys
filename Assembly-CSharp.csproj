@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{58D4AABA-5284-486B-1B69-AEC9D537F07E}</ProjectGuid>
+    <ProjectGuid>{A39AF3FF-CB1D-2D15-E7F0-380CA1A7F1DF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -66,7 +66,6 @@
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\AppSettingsExtensions.cs" />
     <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesDestroyer.cs" />
     <Compile Include="Assets\Resources\Scripts\PlayerController.cs" />
-    <Compile Include="Assets\HJ\Scripts\TrailAdder.cs" />
     <Compile Include="Assets\HJ\Scripts\CycleMover.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChannelSelector.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Interface\IInteractable.cs" />
@@ -85,6 +84,7 @@
     <Compile Include="Assets\HJ\Scripts\FlowZone.cs" />
     <Compile Include="Assets\HJ\Scripts\IControllable.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Object\PatrolObject.cs" />
+    <Compile Include="Assets\HJ\Scripts\ControlableObstacle.cs" />
     <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDPrefabVariator.cs" />
     <Compile Include="Assets\Photon\PhotonLibs\WebSocket\WebSocket.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\TextButtonTransition.cs" />
@@ -119,7 +119,10 @@
     <Compile Include="Assets\Scripts\TestScripts.cs" />
     <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDRotator.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
-    <Compile Include="Assets\HJ\Scripts\ControlableObstacle.cs" />
+    <Compile Include="Assets\HJ\Scripts\BounceBackBumper.cs" />
+    <Compile Include="Assets\HJ\Scripts\Activator.cs" />
+    <Compile Include="Assets\HJ\Scripts\PointObstacle.cs" />
+    <Compile Include="Assets\HJ\Scripts\RemoteSetter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.xml" />
@@ -849,43 +852,43 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="PhotonChat.csproj">
-      <Project>{D9E40283-80FA-9D7A-DB39-E33FE7148B00}</Project>
+      <Project>{C331CCB9-85F0-4EF1-B129-E666CCDA39F0}</Project>
       <Name>PhotonChat</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
-      <Project>{E2BF9CA7-722B-4998-1D4A-AC96AE20240C}</Project>
+      <Project>{853F1A83-9ADF-513D-0D43-53EC19268F3F}</Project>
       <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Editor.csproj">
-      <Project>{26892DB2-44DE-E651-42E2-C8914C32AB28}</Project>
+      <Project>{8C26A015-9234-4202-5506-3151790E0580}</Project>
       <Name>PhotonUnityNetworking.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
-      <Project>{8BA69457-B7AB-FA78-E5B8-3613A04E6B97}</Project>
+      <Project>{3B31C328-162E-3720-F7D4-5531CCB6C5FC}</Project>
       <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PunDemos.DemoHubEditor.csproj">
-      <Project>{A0DBB879-0BDF-D10F-EF28-FDBB4A53A753}</Project>
+      <Project>{E936551E-4FAF-6C07-2E88-816392FD3DC7}</Project>
       <Name>PunDemos.DemoHubEditor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonRealtime.csproj">
-      <Project>{D6B5642E-5C6E-ED52-82B1-29AC8B37B73B}</Project>
+      <Project>{AB60C940-2988-3F9A-B55A-1AE6C578393E}</Project>
       <Name>PhotonRealtime</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
-      <Project>{6F59418C-EC2E-9889-760A-BD1494C21445}</Project>
+      <Project>{FBC9FEC8-E99D-F74D-22E8-9AFB7AC80412}</Project>
       <Name>PhotonUnityNetworking.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.csproj">
-      <Project>{199B3F5D-45C0-C304-F33A-7F760015EAFA}</Project>
+      <Project>{E2453387-CA2C-1E1C-3636-327E18D6D6D7}</Project>
       <Name>PhotonUnityNetworking</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Demos.csproj">
-      <Project>{9B63DA5C-9D41-FF8B-0086-58B2866E30DC}</Project>
+      <Project>{A23F22ED-46DC-F0EA-9FF1-F9E6BBA2F88E}</Project>
       <Name>PhotonUnityNetworking.Demos</Name>
     </ProjectReference>
     <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj">
-      <Project>{B21D252A-C410-A26F-9214-726F247ECAB4}</Project>
+      <Project>{34065A3A-6D57-66D5-C6EF-02D3E46865FB}</Project>
       <Name>PunDemos.DemoSlotcarEditor</Name>
     </ProjectReference>
   </ItemGroup>
