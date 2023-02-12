@@ -13,12 +13,13 @@ namespace HJ
         [Header("Setting")]
         [SerializeField] private GameObject projectilePrefab;
         [SerializeField] private Transform projectPosition;
+        [SerializeField] private ParticleSystem particlePrefab;
 
         //================ Value =================
         [SerializeField] private float power = 30f;
      
-        [SerializeField] private float shootingDelay;
-        [SerializeField] private float endDelay;
+        [SerializeField] private float shootingDelay = 3f;
+        [SerializeField] private float endDelay = 1f;
       
         //================ Debug ==================
         [Header("Debug")]
@@ -99,6 +100,10 @@ namespace HJ
 
         private void Shoot()
         {
+            particlePrefab.Play();
+           /* GameObject fx = Instantiate(particlePrefab, arrowsParent.transform.position, new Quaternion());
+            fx.transform.localEulerAngles = Vector3.zero;*/
+
             curProjectile.transform.parent = null;
             curProjectile.GetComponent<Rigidbody>().isKinematic = false;
             curProjectile.GetComponent<Rigidbody>().AddForce(transform.up * power, ForceMode.VelocityChange);
