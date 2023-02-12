@@ -5,72 +5,27 @@ using UnityEngine;
 public class PatrolObject : MonoBehaviour
 {
     [Header("Patrol")]
-    [SerializeField] private bool isHorizontal = true;
-    [SerializeField] private float distance = 10.0f;
-    [SerializeField] private float speed = 10.0f;
+    [SerializeField] private float distance = 7.0f;
+    [SerializeField] private float speed = 1.0f;
+    [SerializeField] private bool isDirX = true;
 
-    private bool isForward = true;
-    private Vector3 startPosition;
+    private Vector3 startPos;
 
-    private void Awake()
+    private void Start()
     {
-        startPosition = transform.position;
-        if (isHorizontal)
-            transform.position += Vector3.right;
-        else
-            transform.position += Vector3.forward;
+        startPos = transform.localPosition;
     }
 
     private void Update()
     {
-        if (isHorizontal)
-        {
-            if (isForward)
-            {
-                if (transform.position.x < startPosition.x + distance)
-                {
-                    transform.position += Vector3.right * speed * Time.deltaTime;
-                }
+        Patrolling();
+    }
 
-                else
-                    isForward = false;
-            }
+    private void Patrolling()
+    {
+        Vector3 dir = isDirX ? Vector3.right : Vector3.forward;
+        Vector3 pos = distance * Mathf.Sin(Time.time * speed) * dir;
 
-            else
-            {
-                if (transform.position.x > startPosition.x)
-                {
-                    transform.position -= Vector3.right * speed * Time.deltaTime;
-                }
-
-                else
-                    isForward = true;
-            }
-        }
-
-        else
-        {
-            if (isForward)
-            {
-                if (transform.position.z < startPosition.z + distance)
-                {
-                    transform.position += Vector3.forward * speed * Time.deltaTime;
-                }
-
-                else
-                    isForward = false;
-            }
-
-            else
-            {
-                if (transform.position.z > startPosition.z)
-                {
-                    transform.position -= Vector3.forward * speed * Time.deltaTime;
-                }
-
-                else
-                    isForward = true;
-            }
-        }
+        transform.localPosition = pos + startPos;
     }
 }

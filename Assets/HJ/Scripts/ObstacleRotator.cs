@@ -9,6 +9,8 @@ public class ObstacleRotator : ControlableObstacle
 
     [SerializeField] private bool isOpposite;
     [SerializeField] private bool startRandom;
+    [SerializeField] private List<Transform> evenList = new List<Transform>();
+    [SerializeField] private List<Transform> oddList = new List<Transform>();
 
     private void Start()
     {
@@ -24,9 +26,17 @@ public class ObstacleRotator : ControlableObstacle
 
     private void FixedUpdate()
     {
-        int rotationDir = isOpposite ? -1 : 1;
-        transform.Rotate(rotationDir * rotationVelocity);
+        for (int i = 0; i < evenList.Count; i++)
+        {
+            evenList[i].transform.Rotate(-rotationVelocity);
+        }
+
+        for (int j = 0; j < oddList.Count; j++)
+        {
+            oddList[j].transform.Rotate(rotationVelocity);
+        }
     }
+
     protected override IEnumerator ControlCoroutine(float duration, float coolTime)
     {
         rotationVelocity *= changed;
