@@ -11,42 +11,46 @@ public class PlayerPunch : MonoBehaviour
     {
         pv = GetComponentInParent<PhotonView>();
 
-        if (!pv.IsMine) Destroy(this);
+        //if (!pv.IsMine) Destroy(this);
     }
 
-    private void Update()
-    {
-
-    }
 
     private void OnTriggerEnter(Collider collision)
     {
-        //if (pv.IsMine) return;
+        PhotonView otherPV = collision.gameObject.GetComponent<PhotonView>();
 
-        if (collision.gameObject.GetComponent<PhotonView>().IsMine) return;
-        else if (collision.gameObject.GetComponent<PhotonView>().IsMine == null) return;
-
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (otherPV != null)
         {
-            PlayerController pc = collision.gameObject.GetComponent<PlayerController>();
-            Rigidbody rigid = collision.gameObject.GetComponent<Rigidbody>();
-
-            if (pc != null)
+            if (otherPV != pv)
             {
-                pc.photonView.RPC("OnHit", RpcTarget.All);
-
-                if (rigid != null)
+                if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
                 {
-                    Rigidbody[] rig = collision.gameObject.GetComponentsInChildren<Rigidbody>();
+                    PlayerController pc = collision.gameObject.GetComponent<PlayerController>();
+                    Rigidbody rigid = collision.gameObject.GetComponent<Rigidbody>();
 
-                    foreach (Rigidbody r in rig)
+                    if (pc != null)
                     {
-                        StartCoroutine(DelayAddForce(r));
+                        pc.photonView.RPC("OnHit", RpcTarget.All);
+
+                        if (rigid != null)
+                        {
+                            Rigidbody[] rig = collision.gameObject.GetComponentsInChildren<Rigidbody>();
+
+                            foreach (Rigidbody r in rig)
+                            {
+                                StartCoroutine(DelayAddForce(r));
+                            }
+                        }
                     }
+
                 }
             }
 
         }
+
+        
+
+        
     }
 
     IEnumerator DelayAddForce(Rigidbody target)

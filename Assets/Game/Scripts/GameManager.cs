@@ -1,3 +1,4 @@
+using Cinemachine;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
@@ -14,9 +15,23 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private TMP_Text infoText;
 
+    [SerializeField]
+    private CinemachineFreeLook playerCam;
+
+    private SkinnedMeshRenderer[] Skincolor;
+
+    private Color playerColor;
+
+    private PhotonView pv;
+
+    private void Awake()
+    {
+    }
 
     private void Start()
     {
+        pv = GetComponent<PhotonView>();
+
         if (PhotonNetwork.InRoom)
         {
             Hashtable props = new Hashtable { { "Load", true } };
@@ -28,18 +43,20 @@ public class GameManager : MonoBehaviourPunCallbacks
             //StartCoroutine(DelayGameStart());
             //TestGameStart();
         }
+
+
     }
 
     public override void OnConnectedToMaster()
     {
-        PhotonNetwork.JoinOrCreateRoom("TextRoom", new RoomOptions() { MaxPlayers = 8 }, null);
+        PhotonNetwork.JoinOrCreateRoom("TestRoom", new RoomOptions() { MaxPlayers = 4 }, null);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         if (PhotonNetwork.LocalPlayer.ActorNumber == newMasterClient.ActorNumber)
         {
-            StartCoroutine(SpawnStone());
+            //StartCoroutine(SpawnStone());
         }
     }
 
@@ -81,7 +98,27 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void GameStart()
     {
         PrintInfo("Game Start");
+        float angularStart = (360.0f / PhotonNetwork.CurrentRoom.PlayerCount) * PhotonNetwork.LocalPlayer.GetPlayerNumber();
+        float x = 20.0f * Mathf.Sin(angularStart * Mathf.Deg2Rad);
+        float z = 20.0f * Mathf.Cos(angularStart * Mathf.Deg2Rad);
+        //Vector3 position = new Vector3(x, 0.0f, z);
+        //Quaternion rotation = Quaternion.Euler(0.0f, angularStart, 0.0f);
+        Vector3 position = new Vector3(0, 10f, 0);
+        Quaternion rotation = Quaternion.Euler(0.0f, 0f, 0.0f);
+
+        GameObject Player = PhotonNetwork.Instantiate("Player", position, rotation, 0);
+        playerCam.LookAt = Player.transform;
+        playerCam.Follow = Player.transform;
+
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetColor", RpcTarget.AllViaServer);
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            //StartCoroutine(SpawnStone());
+        }
+        
     }
+
 
     private void TestGameStart()
     {
@@ -89,17 +126,23 @@ public class GameManager : MonoBehaviourPunCallbacks
         float angularStart = (360.0f / PhotonNetwork.CurrentRoom.PlayerCount) * PhotonNetwork.LocalPlayer.GetPlayerNumber();
         float x = 20.0f * Mathf.Sin(angularStart * Mathf.Deg2Rad);
         float z = 20.0f * Mathf.Cos(angularStart * Mathf.Deg2Rad);
-        Vector3 position = new Vector3(x, 0.0f, z);
-        Quaternion rotation = Quaternion.Euler(0.0f, angularStart, 0.0f);
+        //Vector3 position = new Vector3(x, 0.0f, z);
+       // Quaternion rotation = Quaternion.Euler(0.0f, angularStart, 0.0f);
+        Vector3 position = new Vector3(0, 15f, 0);
+        Quaternion rotation = Quaternion.Euler(0.0f, 0f, 0.0f);
 
-        PhotonNetwork.Instantiate("Player", position, rotation, 0);
+        GameObject Player = PhotonNetwork.Instantiate("Player", position, rotation, 0);
+        playerCam.LookAt = Player.transform;
+        playerCam.Follow = Player.transform;
+
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetColor", RpcTarget.AllViaServer);
 
         if (PhotonNetwork.IsMasterClient)
         {
-            StartCoroutine(SpawnStone());
+            //StartCoroutine(SpawnStone());
         }
+        
     }
-
 
 
     private bool AllPlayersLoadLevel()

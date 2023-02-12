@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -88,6 +89,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private PhotonView pv;
 
     private bool movable;
+
+    private SkinnedMeshRenderer[] Skincolor;
 
     private void Awake()
     {
@@ -668,6 +671,26 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
         else
         { getupTimer = 0.0f; }
+    }
+
+    [PunRPC]
+    public void SetColor()
+    {
+        Player player = gameObject.GetComponent<PhotonView>().Owner;
+
+        object R, G, B;
+
+        if (player.CustomProperties.TryGetValue("R", out R) &&
+            player.CustomProperties.TryGetValue("G", out G) &&
+            player.CustomProperties.TryGetValue("B", out B))
+        {
+            Skincolor = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
+            Color playercolor = new Color((float)R, (float)G, (float)B);
+            for (int i = 0; i < Skincolor.Length; i++)
+            {
+                Skincolor[i].material.color = playercolor;
+            }
+        }
     }
 
     class BoneTransform
