@@ -41,6 +41,31 @@ MonoBehaviour:
   - RespawnSpaceship
   - CreateBullet
   - SetPlayerColor
+  - GetUp
+  - OnHit
+  - OnRagDoll
+  - OutRagDoll
+  - ResettingBones
+  - CheckFalling
+  - FixedMove
+  - Move
+  - TestMove
+  - FixedAttack
+  - FixedJump
+  - AnimationUpdate
+  - moveAnimDetect
+  - JumpDetect
+  - AttackAnimDetect
+  - SetColor
+  - SetNickname
+  - ChangeState
+  - CreateProjectile
+  - PrepareProjectile
+  - Rest
+  - Shoot
+  - WaitBeforeShoot
+  - Initiate
+  - SetTeam
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

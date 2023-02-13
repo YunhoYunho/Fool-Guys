@@ -4,6 +4,7 @@ using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,19 +19,18 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private CinemachineFreeLook playerCam;
 
-    private SkinnedMeshRenderer[] Skincolor;
+    public GameObject NowRespawnArea;
 
-    private Color playerColor;
+    public enum Team { Red, Blue };
+    public Team team;
 
-    private PhotonView pv;
+    public int RedTeamNeedGoalPoint = 0;
+    public int BlueTeamNeedGoalPoint = 0;
 
-    private void Awake()
-    {
-    }
+    Vector3 spawn_1p_Pos, spawn_2p_Pos, spawn_3p_Pos, spawn_4p_Pos;
 
     private void Start()
     {
-        pv = GetComponent<PhotonView>();
 
         if (PhotonNetwork.InRoom)
         {
@@ -44,7 +44,10 @@ public class GameManager : MonoBehaviourPunCallbacks
             //TestGameStart();
         }
 
-
+        spawn_1p_Pos = GameObject.Find("Start Point 1P").transform.position;
+        spawn_2p_Pos = GameObject.Find("Start Point 2P").transform.position;
+        spawn_3p_Pos = GameObject.Find("Start Point 3P").transform.position;
+        spawn_4p_Pos = GameObject.Find("Start Point 4P").transform.position;
     }
 
     public override void OnConnectedToMaster()
@@ -97,20 +100,50 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void GameStart()
     {
-        PrintInfo("Game Start");
-        float angularStart = (360.0f / PhotonNetwork.CurrentRoom.PlayerCount) * PhotonNetwork.LocalPlayer.GetPlayerNumber();
-        float x = 20.0f * Mathf.Sin(angularStart * Mathf.Deg2Rad);
-        float z = 20.0f * Mathf.Cos(angularStart * Mathf.Deg2Rad);
-        //Vector3 position = new Vector3(x, 0.0f, z);
-        //Quaternion rotation = Quaternion.Euler(0.0f, angularStart, 0.0f);
-        Vector3 position = new Vector3(0, 10f, 0);
-        Quaternion rotation = Quaternion.Euler(0.0f, 0f, 0.0f);
+        PrintInfo("");
+
+        int PlayerNum = PhotonNetwork.LocalPlayer.ActorNumber;
+        Vector3 position;
+        Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+        {
+            switch (PlayerNum)
+            {
+                case 1: position = spawn_2p_Pos; team = Team.Red; break;
+                case 2: position = spawn_3p_Pos; team = Team.Blue; break;
+                default: position = spawn_3p_Pos; break;
+            }
+        }
+
+        else
+        {
+            switch (PlayerNum)
+            {
+                case 1: position = spawn_1p_Pos; team = Team.Red; break;
+                case 2: position = spawn_2p_Pos; team = Team.Red; break;
+                case 3: position = spawn_3p_Pos; team = Team.Blue; break;
+                case 4: position = spawn_4p_Pos; team = Team.Blue; break;
+                default: position = spawn_3p_Pos; break;
+            }
+        }
 
         GameObject Player = PhotonNetwork.Instantiate("Player", position, rotation, 0);
         playerCam.LookAt = Player.transform;
         playerCam.Follow = Player.transform;
 
         Player.gameObject.GetComponent<PhotonView>().RPC("SetColor", RpcTarget.AllViaServer);
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetNickname", RpcTarget.AllViaServer);
+
+        if (team == Team.Red) 
+        {
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Red");
+
+        }
+        else
+        {
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Blue");
+        }
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -119,17 +152,39 @@ public class GameManager : MonoBehaviourPunCallbacks
         
     }
 
+    public void NeedGoalPoint(string team)
+    {
+    }
 
     private void TestGameStart()
     {
         PrintInfo("");
-        float angularStart = (360.0f / PhotonNetwork.CurrentRoom.PlayerCount) * PhotonNetwork.LocalPlayer.GetPlayerNumber();
-        float x = 20.0f * Mathf.Sin(angularStart * Mathf.Deg2Rad);
-        float z = 20.0f * Mathf.Cos(angularStart * Mathf.Deg2Rad);
-        //Vector3 position = new Vector3(x, 0.0f, z);
-       // Quaternion rotation = Quaternion.Euler(0.0f, angularStart, 0.0f);
-        Vector3 position = new Vector3(0, 15f, 0);
-        Quaternion rotation = Quaternion.Euler(0.0f, 0f, 0.0f);
+
+        int PlayerNum = PhotonNetwork.LocalPlayer.ActorNumber;
+        Vector3 position;
+        Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+        {
+            switch (PlayerNum)
+            {
+                case 0: position = spawn_2p_Pos; team = Team.Red; break;
+                case 1: position = spawn_3p_Pos; team = Team.Blue; break;
+                default: position = spawn_3p_Pos; break;
+            }
+        }
+
+        else
+        {
+            switch (PlayerNum)
+            {
+                case 0: position = spawn_1p_Pos; team = Team.Red; break;
+                case 1: position = spawn_2p_Pos; team = Team.Red; break;
+                case 2: position = spawn_3p_Pos; team = Team.Blue; break;
+                case 3: position = spawn_4p_Pos; team = Team.Blue; break;
+                default: position = spawn_3p_Pos; break;
+            }
+        }
 
         GameObject Player = PhotonNetwork.Instantiate("Player", position, rotation, 0);
         playerCam.LookAt = Player.transform;
@@ -139,9 +194,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            //StartCoroutine(SpawnStone());
         }
-        
+
     }
 
 

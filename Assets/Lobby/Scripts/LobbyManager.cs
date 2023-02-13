@@ -101,7 +101,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             { "B", (float)PlayerColor.b}
         };
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-
+        roomPanel.RoomNameSet(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.LocalPlayer.NickName);
         roomPanel.UpdateRoomState();
 
     }

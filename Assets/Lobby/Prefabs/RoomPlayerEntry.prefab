@@ -41,7 +41,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 288, y: 616}
+  m_AnchoredPosition: {x: 301, y: 592}
   m_SizeDelta: {x: 403.3578, y: 533.1605}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &311048635483385342
@@ -98,7 +98,6 @@ MonoBehaviour:
   playerName: {fileID: 1490609303004357387}
   playerReady: {fileID: 1490609302985099887}
   playerReadyButton: {fileID: 1490609303193853393}
-  lobbyManager: {fileID: 0}
 --- !u!1 &1490609301496260205
 GameObject:
   m_ObjectHideFlags: 0

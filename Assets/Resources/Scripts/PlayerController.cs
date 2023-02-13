@@ -1,7 +1,10 @@
 using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 public enum PlayerState { Idle, GetDown, GetUp, GettingUp, Jump }
 
@@ -86,16 +89,24 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
 
     //=============== Photon ==================
+    [SerializeField]
+    private TMP_Text nickName;
+
     private PhotonView pv;
 
     private bool movable;
 
     private SkinnedMeshRenderer[] Skincolor;
 
+    private GameManager gameManager;
+
+    [SerializeField]
+    private TMP_Text TeamText;
+
     private void Awake()
     {
         pv = GetComponent<PhotonView>();
-
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         //=== PlayerState SetUp ===
         //moveSpeed = 50f;
@@ -215,6 +226,16 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
     }
 
+    public Transform[] GetBonesTransform()
+    {
+        return bones;
+    }
+
+    public bool GetStateRagDoll()
+    {
+        return ragdoll;
+    }
+
     private void GettingUpAnimationCheck()
     {
         if (pv.IsMine == false) return;
@@ -264,14 +285,13 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         upperAttackAnim = null;
     }
-
     private void SetJoint()
     {
         for (int i = 0; i < playerColliders.Length; i++)
         {
             playerColliders[i].enabled = !getUp;
         }
-        playercol.enabled = getUp;
+        playercol.isTrigger/* enabled */= !getUp;
     }
 
     #region 캐릭터 움직임 과 MaxSpeed로의 속도제한
@@ -294,7 +314,9 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
         moveVec = fowardVec * moveInput.z + rightVec * moveInput.x;
 
-        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, 0.8f);
+        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, Time.fixedDeltaTime * 10);
+        //transform.forward = Vector3.Lerp(transform.forward, moveVec, 0.8f);
+
 
         // GetAxisRaw 의 입력값이 있는지의 여부를 bool로 판단하여 저장 
         bool vermove = Input.GetAxisRaw("Vertical") != 0 ? true : false;
@@ -434,6 +456,13 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             //OnHit();
         }
 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+            gameObject.transform.position = gameManager.NowRespawnArea.transform.position;
+            gameObject.transform.rotation = rotation;
+        }
+
     }
 
     private void GettingUpBehaviour()
@@ -459,7 +488,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         getUp = false;
         ragdoll = true;
         getupTimer = 0;
-        gameObject.GetComponent<PhotonAnimatorView>().enabled = getUp;
+        //gameObject.GetComponent<PhotonAnimatorView>().enabled = getUp;
         gameObject.GetComponent<Animator>().enabled = getUp;
         OnRagDoll();
         rigid.velocity = Vector3.zero;
@@ -467,6 +496,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     }
 
     private void GetUp()
+
     {
         getUp = true;
         playstandup = true;
@@ -606,7 +636,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         {
             fallTimer += Time.deltaTime;
 
-            if (fallTimer > 2f)
+            if (fallTimer > 1.5f)
             {
                 isFalling = true;
                 pv.RPC("JumpDetect", RpcTarget.All, false);
@@ -617,7 +647,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         {
             inMidAir = true;
             fallTimer += Time.deltaTime;
-            if (fallTimer > 1f)
+            if (fallTimer > 0.75f)
             {
                 inMidAir = false;
                 isFalling = true;
@@ -693,6 +723,25 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
     }
 
+    [PunRPC]
+    public void SetNickname()
+    {
+        Player player = gameObject.GetComponent<PhotonView>().Owner;
+        nickName.text = player.NickName + "\n<size=0.1>▼";
+    }
+
+
+    [PunRPC]
+    public void SetTeam(string team)
+    {
+        switch (team)
+        {
+            case "Red": TeamText.text = "<color=red>[RED]</color>"; gameManager.RedTeamNeedGoalPoint += 1; break;
+            case "Blue": TeamText.text = "<color=blue>[BLUE]</color>"; gameManager.BlueTeamNeedGoalPoint += 1; break;
+            default: break;
+        }
+    }
+
     class BoneTransform
     {
         public Vector3 position { get; set; }
@@ -702,9 +751,25 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (!pv.IsMine) return;
+
         if (isFalling)
         {
-            OnHit();
+            pv.RPC("OnHit", RpcTarget.All);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!pv.IsMine) return;
+
+        if (other.gameObject.CompareTag("RespawnPlane"))
+        {
+            Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+            moveVec = Vector3.zero;
+            rigid.velocity = Vector3.zero;
+            gameObject.transform.position = gameManager.NowRespawnArea.transform.position;
+            gameObject.transform.rotation = rotation;
         }
     }
 

@@ -2,6 +2,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
@@ -14,6 +15,12 @@ public class RoomPanel : MonoBehaviour
 
     [SerializeField]
     private RectTransform playerContent;
+
+    [SerializeField]
+    private TMP_Text NickName;
+
+    [SerializeField]
+    private TMP_Text RoomName;
 
     [SerializeField]
     private Button startButton;
@@ -78,6 +85,12 @@ public class RoomPanel : MonoBehaviour
         return true;
     }
 
+    public void RoomNameSet(string roomname, string nickname)
+    {
+        RoomName.text = roomname;
+        NickName.text = nickname;
+    }
+
     public void OnStartButtonClicked()
     {
         PhotonNetwork.CurrentRoom.IsOpen = false;
@@ -86,7 +99,8 @@ public class RoomPanel : MonoBehaviour
         PhotonNetwork.AutomaticallySyncScene = true;
         //PhotonNetwork.LoadLevel("SW_Scene");
 
-        PhotonNetwork.LoadLevel("Stage1");
+        //PhotonNetwork.LoadLevel("Stage1");
+        PhotonNetwork.LoadLevel("Test_Map");
 
         //SceneManager.LoadScene
     }

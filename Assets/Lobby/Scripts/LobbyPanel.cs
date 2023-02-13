@@ -31,8 +31,8 @@ public class LobbyPanel : MonoBehaviour
     [SerializeField]
     private Toggle VisibleCheckToggle;
 
-    private Dictionary<string, RoomInfo> cachedRoomList;
-    private Dictionary<string, GameObject> roomListEntries;
+    public Dictionary<string, RoomInfo> cachedRoomList;
+    public Dictionary<string, GameObject> roomListEntries;
 
     private void Awake()
     {
