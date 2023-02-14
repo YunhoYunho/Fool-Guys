@@ -92,6 +92,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField]
     private TMP_Text nickName;
 
+    private string Team;
+
     private PhotonView pv;
 
     private bool movable;
@@ -112,7 +114,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         //moveSpeed = 50f;
         //jumpPower = 13f;
         state = PlayerState.Idle;
-        groundRadious = 0.3f;
+        groundRadious = 0.2f;
         //=========================
 
         //==== SetUp Coroutine ====
@@ -174,9 +176,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private void Update()
     {
+        if (!gameManager.onGameStart) return;
 
         switch (state)
         {
+
             case PlayerState.Idle:
                 //MoveDetect();
                 Move();
@@ -410,6 +414,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (!pv.IsMine) return;
 
+
         if (attackOrder && attackcoroutine == null)
         {
             //isAttacking = true;
@@ -421,6 +426,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private void FixedMove()
     {
+
         //isMoving = moveVec.sqrMagnitude != 0 ? true : false;
         rigid.AddForce(moveVec * moveSpeed);
     }
@@ -458,12 +464,20 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
-            gameObject.transform.position = gameManager.NowRespawnArea.transform.position;
-            gameObject.transform.rotation = rotation;
+            Respawn();
         }
 
     }
+
+    private void Respawn()
+    {
+        moveVec = Vector3.zero;
+        rigid.velocity = Vector3.zero;
+        Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+        gameObject.transform.position = gameManager.NowRespawnArea.transform.position;
+        gameObject.transform.rotation = rotation;
+    }
+
 
     private void GettingUpBehaviour()
     {
@@ -734,10 +748,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void SetTeam(string team)
     {
+        Team = team;
+
         switch (team)
         {
-            case "Red": TeamText.text = "<color=red>[RED]</color>"; gameManager.RedTeamNeedGoalPoint += 1; break;
-            case "Blue": TeamText.text = "<color=blue>[BLUE]</color>"; gameManager.BlueTeamNeedGoalPoint += 1; break;
+            case "Red": TeamText.text = "<color=red>[RED]</color>"; gameManager.GoalPointChange("Red", 1); break;
+            case "Blue": TeamText.text = "<color=blue>[BLUE]</color>"; gameManager.GoalPointChange("Blue", 1); break;
             default: break;
         }
     }
@@ -765,11 +781,13 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         if (other.gameObject.CompareTag("RespawnPlane"))
         {
-            Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
-            moveVec = Vector3.zero;
-            rigid.velocity = Vector3.zero;
-            gameObject.transform.position = gameManager.NowRespawnArea.transform.position;
-            gameObject.transform.rotation = rotation;
+            Respawn();
+        }
+
+        if (other.gameObject.CompareTag("Finish"))
+        {
+            gameManager.GetComponent<PhotonView>().RPC("GoalPointChange", RpcTarget.All ,Team, -1);
+            PhotonNetwork.Destroy(gameObject);
         }
     }
 

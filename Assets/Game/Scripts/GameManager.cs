@@ -19,15 +19,27 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private CinemachineFreeLook playerCam;
 
+    private PhotonView pv;
+
     public GameObject NowRespawnArea;
 
-    public enum Team { Red, Blue };
+    public enum Team { None, Red, Blue };
     public Team team;
+    public string myTeam;
 
     public int RedTeamNeedGoalPoint = 0;
     public int BlueTeamNeedGoalPoint = 0;
 
+    public bool onGameStart;
+
+    public bool isTestGame;
+
     Vector3 spawn_1p_Pos, spawn_2p_Pos, spawn_3p_Pos, spawn_4p_Pos;
+
+    private void Awake()
+    {
+        pv = GetComponent<PhotonView>();
+    }
 
     private void Start()
     {
@@ -50,9 +62,18 @@ public class GameManager : MonoBehaviourPunCallbacks
         spawn_4p_Pos = GameObject.Find("Start Point 4P").transform.position;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.G)) 
+        {
+            pv.RPC("GoalPointChange", RpcTarget.All, "Red", 1);
+        }
+    }
+
+
     public override void OnConnectedToMaster()
     {
-        PhotonNetwork.JoinOrCreateRoom("TestRoom", new RoomOptions() { MaxPlayers = 4 }, null);
+        PhotonNetwork.JoinOrCreateRoom("TestRoomSW", new RoomOptions() { MaxPlayers = 4 }, null);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
@@ -110,8 +131,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             switch (PlayerNum)
             {
-                case 1: position = spawn_2p_Pos; team = Team.Red; break;
-                case 2: position = spawn_3p_Pos; team = Team.Blue; break;
+                case 1: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 2: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
                 default: position = spawn_3p_Pos; break;
             }
         }
@@ -120,10 +141,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             switch (PlayerNum)
             {
-                case 1: position = spawn_1p_Pos; team = Team.Red; break;
-                case 2: position = spawn_2p_Pos; team = Team.Red; break;
-                case 3: position = spawn_3p_Pos; team = Team.Blue; break;
-                case 4: position = spawn_4p_Pos; team = Team.Blue; break;
+                case 1: position = spawn_1p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 2: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 3: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                case 4: position = spawn_4p_Pos; team = Team.Blue; myTeam = "Blue"; break;
                 default: position = spawn_3p_Pos; break;
             }
         }
@@ -147,14 +168,18 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            //StartCoroutine(SpawnStone());
+            pv.RPC("GameStartSend", RpcTarget.All);
         }
         
     }
 
-    public void NeedGoalPoint(string team)
+    [PunRPC]
+    public void GameStartSend()
     {
+        onGameStart = true;
     }
+
+
 
     private void TestGameStart()
     {
@@ -168,8 +193,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             switch (PlayerNum)
             {
-                case 0: position = spawn_2p_Pos; team = Team.Red; break;
-                case 1: position = spawn_3p_Pos; team = Team.Blue; break;
+                case 1: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 2: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
                 default: position = spawn_3p_Pos; break;
             }
         }
@@ -178,10 +203,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             switch (PlayerNum)
             {
-                case 0: position = spawn_1p_Pos; team = Team.Red; break;
-                case 1: position = spawn_2p_Pos; team = Team.Red; break;
-                case 2: position = spawn_3p_Pos; team = Team.Blue; break;
-                case 3: position = spawn_4p_Pos; team = Team.Blue; break;
+                case 1: position = spawn_1p_Pos; team = Team.Red; myTeam = "Red";break;
+                case 2: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 3: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                case 4: position = spawn_4p_Pos; team = Team.Blue; myTeam = "Blue"; break;
                 default: position = spawn_3p_Pos; break;
             }
         }
@@ -191,9 +216,22 @@ public class GameManager : MonoBehaviourPunCallbacks
         playerCam.Follow = Player.transform;
 
         Player.gameObject.GetComponent<PhotonView>().RPC("SetColor", RpcTarget.AllViaServer);
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetNickname", RpcTarget.AllViaServer);
+
+        if (team == Team.Red)
+        {
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Red");
+
+        }
+        else
+        {
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Blue");
+        }
 
         if (PhotonNetwork.IsMasterClient)
         {
+            isTestGame = true;
+            pv.RPC("GameStartSend", RpcTarget.All);
         }
 
     }
@@ -218,6 +256,48 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
 
         return true;
+    }
+
+    [PunRPC]
+    public void GoalPointChange(string team, int score)
+    {
+        switch (team)
+        {
+            case "Red": RedTeamNeedGoalPoint += score; break;
+            case "Blue": BlueTeamNeedGoalPoint += score; break;
+            default: break;
+        }
+
+        DetectGameOver();
+    }
+
+    private void DetectGameOver()
+    {
+        if (!PhotonNetwork.IsMasterClient || !onGameStart) return;
+
+        if (!isTestGame)
+        {
+            if (RedTeamNeedGoalPoint <= 0 || BlueTeamNeedGoalPoint <= 0)
+                pv.RPC("GameOver", RpcTarget.All, myTeam);
+        }
+        else
+        {
+            if (RedTeamNeedGoalPoint <= 0)
+                pv.RPC("GameOver", RpcTarget.All, myTeam);
+        }
+
+    }
+
+    [PunRPC]
+    public void GameOver(string team)
+    {
+        PrintInfo("게임 끝");
+        // TODO: 게임오버 로직 ex) 게임오버 씬 이동 or 시상식, etc...
+    }
+
+    public void SetCheckPoint(GameObject area)
+    {
+        NowRespawnArea = area;
     }
 
     private void PrintInfo(string info)
@@ -269,5 +349,9 @@ public class GameManager : MonoBehaviourPunCallbacks
                 PhotonNetwork.InstantiateRoomObject("SmallStone", position, Quaternion.Euler(Random.value * 360.0f, Random.value * 360.0f, Random.value * 360.0f), 0, instantiationData);
             }
         }
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
     }
 }

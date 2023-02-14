@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,7 +16,17 @@ public class Respawn : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            gameManager.NowRespawnArea = gameObject;
+            PhotonView pv = other.gameObject.GetComponent<PhotonView>();
+
+            if (pv != null) 
+            {
+                if (other.gameObject.GetComponent<PhotonView>().IsMine)
+                {
+                    Debug.Log("리스폰 지점 닿음");
+                    gameManager.SetCheckPoint(gameObject);
+                }
+            }
+            
         }
         
     }

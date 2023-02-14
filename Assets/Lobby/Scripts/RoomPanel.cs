@@ -27,10 +27,13 @@ public class RoomPanel : MonoBehaviour
 
     private List<PlayerEntry> playerEntries;
 
+    private LoadScreenScript loadScene;
+
 
     private void Awake()
     {
         playerEntries = new List<PlayerEntry>();
+        loadScene = GameObject.Find("LoadingCanvas").GetComponent<LoadScreenScript>();
     }
 
     public void UpdateRoomState()
@@ -93,16 +96,12 @@ public class RoomPanel : MonoBehaviour
 
     public void OnStartButtonClicked()
     {
-        PhotonNetwork.CurrentRoom.IsOpen = false;
         //PhotonNetwork.CurrentRoom.IsVisible = false;
-
-        PhotonNetwork.AutomaticallySyncScene = true;
         //PhotonNetwork.LoadLevel("SW_Scene");
-
         //PhotonNetwork.LoadLevel("Stage1");
-        PhotonNetwork.LoadLevel("Test_Map");
-
         //SceneManager.LoadScene
+
+        StartCoroutine(DelayStart());
     }
 
     public void OnLeaveRoomButtonClicked()
@@ -110,5 +109,16 @@ public class RoomPanel : MonoBehaviour
         PhotonNetwork.LeaveRoom();
         //PhotonNetwork.JoinLobby();
     }
+
+    public IEnumerator DelayStart()
+    {
+        loadScene.LoadNextLevel();
+        yield return new WaitForSeconds(3f);
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+        PhotonNetwork.AutomaticallySyncScene = true;
+        PhotonNetwork.LoadLevel("Test_Map");
+
+    }
+
 
 }

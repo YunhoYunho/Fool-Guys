@@ -66,6 +66,9 @@ MonoBehaviour:
   - WaitBeforeShoot
   - Initiate
   - SetTeam
+  - GoalPointChange
+  - GameOver
+  - GameStartSend
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
