@@ -105,6 +105,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField]
     private TMP_Text TeamText;
 
+    [SerializeField] private ParticleSystem collisionEffect;
+
     private void Awake()
     {
         pv = GetComponent<PhotonView>();
@@ -772,6 +774,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (isFalling)
         {
             pv.RPC("OnHit", RpcTarget.All);
+        }
+
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            collisionEffect.Play();
+            Debug.Log("Effect");
         }
     }
 

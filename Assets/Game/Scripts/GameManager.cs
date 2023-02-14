@@ -64,9 +64,49 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void Update()
     {
+        if (!pv.IsMine) return;
+
         if (Input.GetKeyDown(KeyCode.G)) 
         {
             pv.RPC("GoalPointChange", RpcTarget.All, "Red", 1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            TestRespawnPointSet(1);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            TestRespawnPointSet(2);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            TestRespawnPointSet(3);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            TestRespawnPointSet(4);
+        }
+    }
+
+    public void TestRespawnPointSet(int area)
+    {
+        GameObject Left_1 = GameObject.Find("RespawnArea1_Left");
+        GameObject Left_2 = GameObject.Find("RespawnArea2_Left");
+        GameObject Left_3 = GameObject.Find("RespawnArea3");
+        GameObject Left_4 = GameObject.Find("RespawnArea4");
+
+
+        switch (area)
+        {
+            case 1: NowRespawnArea = Left_1; break;
+            case 2: NowRespawnArea = Left_2; break;
+            case 3: NowRespawnArea = Left_3; break;
+            case 4: NowRespawnArea = Left_4; break;
+            default: break;
         }
     }
 
@@ -173,11 +213,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         
     }
 
-    [PunRPC]
-    public void GameStartSend()
-    {
-        onGameStart = true;
-    }
+    
 
 
 
@@ -286,6 +322,12 @@ public class GameManager : MonoBehaviourPunCallbacks
                 pv.RPC("GameOver", RpcTarget.All, myTeam);
         }
 
+    }
+
+    [PunRPC]
+    public void GameStartSend()
+    {
+        onGameStart = true;
     }
 
     [PunRPC]

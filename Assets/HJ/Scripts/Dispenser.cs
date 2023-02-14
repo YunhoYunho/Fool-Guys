@@ -32,9 +32,18 @@ namespace HJ
         //================ Photon =================
         private PhotonView pv;
 
-        public void ReadyToCreate()
+
+        public void ReadyToCreateDetect()
+        {
+            pv.RPC("ReadyToCreateBall", RpcTarget.All);
+        }
+
+
+        [PunRPC]
+        public void ReadyToCreateBall()
         {
             state = State.Create;
+
         }
 
 
@@ -42,6 +51,7 @@ namespace HJ
         {
             pv = GetComponent<PhotonView>();
         }
+
 
         public void FixedUpdate()
         {

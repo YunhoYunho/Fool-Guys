@@ -10,8 +10,5 @@ EditorBuildSettings:
     guid: 1cd1dfed0af10c34884128a22979786e
   - enabled: 1
     path: Assets/YH_Scene/Scenes/Test_Map.unity
-    guid: e8331c775b171fa40b4c4a64d0b3667b
-  - enabled: 0
-    path: Assets/SW_Scene/Stage1.unity
-    guid: ccc675c5d9f022448ad77acd1ffaa3c8
+    guid: 558b4c5b2169f354b9c949854d6fd71d
   m_configObjects: {}

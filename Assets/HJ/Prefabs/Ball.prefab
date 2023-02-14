@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2659397934548886164}
   - component: {fileID: 3827779624500794411}
   - component: {fileID: 1631330983116721525}
-  - component: {fileID: 8765995258390606808}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -75,8 +74,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc00aa5c62fc1e4478abd9b5978ce171, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Force: 2000
-  radius: 20
+  Force: 30
+  radius: 30
 --- !u!114 &1631330983116721525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,22 +88,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00f64865786f98d4e938046ed0c16379, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8765995258390606808
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8681149350362242784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
 --- !u!1001 &8681149348681781834
 PrefabInstance:
   m_ObjectHideFlags: 0

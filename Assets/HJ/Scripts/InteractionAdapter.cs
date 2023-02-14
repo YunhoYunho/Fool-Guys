@@ -12,7 +12,6 @@ namespace HJ_NoneUse
         {
             //Debug.Log("인터렉션");
             OnInteract?.Invoke(player);
-
         }
     }
 }

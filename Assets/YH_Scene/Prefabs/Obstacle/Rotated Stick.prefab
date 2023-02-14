@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 6368086487588885547}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 1, z: 0.5}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7629504929330178495}
@@ -43,6 +43,10 @@ PrefabInstance:
     - target: {fileID: 503385578143984380, guid: af8e2848756f7bf4eb4c9dccc305df79, type: 3}
       propertyPath: m_Name
       value: Stick
+      objectReference: {fileID: 0}
+    - target: {fileID: 503385578143984380, guid: af8e2848756f7bf4eb4c9dccc305df79, type: 3}
+      propertyPath: m_TagString
+      value: Obstacle
       objectReference: {fileID: 0}
     - target: {fileID: 5355143793316182771, guid: af8e2848756f7bf4eb4c9dccc305df79, type: 3}
       propertyPath: m_CastShadows
@@ -140,7 +144,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 863350294751150285, guid: 9afea906108d6d148b1a5febf4b976e9, type: 3}
       propertyPath: m_Name
-      value: Platform Circle Rotated_7 (1)
+      value: Platform
       objectReference: {fileID: 0}
     - target: {fileID: 863350294751150285, guid: 9afea906108d6d148b1a5febf4b976e9, type: 3}
       propertyPath: m_Layer
@@ -218,3 +222,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c409eeeccdfddbf41baa408dd9d61d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obstacleRotator: {fileID: 0}

@@ -69,6 +69,10 @@ MonoBehaviour:
   - GoalPointChange
   - GameOver
   - GameStartSend
+  - ReadyToCreate
+  - ReadyToCreateBall
+  - DoorObj
+  - SteppingObj
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
