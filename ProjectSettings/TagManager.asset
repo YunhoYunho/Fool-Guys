@@ -4,8 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Platform
-  - Respawn2
+  - Bullet
+  - RespawnPlane
   layers:
   - Default
   - TransparentFX
@@ -15,7 +15,7 @@ TagManager:
   - UI
   - Ground
   - Player
-  - 
+  - Obstacle
   - 
   - 
   - 
@@ -42,4 +42,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: On
+    uniqueID: 2789554497
     locked: 0

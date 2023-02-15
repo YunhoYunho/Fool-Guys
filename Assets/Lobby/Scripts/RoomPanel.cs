@@ -2,6 +2,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
@@ -16,13 +17,23 @@ public class RoomPanel : MonoBehaviour
     private RectTransform playerContent;
 
     [SerializeField]
+    private TMP_Text NickName;
+
+    [SerializeField]
+    private TMP_Text RoomName;
+
+    [SerializeField]
     private Button startButton;
 
     private List<PlayerEntry> playerEntries;
 
+    private LoadScreenScript loadScene;
+
+
     private void Awake()
     {
         playerEntries = new List<PlayerEntry>();
+        loadScene = GameObject.Find("LoadingCanvas").GetComponent<LoadScreenScript>();
     }
 
     public void UpdateRoomState()
@@ -31,20 +42,23 @@ public class RoomPanel : MonoBehaviour
         {
             Destroy(entry.gameObject);
         }
+
         playerEntries.Clear();
 
         foreach (Player player in PhotonNetwork.PlayerList)
         {
             PlayerEntry entry = Instantiate(playerEntryPrefab, playerContent);
             entry.Initialize(player.ActorNumber, player.NickName);
+
             object isPlayerReady;
             if (player.CustomProperties.TryGetValue("Ready", out isPlayerReady))
             {
                 entry.SetPlayerReady((bool)isPlayerReady);
             }
-
+            //entry.SetPlayerColor();
             playerEntries.Add(entry);
         }
+
     }
 
     public void UpdateLocalPlayerPropertiesUpdate()
@@ -74,22 +88,37 @@ public class RoomPanel : MonoBehaviour
         return true;
     }
 
+    public void RoomNameSet(string roomname, string nickname)
+    {
+        RoomName.text = roomname;
+        NickName.text = nickname;
+    }
+
     public void OnStartButtonClicked()
     {
-        PhotonNetwork.CurrentRoom.IsOpen = false;
         //PhotonNetwork.CurrentRoom.IsVisible = false;
-
-        PhotonNetwork.AutomaticallySyncScene = true;
         //PhotonNetwork.LoadLevel("SW_Scene");
-
-        PhotonNetwork.LoadLevel("Stage1");
-
+        //PhotonNetwork.LoadLevel("Stage1");
         //SceneManager.LoadScene
+
+        StartCoroutine(DelayStart());
     }
 
     public void OnLeaveRoomButtonClicked()
     {
         PhotonNetwork.LeaveRoom();
+        //PhotonNetwork.JoinLobby();
     }
+
+    public IEnumerator DelayStart()
+    {
+        loadScene.LoadNextLevel();
+        yield return new WaitForSeconds(3f);
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+        PhotonNetwork.AutomaticallySyncScene = true;
+        PhotonNetwork.LoadLevel("Test_Map");
+
+    }
+
 
 }

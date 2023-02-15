@@ -9,9 +9,6 @@ EditorBuildSettings:
     path: Assets/Lobby/Scenes/LobbyScene.unity
     guid: 1cd1dfed0af10c34884128a22979786e
   - enabled: 1
-    path: Assets/SW_Scene/SW_Scene.unity
-    guid: 3537773504953f44296e2418103be6c9
-  - enabled: 1
-    path: Assets/SW_Scene/Stage1.unity
-    guid: ccc675c5d9f022448ad77acd1ffaa3c8
+    path: Assets/YH_Scene/Scenes/Test_Map.unity
+    guid: 558b4c5b2169f354b9c949854d6fd71d
   m_configObjects: {}

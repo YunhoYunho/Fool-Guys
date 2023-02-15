@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{86F69643-7BC9-D386-5E58-DC5BC4E7B40D}</ProjectGuid>
+    <ProjectGuid>{F72D66EF-217B-706A-F39A-87C21FCDB6BB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -53,100 +53,164 @@
     <UnityVersion>2021.3.14f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="D:\Visual Studio\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
+    <Compile Include="Assets\Mini UI\Script\TextPressed.cs" />
+    <Compile Include="Assets\Resources\Scripts\Respawn.cs" />
+    <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Scripts\CFX_LightIntensityFade.cs" />
+    <Compile Include="Assets\Mini UI\Script\SlideAnimation.cs" />
     <Compile Include="Assets\Photon\PhotonLibs\WebSocket\SocketWebTcp.cs" />
     <Compile Include="Assets\Lobby\Scripts\RoomPanel.cs" />
-    <Compile Include="Assets\HJ\Scripts\TrueFalsePlatform.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Object\PatrolObject.cs" />
+    <Compile Include="Assets\Resources\Scripts\Dispenser.cs" />
     <Compile Include="Assets\Lobby\Scripts\RoomEntry.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatAppIdCheckerUI.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\AppSettingsExtensions.cs" />
     <Compile Include="Assets\HJ\Scripts\Elevator.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Interface\IInteractable.cs" />
-    <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesDestroyer.cs" />
-    <Compile Include="Assets\Resources\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Scripts\CFX_AutoRotate.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesDestroyer.cs" />
+    <Compile Include="Assets\HJ\Scripts\ParticleCreator.cs" />
+    <Compile Include="Assets\Resources\Scripts\GamePlayerController.cs" />
+    <Compile Include="Assets\Resources\Scripts\Ball.cs" />
+    <Compile Include="Assets\Lobby\Scripts\CustomizePanel.cs" />
+    <Compile Include="Assets\Mini UI\Script\ProgressBarScript.cs" />
     <Compile Include="Assets\HJ\Scripts\Move.cs" />
+    <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_AutoStopLoopedEffect.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Object\TriggerPoint.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChannelSelector.cs" />
+    <Compile Include="Assets\Mini UI\Script\ViewSelector.cs" />
     <Compile Include="Assets\Lobby\Scripts\PlayerEntry.cs" />
     <Compile Include="Assets\HJ\Scripts\MotorController.cs" />
     <Compile Include="Assets\Game\Scripts\GameManager.cs" />
+    <Compile Include="Assets\JellyShader\Scripts\JellyClickReceiver.cs" />
     <Compile Include="Assets\Resources\Scripts\Stone.cs" />
     <Compile Include="Assets\HJ\Scripts\InteractionAdapter.cs" />
+    <Compile Include="Assets\SW_Resource\TestRotationObstacle.cs" />
     <Compile Include="Assets\HJ\Scripts\Interactor.cs" />
     <Compile Include="Assets\HJ\Scripts\IInteractable.cs" />
+    <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_Demo_RandomDir.cs" />
+    <Compile Include="Assets\Mini UI\Script\Store_Controller.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\EventSystemSpawner.cs" />
-    <Compile Include="Assets\Lim\Script\PlayerController.cs" />
-    <Compile Include="Assets\Lim\Script\PhsicsObject.cs" />
-    <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDMoover.cs" />
+    <Compile Include="Assets\HJ\Scripts\IControllable.cs" />
+    <Compile Include="Assets\Resources\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\Mini UI\Script\LoadingScript.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDMoover.cs" />
     <Compile Include="Assets\HJ\Scripts\ObstacleRotator.cs" />
+    <Compile Include="Assets\Mini UI\Script\StartScript.cs" />
+    <Compile Include="Assets\SW_Scene\Script\PlayerControllercc.cs" />
     <Compile Include="Assets\HJ\Scripts\Dispenser.cs" />
-    <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesSpawner.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesSpawner.cs" />
     <Compile Include="Assets\HJ\Scripts\CycleMover.cs" />
     <Compile Include="Assets\Lobby\Scripts\StatePanel.cs" />
+    <Compile Include="Assets\Mini UI\Script\ItemDescriptionShow.cs" />
+    <Compile Include="Assets\SW_Resource\Obstaclezd.cs" />
     <Compile Include="Assets\Lim\Script\Obstacle.cs" />
+    <Compile Include="Assets\Resources\Scripts\PlayerPunch.cs" />
     <Compile Include="Assets\Lobby\Scripts\LobbyManager.cs" />
+    <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Scripts\CFX_AutoDestructShuriken.cs" />
+    <Compile Include="Assets\HJ\Scripts\RandomObject.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Interface\IItem.cs" />
     <Compile Include="Assets\HJ\Scripts\Bouncer.cs" />
-    <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDPrefabVariator.cs" />
+    <Compile Include="Assets\Mini UI\Script\CustomButton.cs" />
+    <Compile Include="Assets\HJ\Scripts\PointObstacle.cs" />
+    <Compile Include="Assets\Mini UI\Script\ItemDescription.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDPrefabVariator.cs" />
+    <Compile Include="Assets\Mini UI\Script\Switch_Slide.cs" />
     <Compile Include="Assets\Photon\PhotonLibs\WebSocket\WebSocket.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\TextButtonTransition.cs" />
+    <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_Demo_RotateCamera.cs" />
+    <Compile Include="Assets\Lim\ScreenLoader\LoadScreenScript.cs" />
+    <Compile Include="Assets\Mini UI\Script\AddFriendScript.cs" />
     <Compile Include="Assets\Resources\Scripts\Bullet.cs" />
     <Compile Include="Assets\HJ\Scripts\Platform.cs" />
+    <Compile Include="Assets\Mini UI\Script\OnOff.cs" />
+    <Compile Include="Assets\Lobby\Scripts\CreateRoomPanel.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs" />
     <Compile Include="Assets\Lobby\Scripts\LobbyPanel.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Object\InteractionAdapter.cs" />
-    <Compile Include="Assets\HJ\Scripts\Switch.cs" />
-    <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Demo\Scripts\WNDDisabler.cs" />
+    <Compile Include="Assets\Mini UI\Script\Map.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Demo\Scripts\WNDDisabler.cs" />
     <Compile Include="Assets\HJ\Scripts\ColorSelector.cs" />
+    <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_Demo_RandomDirectionTranslate.cs" />
     <Compile Include="Assets\HJ\Scripts\FlowZone.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\IgnoreUiRaycastWhenInactive.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Object\FallingObject.cs" />
+    <Compile Include="Assets\Mini UI\Script\Notification.cs" />
+    <Compile Include="Assets\Mini UI\Script\Menus.cs" />
+    <Compile Include="Assets\HJ\Scripts\PoolManager.cs" />
+    <Compile Include="Assets\HJ\Scripts\Console.cs" />
+    <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_Demo_Translate.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\FriendItem.cs" />
+    <Compile Include="Assets\Mini UI\Script\CloseButton.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatGui.cs" />
-    <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDDispenser.cs" />
+    <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_Demo_New.cs" />
+    <Compile Include="Assets\HJ\Scripts\CycleRotator.cs" />
+    <Compile Include="Assets\Resources\Scripts\NickNameUI.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDDispenser.cs" />
+    <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Scripts\CFX_LightFlicker.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\TextToggleIsOnTransition.cs" />
+    <Compile Include="Assets\HJ\Scripts\BoingTrigger.cs" />
     <Compile Include="Assets\Lobby\Scripts\LoginPanel.cs" />
     <Compile Include="Assets\Lobby\Scripts\InConnectPanel.cs" />
     <Compile Include="Assets\Scripts\TestScripts.cs" />
-    <Compile Include="Assets\Imports\HYPEPOLY - Battle Royale Show\Scripts\WNDRotator.cs" />
+    <Compile Include="Assets\HJ\Scripts\ControlableObstacle.cs" />
+    <Compile Include="Assets\Mini UI\Script\ItemDescriptionCloseButton.cs" />
+    <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDRotator.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
+    <Compile Include="Assets\YH_Scene\Scripts\Object\Rotater.cs" />
+    <Compile Include="Assets\HJ\Scripts\Swamp.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
     <None Include="Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.xml" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
+    <None Include="Assets\JMO Assets\Cartoon FX (legacy)\Shaders\CFX3 Multiply Color.shader" />
     <None Include="Assets\Photon\PhotonUnityNetworking\changelog.txt" />
+    <None Include="Assets\JMO Assets\Cartoon FX Remaster\CFXR Assets\Shaders\CFXR Particle Glow.shader" />
+    <None Include="Assets\JMO Assets\Cartoon FX Remaster\CFXR Assets\Shaders\CFXR Particle Ubershader.shader" />
+    <None Include="Assets\JMO Assets\Cartoon FX Remaster\CFXR Assets\Shaders\CFXR_SETTINGS.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
+    <None Include="Assets\JMO Assets\Cartoon FX (legacy)\CartoonFX Free.txt" />
+    <None Include="Assets\Fantasy Skybox FREE\Readme.txt" />
+    <None Include="Assets\JMO Assets\Cartoon FX Remaster\CFXR Assets\Shaders\CFXR.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
     <None Include="Assets\Photon\PhotonLibs\WebSocket\websocket-sharp.dll" />
+    <None Include="Assets\Fantasy Skybox FREE\ReleaseNotes.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
+    <None Include="Assets\JMO Assets\Cartoon FX Remaster\Readme Cartoon FX Remaster FREE.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
     <None Include="Assets\Photon\PhotonLibs\changes-library.txt" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+    <None Include="Assets\JellyShader\Shaders\JellyShader.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\Photon\PhotonUnityNetworking\readme.txt" />
     <None Include="Assets\Photon\PhotonChat\Demos\DemoChat\Files\eurof_tt.txt" />
+    <None Include="Assets\JMO Assets\Cartoon FX Remaster\CFXR Prefabs\Texts\_Make your own text effect.txt" />
     <None Include="Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.dll" />
     <None Include="Assets\Photon\PhotonLibs\Photon3Unity3D.dll" />
+    <None Include="Assets\DB-FX_Confetti\ReadMe.txt" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
     <None Include="Assets\Photon\PhotonLibs\Metro\Photon3Unity3D.dll" />
+    <None Include="Assets\JMO Assets\Cartoon FX (legacy)\Shaders\CFXM_MobileParticleAdd_Alpha8.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
+    <None Include="Assets\JMO Assets\Cartoon FX Remaster\CFXR Assets\Shaders\CFXR Particle Procedural Ring.shader" />
     <None Include="Assets\Photon\PhotonLibs\Photon3Unity3D.xml" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
+    <None Include="Assets\JMO Assets\Cartoon FX Remaster\CFXR Assets\Shaders\CFXR_URP.cginc" />
     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
     <None Include="Assets\Photon\PhotonUnityNetworking\link.xml" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
+    <None Include="Assets\JMO Assets\Cartoon FX Remaster\CFXR Assets\Shaders\CFXR Particle Distortion.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
   </ItemGroup>
   <ItemGroup>
@@ -410,6 +474,12 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Android.Types">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.14f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Android.Gradle">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.14f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Gradle.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.14f1\Editor\Data\NetStandard\ref\2.1.0\netstandard.dll</HintPath>
@@ -810,8 +880,8 @@
     <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.VisualScripting.Flow">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
+    <Reference Include="Unity.2D.Sprite.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
@@ -821,6 +891,9 @@
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Flow">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection">
       <HintPath>Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection.dll</HintPath>
@@ -863,44 +936,68 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="PhotonChat.csproj">
-      <Project>{84FAAC7A-87AF-F78E-5853-312D656E8D0D}</Project>
-      <Name>PhotonChat</Name>
-    </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
-      <Project>{86D73AF3-D7FD-F6B1-4F1B-74486E01CFBE}</Project>
+      <Project>{F2308264-0774-6433-3A88-EC1EBD6CAE78}</Project>
       <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>
     </ProjectReference>
+    <ProjectReference Include="PhotonChat.csproj">
+      <Project>{07D9D363-1BFD-96D5-8757-6872995FA9B0}</Project>
+      <Name>PhotonChat</Name>
+    </ProjectReference>
+    <ProjectReference Include="ToonyColorsPro.Demo.Editor.csproj">
+      <Project>{171093CE-30E9-A0CB-7586-0C88F96C43A9}</Project>
+      <Name>ToonyColorsPro.Demo.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="KinoBloom.Runtime.csproj">
+      <Project>{923E9FED-1793-9DB0-D301-0946EF07833B}</Project>
+      <Name>KinoBloom.Runtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="CFXREditor.csproj">
+      <Project>{9B74A631-E652-13F8-B7BB-48116266854B}</Project>
+      <Name>CFXREditor</Name>
+    </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Editor.csproj">
-      <Project>{B3664D6A-669D-3F36-F529-3C58955FA056}</Project>
+      <Project>{26ED7566-F3EC-8394-8104-8CFBC2AAA387}</Project>
       <Name>PhotonUnityNetworking.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
-      <Project>{919DC066-BE11-51B5-B3B9-30482624C87A}</Project>
+      <Project>{68A1FFAB-D266-FA0F-3033-92D0DEA29C92}</Project>
       <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>
     </ProjectReference>
+    <ProjectReference Include="CFXRDemo.csproj">
+      <Project>{8CDC224A-1332-437C-4ACB-FAA3B64E1D2A}</Project>
+      <Name>CFXRDemo</Name>
+    </ProjectReference>
     <ProjectReference Include="PunDemos.DemoHubEditor.csproj">
-      <Project>{756BD845-7A80-E144-32A4-9A828E25AFA1}</Project>
+      <Project>{E6ADAE84-9F5D-32AD-3C0F-DFF10E71AB46}</Project>
       <Name>PunDemos.DemoHubEditor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonRealtime.csproj">
-      <Project>{CEC8CB31-BB0F-567D-190D-7150E6298F8F}</Project>
+      <Project>{7C633B3D-8188-821F-C033-86BF229B8A28}</Project>
       <Name>PhotonRealtime</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
-      <Project>{4AA914D2-41C5-8B85-03D8-8598B2B39F11}</Project>
+      <Project>{50C8601B-2C84-4A95-9EE5-87009540F0A0}</Project>
       <Name>PhotonUnityNetworking.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.csproj">
-      <Project>{582D2CC6-F8A8-2CC3-C026-FB865ED57515}</Project>
+      <Project>{0B12D7A9-8665-9AA0-4704-C526A9B8A1AC}</Project>
       <Name>PhotonUnityNetworking</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Demos.csproj">
-      <Project>{C2DC52C4-91A3-627E-4AAC-A7852CB7DCC6}</Project>
+      <Project>{D532372E-1FC1-9CBC-14C1-2D8209689637}</Project>
       <Name>PhotonUnityNetworking.Demos</Name>
     </ProjectReference>
+    <ProjectReference Include="CFXR.WelcomeScreen.csproj">
+      <Project>{BAA27313-E1D2-52A0-1CAF-F9935EFB89EE}</Project>
+      <Name>CFXR.WelcomeScreen</Name>
+    </ProjectReference>
+    <ProjectReference Include="CFXRRuntime.csproj">
+      <Project>{E39AA644-5572-B2CF-1690-DF54FAEAD85E}</Project>
+      <Name>CFXRRuntime</Name>
+    </ProjectReference>
     <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj">
-      <Project>{98D59637-EBD1-4600-6349-1952E8EC4DE2}</Project>
+      <Project>{A9CA9FD2-9587-2DC8-6474-9D366B030029}</Project>
       <Name>PunDemos.DemoSlotcarEditor</Name>
     </ProjectReference>
   </ItemGroup>

@@ -2,29 +2,31 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
-    public enum Panel { Login, InConnect, Lobby, Room }
+    public enum Panel { Login, Lobby, Room }
 
     [SerializeField]
     private LoginPanel loginPanel;
     [SerializeField]
-    private InConnectPanel inConnectPanel;
-    [SerializeField]
     private RoomPanel roomPanel;
     [SerializeField]
     private LobbyPanel lobbyPanel;
+    [SerializeField]
+    private CustomizePanel customizePanel;
 
+    public Color PlayerColor;
 
     private void Start()
     {
         if (PhotonNetwork.IsConnected) 
         {
             OnConnectedToMaster();
-        }    
-        else if (PhotonNetwork.InRoom) 
+        }
+        else if (PhotonNetwork.InRoom)
         {
             OnJoinedRoom();
         }
@@ -36,12 +38,23 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             OnDisconnected(DisconnectCause.None);
         }
+
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            Debug.Log(PhotonNetwork.NetworkingClient.AppVersion);
+        }
     }
 
     public override void OnConnectedToMaster()
     {
-        SetActivePanel(Panel.InConnect);
+        SetActivePanel(Panel.Lobby);
+        PhotonNetwork.JoinLobby();
     }
+
 
     public override void OnDisconnected(DisconnectCause cause)
     {
@@ -50,13 +63,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        SetActivePanel(Panel.InConnect);
+        SetActivePanel(Panel.Lobby);
         StatePanel.Instance.AddMessage(string.Format("Create room failed with error({0}) : {1}", returnCode, message));
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
-        SetActivePanel(Panel.InConnect);
+        SetActivePanel(Panel.Lobby);
         StatePanel.Instance.AddMessage(string.Format("Join room failed with error({0}) : {1}", returnCode, message));
     }
 
@@ -67,8 +80,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         StatePanel.Instance.AddMessage("Create room!");
 
         string roomName = string.Format("Room{0}", Random.Range(1000, 10000));
-        RoomOptions options = new RoomOptions() { MaxPlayers = 8 };
-        PhotonNetwork.CreateRoom(roomName, options);
+        RoomOptions options = new RoomOptions() { MaxPlayers = (byte)8, IsVisible = true };
+        PhotonNetwork.CreateRoom(roomName, options, null);
+
+        //RoomOptions options = new RoomOptions() { MaxPlayers = (byte)maxPlayer, IsVisible = Visible };
+        //PhotonNetwork.CreateRoom(roomName, options, null);
+        //createRoomPanel.SetActive(false);
     }
 
     public override void OnJoinedRoom()
@@ -78,22 +95,27 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
         {
             { "Ready", false },
-            { "Load", false }
+            { "Load", false },
+            { "R", (float)PlayerColor.r},
+            { "G", (float)PlayerColor.g},
+            { "B", (float)PlayerColor.b}
         };
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-
+        roomPanel.RoomNameSet(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.LocalPlayer.NickName);
         roomPanel.UpdateRoomState();
+
     }
 
     public override void OnLeftRoom()
     {
-        SetActivePanel(Panel.InConnect);
+        SetActivePanel(Panel.Lobby);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         roomPanel.UpdateRoomState();
         roomPanel.UpdateLocalPlayerPropertiesUpdate();
+
     }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
@@ -119,20 +141,23 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        lobbyPanel.UpdateRoomList(roomList);
+        lobbyPanel.ClearRoomListView();
+
+        lobbyPanel.UpdateCachedRoomList(roomList);
+        lobbyPanel.UpdateRoomListView();
     }
 
     public override void OnLeftLobby()
     {
-        SetActivePanel(Panel.InConnect);
+        SetActivePanel(Panel.Login);
     }
+
 
     private void SetActivePanel(Panel panel)
     {
         loginPanel?.gameObject?.SetActive(panel == Panel.Login);
-        inConnectPanel?.gameObject?.SetActive(panel == Panel.InConnect);
-        roomPanel?.gameObject?.SetActive(panel == Panel.Room);
         lobbyPanel?.gameObject?.SetActive(panel == Panel.Lobby);
+        roomPanel?.gameObject?.SetActive(panel == Panel.Room);
     }
 
 }

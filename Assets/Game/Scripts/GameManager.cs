@@ -1,8 +1,10 @@
+using Cinemachine;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,9 +16,34 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private TMP_Text infoText;
 
+    [SerializeField]
+    private CinemachineFreeLook playerCam;
+
+    private PhotonView pv;
+
+    public GameObject NowRespawnArea;
+
+    public enum Team { None, Red, Blue };
+    public Team team;
+    public string myTeam;
+
+    public int RedTeamNeedGoalPoint = 0;
+    public int BlueTeamNeedGoalPoint = 0;
+
+    public bool onGameStart;
+
+    public bool isTestGame;
+
+    Vector3 spawn_1p_Pos, spawn_2p_Pos, spawn_3p_Pos, spawn_4p_Pos;
+
+    private void Awake()
+    {
+        pv = GetComponent<PhotonView>();
+    }
 
     private void Start()
     {
+
         if (PhotonNetwork.InRoom)
         {
             Hashtable props = new Hashtable { { "Load", true } };
@@ -28,18 +55,72 @@ public class GameManager : MonoBehaviourPunCallbacks
             //StartCoroutine(DelayGameStart());
             //TestGameStart();
         }
+
+        spawn_1p_Pos = GameObject.Find("Start Point 1P").transform.position;
+        spawn_2p_Pos = GameObject.Find("Start Point 2P").transform.position;
+        spawn_3p_Pos = GameObject.Find("Start Point 3P").transform.position;
+        spawn_4p_Pos = GameObject.Find("Start Point 4P").transform.position;
     }
+
+    private void Update()
+    {
+        if (!pv.IsMine) return;
+
+        if (Input.GetKeyDown(KeyCode.G)) 
+        {
+            pv.RPC("GoalPointChange", RpcTarget.All, "Red", 1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            TestRespawnPointSet(1);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            TestRespawnPointSet(2);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            TestRespawnPointSet(3);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            TestRespawnPointSet(4);
+        }
+    }
+
+    public void TestRespawnPointSet(int area)
+    {
+        GameObject Left_1 = GameObject.Find("RespawnArea1_Left");
+        GameObject Left_2 = GameObject.Find("RespawnArea2_Left");
+        GameObject Left_3 = GameObject.Find("RespawnArea3");
+        GameObject Left_4 = GameObject.Find("RespawnArea4");
+
+
+        switch (area)
+        {
+            case 1: NowRespawnArea = Left_1; break;
+            case 2: NowRespawnArea = Left_2; break;
+            case 3: NowRespawnArea = Left_3; break;
+            case 4: NowRespawnArea = Left_4; break;
+            default: break;
+        }
+    }
+
 
     public override void OnConnectedToMaster()
     {
-        PhotonNetwork.JoinOrCreateRoom("TextRoom", new RoomOptions() { MaxPlayers = 8 }, null);
+        PhotonNetwork.JoinOrCreateRoom("TestRoomSW", new RoomOptions() { MaxPlayers = 4 }, null);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         if (PhotonNetwork.LocalPlayer.ActorNumber == newMasterClient.ActorNumber)
         {
-            StartCoroutine(SpawnStone());
+            //StartCoroutine(SpawnStone());
         }
     }
 
@@ -80,26 +161,116 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void GameStart()
     {
-        PrintInfo("Game Start");
+        PrintInfo("");
+
+        int PlayerNum = PhotonNetwork.LocalPlayer.ActorNumber;
+        Vector3 position;
+        Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+        {
+            switch (PlayerNum)
+            {
+                case 1: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 2: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                default: position = spawn_3p_Pos; break;
+            }
+        }
+
+        else
+        {
+            switch (PlayerNum)
+            {
+                case 1: position = spawn_1p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 2: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 3: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                case 4: position = spawn_4p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                default: position = spawn_3p_Pos; break;
+            }
+        }
+
+        GameObject Player = PhotonNetwork.Instantiate("Player", position, rotation, 0);
+        playerCam.LookAt = Player.transform;
+        playerCam.Follow = Player.transform;
+
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetColor", RpcTarget.AllViaServer);
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetNickname", RpcTarget.AllViaServer);
+
+        if (team == Team.Red) 
+        {
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Red");
+
+        }
+        else
+        {
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Blue");
+        }
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            pv.RPC("GameStartSend", RpcTarget.All);
+        }
+        
     }
+
+    
+
+
 
     private void TestGameStart()
     {
         PrintInfo("");
-        float angularStart = (360.0f / PhotonNetwork.CurrentRoom.PlayerCount) * PhotonNetwork.LocalPlayer.GetPlayerNumber();
-        float x = 20.0f * Mathf.Sin(angularStart * Mathf.Deg2Rad);
-        float z = 20.0f * Mathf.Cos(angularStart * Mathf.Deg2Rad);
-        Vector3 position = new Vector3(x, 0.0f, z);
-        Quaternion rotation = Quaternion.Euler(0.0f, angularStart, 0.0f);
 
-        PhotonNetwork.Instantiate("Player", position, rotation, 0);
+        int PlayerNum = PhotonNetwork.LocalPlayer.ActorNumber;
+        Vector3 position;
+        Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+        {
+            switch (PlayerNum)
+            {
+                case 1: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 2: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                default: position = spawn_3p_Pos; break;
+            }
+        }
+
+        else
+        {
+            switch (PlayerNum)
+            {
+                case 1: position = spawn_1p_Pos; team = Team.Red; myTeam = "Red";break;
+                case 2: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 3: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                case 4: position = spawn_4p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                default: position = spawn_3p_Pos; break;
+            }
+        }
+
+        GameObject Player = PhotonNetwork.Instantiate("Player", position, rotation, 0);
+        playerCam.LookAt = Player.transform;
+        playerCam.Follow = Player.transform;
+
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetColor", RpcTarget.AllViaServer);
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetNickname", RpcTarget.AllViaServer);
+
+        if (team == Team.Red)
+        {
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Red");
+
+        }
+        else
+        {
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Blue");
+        }
 
         if (PhotonNetwork.IsMasterClient)
         {
-            StartCoroutine(SpawnStone());
+            isTestGame = true;
+            pv.RPC("GameStartSend", RpcTarget.All);
         }
-    }
 
+    }
 
 
     private bool AllPlayersLoadLevel()
@@ -121,6 +292,54 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
 
         return true;
+    }
+
+    [PunRPC]
+    public void GoalPointChange(string team, int score)
+    {
+        switch (team)
+        {
+            case "Red": RedTeamNeedGoalPoint += score; break;
+            case "Blue": BlueTeamNeedGoalPoint += score; break;
+            default: break;
+        }
+
+        DetectGameOver();
+    }
+
+    private void DetectGameOver()
+    {
+        if (!PhotonNetwork.IsMasterClient || !onGameStart) return;
+
+        if (!isTestGame)
+        {
+            if (RedTeamNeedGoalPoint <= 0 || BlueTeamNeedGoalPoint <= 0)
+                pv.RPC("GameOver", RpcTarget.All, myTeam);
+        }
+        else
+        {
+            if (RedTeamNeedGoalPoint <= 0)
+                pv.RPC("GameOver", RpcTarget.All, myTeam);
+        }
+
+    }
+
+    [PunRPC]
+    public void GameStartSend()
+    {
+        onGameStart = true;
+    }
+
+    [PunRPC]
+    public void GameOver(string team)
+    {
+        PrintInfo("게임 끝");
+        // TODO: 게임오버 로직 ex) 게임오버 씬 이동 or 시상식, etc...
+    }
+
+    public void SetCheckPoint(GameObject area)
+    {
+        NowRespawnArea = area;
     }
 
     private void PrintInfo(string info)
@@ -172,5 +391,9 @@ public class GameManager : MonoBehaviourPunCallbacks
                 PhotonNetwork.InstantiateRoomObject("SmallStone", position, Quaternion.Euler(Random.value * 360.0f, Random.value * 360.0f, Random.value * 360.0f), 0, instantiationData);
             }
         }
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
     }
 }
