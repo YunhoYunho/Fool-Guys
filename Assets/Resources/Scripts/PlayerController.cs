@@ -106,6 +106,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField]
     private TMP_Text TeamText;
 
+    public Vector3 myColor;
+
     [SerializeField] private ParticleSystem collisionEffect;
 
     private void Awake()
@@ -759,6 +761,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         {
             Skincolor = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
             Color playercolor = new Color((float)R, (float)G, (float)B);
+            myColor = new Vector3((float)R, (float)G, (float)B);
             for (int i = 0; i < Skincolor.Length; i++)
             {
                 Skincolor[i].material.color = playercolor;
@@ -783,13 +786,19 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         switch (team)
         {
-            case "Red": TeamText.text = "<color=red>[RED]</color>"; gameManager.GoalPointChange("Red", 1); break;
-            case "Blue": TeamText.text = "<color=blue>[BLUE]</color>"; gameManager.GoalPointChange("Blue", 1); break;
+            //case "Red": TeamText.text = "<color=red>[RED]</color>"; gameManager.GoalPointChange("Red", 1); break;
+            case "Red": TeamText.text = "<color=red>[RED]</color>"; if (pv.IsMine) gameManager.GetComponent<PhotonView>().RPC("GoalPointChange", RpcTarget.All, "Red", 1); break;
+            case "Blue": TeamText.text = "<color=blue>[BLUE]</color>"; if (pv.IsMine) gameManager.GetComponent<PhotonView>().RPC("GoalPointChange", RpcTarget.All, "Blue", 1); break;
+            //case "Blue": TeamText.text = "<color=blue>[BLUE]</color>"; gameManager.GoalPointChange("Blue", 1); break;
             default: break;
         }
 
         if (pv.IsMine)
-            gameManager.GetComponent<PhotonView>().RPC("AddTeamList", RpcTarget.All, Team, nickName.text);
+        {
+            Player player = gameObject.GetComponent<PhotonView>().Owner;
+            gameManager.GetComponent<PhotonView>().RPC("AddTeamList", RpcTarget.All, Team, player.NickName);
+
+        }
     }
 
     //public void SendMyInfo()
@@ -836,9 +845,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         if (other.gameObject.CompareTag("Finish"))
         {
-            gameManager.GetComponent<PhotonView>().RPC("GoalPointChange", RpcTarget.All ,Team, -1);
-            gameManager.GetComponent<PhotonView>().RPC("CheckGoalIn", RpcTarget.All , 1);
-            PhotonNetwork.Destroy(gameObject);
+            if (pv.IsMine)
+            { 
+                gameManager.GetComponent<PhotonView>().RPC("GoalPointChange", RpcTarget.All, Team, -1);
+                gameManager.GetComponent<PhotonView>().RPC("CheckGoalIn", RpcTarget.All, 1);
+            }
+            //PhotonNetwork.Destroy(gameObject);
         }
     }
 

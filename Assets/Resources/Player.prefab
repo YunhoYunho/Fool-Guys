@@ -139,6 +139,7 @@ MonoBehaviour:
   nickName: {fileID: 8880946947825570597}
   Team: 
   TeamText: {fileID: 927496042498081563}
+  myColor: {x: 0, y: 0, z: 0}
   collisionEffect: {fileID: 7056034314479340020}
 --- !u!114 &-9071977975041651335
 MonoBehaviour:

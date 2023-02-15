@@ -47,6 +47,12 @@ public class GameManager : MonoBehaviourPunCallbacks
     public string WinTeam;
 
     public GameObject GameOverSTAGE;
+    public GameObject Winner1;
+    public TMP_Text Winner1_Team;
+    public TMP_Text Winner1_Nickname;
+    public GameObject Winner2;
+    public TMP_Text Winner2_Team;
+    public TMP_Text Winner2_Nickname;
 
     public List<string> Winner;
     public List<string> Loser;
@@ -81,10 +87,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.G))
-        //{
-        //    pv.RPC("GoalPointChange", RpcTarget.All, "Red", 1);
-        //}
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -244,13 +246,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Blue");
         }
 
-        
-
-
-
     }
-
-    
 
     private void TestGameStart()
     {
@@ -269,7 +265,6 @@ public class GameManager : MonoBehaviourPunCallbacks
                 default: position = spawn_3p_Pos; break;
             }
         }
-
         else
         {
             switch (PlayerNum)
@@ -365,14 +360,14 @@ public class GameManager : MonoBehaviourPunCallbacks
                 if (RedTeamNeedGoalPoint <= 0)
                 {
                     WinTeam = "Red";
-                    pv.RPC("GameOver", RpcTarget.All, WinTeam);
+                    GameOverFunc();
 
                 }
 
                 else if (BlueTeamNeedGoalPoint <= 0)
                 {
                     WinTeam = "Blue";
-                    pv.RPC("GameOver", RpcTarget.All, WinTeam);
+                    GameOverFunc();
 
                 }
             }
@@ -381,7 +376,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         else
         {
             if (RedTeamNeedGoalPoint <= 0)
-                pv.RPC("GameOver", RpcTarget.All);
+            {
+                WinTeam = "Red";
+                GameOverFunc();
+            }
         }
 
     }
@@ -392,50 +390,131 @@ public class GameManager : MonoBehaviourPunCallbacks
         onGameStart = true;
     }
 
-    //public void TeamListADD()
-    //{
-    //    foreach (Player player in PhotonNetwork.PlayerList)
-    //    {
-    //        //switch
-    //    }
-
-    //    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-
-    //    foreach (GameObject player in players)
-    //    {
-    //        if (player.GetComponent<PhotonView>().IsMine)
-    //        {
-    //            string team = player.GetComponent<PlayerController>().Team;
-                
-    //            switch (team)
-    //            {
-    //                case "Red": Red_TeamList()
-    //            }
-
-    //            break;
-    //        }
-    //    }
-    //}
+    public void GameOverFunc()
+    {
+        StartCoroutine(GameOverCloseDoor());
+    }
 
     [PunRPC]
     public void GameOver(string team)
     {
-        //GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-
-        //foreach (GameObject player in players)
-        //{
-        //    if (player.GetComponent<PhotonView>().IsMine)
-        //    {
-        //        player.GetComponent<PlayerController>().SendMyInfo();
-        //        break;
-        //    }
-        //}
         GameOverSTAGE.SetActive(true);
-        playerCam.LookAt = GameOverSTAGE.transform;
 
-        PrintInfo("게임 끝");
-        Time.timeScale = 0;
-        // TODO: 게임오버 로직 ex) 게임오버 씬 이동 or 시상식, etc...
+        switch (team)
+        {
+            case "Red":
+                Winner1_Team.text = "<color=red>[RED]</color>";
+                Winner1_Nickname.text = Red_TeamList[0] + "\n<size=0.1>▼";
+
+                foreach (Player player in PhotonNetwork.PlayerList)
+                {
+                    Debug.Log(player.NickName);
+                    if (player.NickName == Red_TeamList[0])
+                    {
+                        Debug.Log("접근됐어용");
+                        object R, G, B;
+
+                        if (player.CustomProperties.TryGetValue("R", out R) &&
+                            player.CustomProperties.TryGetValue("G", out G) &&
+                            player.CustomProperties.TryGetValue("B", out B))
+                        {
+                            SkinnedMeshRenderer[] Skincolor = Winner1.GetComponentsInChildren<SkinnedMeshRenderer>();
+                            Color playercolor = new Color((float)R, (float)G, (float)B);
+                            for (int i = 0; i < Skincolor.Length; i++)
+                            {
+                                Skincolor[i].material.color = playercolor;
+                            }
+                        }
+                    }
+                }
+
+                if (Red_TeamList.Count >= 2)
+                {
+                    Winner2_Team.text = "<color=red>[RED]</color>";
+                    Winner2_Nickname.text = Red_TeamList[1] + "\n<size=0.1>▼";
+
+                    foreach (Player player in PhotonNetwork.PlayerList)
+                    {
+                        if (player.NickName == Red_TeamList[1])
+                        {
+                            object R, G, B;
+
+                            if (player.CustomProperties.TryGetValue("R", out R) &&
+                                player.CustomProperties.TryGetValue("G", out G) &&
+                                player.CustomProperties.TryGetValue("B", out B))
+                            {
+                                SkinnedMeshRenderer[] Skincolor = Winner2.GetComponentsInChildren<SkinnedMeshRenderer>();
+                                Color playercolor = new Color((float)R, (float)G, (float)B);
+                                for (int i = 0; i < Skincolor.Length; i++)
+                                {
+                                    Skincolor[i].material.color = playercolor;
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+                else Winner2.SetActive(false);
+
+                break;
+
+            case "Blue":
+                Winner1_Team.text = "<color=blue>[BLUE]</color>";
+                Winner1_Nickname.text = Blue_TeamList[0] + "\n<size=0.1>▼";
+                foreach (Player player in PhotonNetwork.PlayerList)
+                {
+                    if (player.NickName == Blue_TeamList[0])
+                    {
+                        object R, G, B;
+
+                        if (player.CustomProperties.TryGetValue("R", out R) &&
+                            player.CustomProperties.TryGetValue("G", out G) &&
+                            player.CustomProperties.TryGetValue("B", out B))
+                        {
+                            SkinnedMeshRenderer[] Skincolor = Winner1.GetComponentsInChildren<SkinnedMeshRenderer>();
+                            Color playercolor = new Color((float)R, (float)G, (float)B);
+                            for (int i = 0; i < Skincolor.Length; i++)
+                            {
+                                Skincolor[i].material.color = playercolor;
+                            }
+                        }
+                    }
+                }
+
+                if (Red_TeamList.Count >= 2)
+                {
+                    Winner2_Team.text = "<color=blue>[BLUE]</color>";
+                    Winner2_Nickname.text = Blue_TeamList[1] + "\n<size=0.1>▼";
+
+                    foreach (Player player in PhotonNetwork.PlayerList)
+                    {
+                        if (player.NickName == Blue_TeamList[1])
+                        {
+                            object R, G, B;
+
+                            if (player.CustomProperties.TryGetValue("R", out R) &&
+                                player.CustomProperties.TryGetValue("G", out G) &&
+                                player.CustomProperties.TryGetValue("B", out B))
+                            {
+                                SkinnedMeshRenderer[] Skincolor = Winner2.GetComponentsInChildren<SkinnedMeshRenderer>();
+                                Color playercolor = new Color((float)R, (float)G, (float)B);
+                                for (int i = 0; i < Skincolor.Length; i++)
+                                {
+                                    Skincolor[i].material.color = playercolor;
+                                }
+                            }
+                        }
+                    }
+
+                }
+                else Winner2.SetActive(false);
+
+                break;
+        }
+
+        playerCam.enabled = false;
+
     }
 
     [PunRPC]
@@ -470,46 +549,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         StartCoroutine(AllReady());
     }
 
-    private IEnumerator SpawnStone()
+    private IEnumerator GameOverCloseDoor()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(Random.Range(3, 5));
-
-            Vector2 direction = Random.insideUnitCircle;
-            Vector3 position = Vector3.zero;
-
-            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
-            {
-                // Make it appear on the left/right side
-                position = new Vector3(Mathf.Sign(direction.x) * Camera.main.orthographicSize * Camera.main.aspect, 0, direction.y * Camera.main.orthographicSize);
-            }
-            else
-            {
-                // Make it appear on the top/bottom
-                position = new Vector3(direction.x * Camera.main.orthographicSize * Camera.main.aspect, 0, Mathf.Sign(direction.y) * Camera.main.orthographicSize);
-            }
-
-            // Offset slightly so we are not out of screen at creation time (as it would destroy the asteroid right away)
-            position -= position.normalized * 0.1f;
-
-
-            Vector3 force = -position.normalized * 1000.0f;
-            Vector3 torque = Random.insideUnitSphere * Random.Range(100.0f, 300.0f);
-            object[] instantiationData = { force, torque };
-
-            if (Random.Range(0, 10) < 5)
-            {
-                PhotonNetwork.InstantiateRoomObject("BigStone", position, Quaternion.Euler(Random.value * 360.0f, Random.value * 360.0f, Random.value * 360.0f), 0, instantiationData);
-            }
-            else
-            {
-                PhotonNetwork.InstantiateRoomObject("SmallStone", position, Quaternion.Euler(Random.value * 360.0f, Random.value * 360.0f, Random.value * 360.0f), 0, instantiationData);
-            }
-        }
+        loadscreen.gameObject.GetComponent<PhotonView>().RPC("SetCloseDoor", RpcTarget.All);
+        yield return new WaitForSeconds(2f);
+        pv.RPC("GameOver", RpcTarget.All, WinTeam);
+        yield return new WaitForSeconds(2f);
+        loadscreen.gameObject.GetComponent<PhotonView>().RPC("SetOpenDoor", RpcTarget.All);
     }
-
-
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
