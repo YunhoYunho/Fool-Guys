@@ -58,27 +58,26 @@ public class RandomObject : MonoBehaviourPun ,IPunObservable
         }
     }
 
-    [PunRPC]
     private void SteppingObj()
     {
 
         if (PhotonNetwork.IsMasterClient)
         {
-            pv.RPC("TriggerOnFunc", RpcTarget.All);
+            for (int i = 0; i < objectList.Count * 0.5f; i++)
+            {
+                int rand = Random.Range(0, 2);
+                pv.RPC("TriggerOnFunc", RpcTarget.All, rand, i);
+            }
         }
         
     }
 
     [PunRPC]
-    private void TriggerOnFunc()
+    private void TriggerOnFunc(int rand, int i)
     {
-        for (int i = 0; i < objectList.Count * 0.5f; i++)
-        {
-            int rand = Random.Range(0, 2);
-            objectList[i * 2 + rand].GetComponent<Collider>().isTrigger = true;
-            objectList[i * 2 + rand].gameObject.layer = 0;
-            Debug.Log("trigger : " + objectList[i * 2 + rand]);
-        }
+        objectList[i * 2 + rand].GetComponent<Collider>().isTrigger = true;
+        objectList[i * 2 + rand].gameObject.layer = 0;
+        //Debug.Log("trigger : " + objectList[i * 2 + rand]);
     }
 
 
@@ -87,16 +86,17 @@ public class RandomObject : MonoBehaviourPun ,IPunObservable
 
         if (PhotonNetwork.IsMasterClient)
         {
-            pv.RPC("KinematicOffFunc", RpcTarget.All);
+            int rand = Random.Range(0, 4);
+            pv.RPC("KinematicOffFunc", RpcTarget.All, rand);
+
         }
 
         
     }
 
     [PunRPC]
-    private void KinematicOffFunc()
+    private void KinematicOffFunc(int rand)
     {
-        int rand = Random.Range(0, 4);
         Transform targetDoorSet = objectList[rand];
         targetDoorSet.GetComponentsInChildren<Transform>();
         targetDoorSet.GetComponent<Rigidbody>().isKinematic = false;

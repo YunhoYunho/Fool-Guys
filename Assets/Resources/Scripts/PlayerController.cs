@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField] private Transform[] bones;
     [SerializeField] private Collider[] playerColliders;
     [SerializeField] private CapsuleCollider playercol;
+    private CharacterJoint[] joint;
     //=========================================
 
     //================ Attack =================
@@ -116,7 +117,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         //moveSpeed = 50f;
         //jumpPower = 13f;
         state = PlayerState.Idle;
-        groundRadious = 0.2f;
+        groundRadious = 0.4f;
         //=========================
 
         //==== SetUp Coroutine ====
@@ -131,6 +132,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         rigid = GetComponent<Rigidbody>();
         playercol = GetComponent<CapsuleCollider>();
         playerColliders = normalModel.GetComponentsInChildren<Collider>();
+        joint = GetComponentsInChildren<CharacterJoint>();
         //=========================
 
         //=== Bone Transform Set ===
@@ -162,7 +164,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         SetJoint();
         SetRigidBodyGravity();
         SetRigidBodyCollisionDetection();
+        SetJointProjection();
         Cursor.lockState = CursorLockMode.Locked;
+
+        
+
         // =========================
     }
 
@@ -320,8 +326,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
         moveVec = fowardVec * moveInput.z + rightVec * moveInput.x;
 
-        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, Time.fixedDeltaTime * 10);
-        //transform.forward = Vector3.Lerp(transform.forward, moveVec, 0.8f);
+        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, 0.4f);
+        //transform.forward = Vector3.Lerp(transform.forward, moveVec, Time.fixedDeltaTime * 10);
 
 
         // GetAxisRaw 의 입력값이 있는지의 여부를 bool로 판단하여 저장 
@@ -512,7 +518,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     }
 
     private void GetUp()
-
     {
         getUp = true;
         playstandup = true;
@@ -636,6 +641,14 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             ragdoll = false;
             standupAnimTimer = 0;
             state = PlayerState.GettingUp;
+        }
+    }
+
+    private void SetJointProjection()
+    {
+        foreach (CharacterJoint pj in joint)
+        {
+            pj.enableProjection = true;
         }
     }
 
@@ -769,7 +782,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!pv.IsMine) return;
+        //if (!pv.IsMine) return;
 
         if (isFalling)
         {
@@ -785,7 +798,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!pv.IsMine) return;
+        //if (!pv.IsMine) return;
 
         if (other.gameObject.CompareTag("RespawnPlane"))
         {
@@ -795,6 +808,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (other.gameObject.CompareTag("Finish"))
         {
             gameManager.GetComponent<PhotonView>().RPC("GoalPointChange", RpcTarget.All ,Team, -1);
+            gameManager.GetComponent<PhotonView>().RPC("CheckGoalIn", RpcTarget.All , 1);
             PhotonNetwork.Destroy(gameObject);
         }
     }

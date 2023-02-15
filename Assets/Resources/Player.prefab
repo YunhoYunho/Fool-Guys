@@ -120,7 +120,7 @@ MonoBehaviour:
   state: 0
   groundChecker: {fileID: 2758366609796513071}
   isGrounded: 0
-  groundDistance: 0.2
+  groundDistance: 0.15
   groundMask:
     serializedVersion: 2
     m_Bits: 64
@@ -217,7 +217,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SynchronizeVelocity: 1
   m_SynchronizeAngularVelocity: 1
-  m_TeleportEnabled: 0
+  m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
 --- !u!114 &668735886752646226
 MonoBehaviour:

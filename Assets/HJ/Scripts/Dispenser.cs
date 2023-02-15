@@ -68,8 +68,8 @@ namespace HJ
                 case State.Idle:
                     break;
                 case State.Create:
-                    pv.RPC("CreateProjectile", RpcTarget.All);
-                    //CreateProjectile();
+                    //pv.RPC("CreateProjectile", RpcTarget.All);
+                    CreateProjectile();
                     break;
                 case State.Preparing:
                     PrepareProjectile();
@@ -88,13 +88,15 @@ namespace HJ
             }
         }
 
-        [PunRPC]
+       
         public void CreateProjectile()
         {
             if (!PhotonNetwork.IsMasterClient) return;
             GameObject projectile = PhotonNetwork.Instantiate(projectilePrefab.name, projectPosition.position, projectPosition.rotation);
 
             projectile.gameObject.GetComponent<PhotonView>().RPC("Initiate", RpcTarget.All);
+            //projectile.gameObject.GetComponent<Ball>().Initiate();
+
 
             projectileSize = 0f;
             curProjectile = projectile;

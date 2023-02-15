@@ -44,6 +44,8 @@ GameObject:
   - component: {fileID: 6091328571189075570}
   - component: {fileID: 6091328571189075573}
   - component: {fileID: 3057897974774889193}
+  - component: {fileID: 7932167175520842727}
+  - component: {fileID: 9181157909280064539}
   - component: {fileID: 2805157411042812139}
   m_Layer: 6
   m_Name: Mooved Wall 1
@@ -131,6 +133,41 @@ MonoBehaviour:
   randParticles:
   - {fileID: 4516916531100022188}
   - {fileID: 9199015187527923876}
+--- !u!114 &7932167175520842727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6091328571189075575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b33916fcfe9013b4d84c18f321d80577, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9181157909280064539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6091328571189075575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 2805157411042812139}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!114 &2805157411042812139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,7 +182,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowLayerWeightsInspector: 1
   ShowParameterInspector: 1
-  m_SynchronizeParameters: []
+  m_SynchronizeParameters:
+  - Type: 4
+    SynchronizeType: 1
+    Name: Start
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
