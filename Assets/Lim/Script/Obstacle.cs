@@ -6,6 +6,12 @@ using UnityEngine;
 public class Obstacle : MonoBehaviour
 {
     public float Force, radius;
+
+    private void Start()
+    {
+        
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))

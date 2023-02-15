@@ -1,9 +1,10 @@
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class RandomObject : MonoBehaviour,IPunObservable
+public class RandomObject : MonoBehaviourPun ,IPunObservable
 {
     public List<Transform> objectList;
 
@@ -30,15 +31,14 @@ public class RandomObject : MonoBehaviour,IPunObservable
     IEnumerator DelayInit()
     {
         yield return new WaitForSeconds(3f);
-        Debug.Log("딜레이 이닛 접근");
         switch (type)
         {
             case Type.Step:
-                pv.RPC("SteppingObj", RpcTarget.All);
+                SteppingObj();
                 break;
             case Type.Door:
                 SetKinematic();
-                pv.RPC("DoorObj", RpcTarget.All);
+                DoorObj();
                 break;
             default:
                 break;
@@ -61,38 +61,60 @@ public class RandomObject : MonoBehaviour,IPunObservable
     [PunRPC]
     private void SteppingObj()
     {
-        Debug.Log("SteppingObj 접근");
+
         if (PhotonNetwork.IsMasterClient)
         {
-            for (int i = 0; i < objectList.Count * 0.5f; i++)
-            {
-                int rand = Random.Range(0, 2);
-                objectList[i * 2 + rand].GetComponent<Collider>().isTrigger = true;
-                Debug.Log("trigger : " + objectList[i * 2 + rand]);
-            }
+            pv.RPC("TriggerOnFunc", RpcTarget.All);
         }
-
+        
     }
-
 
     [PunRPC]
-    private void DoorObj()
+    private void TriggerOnFunc()
     {
-        Debug.Log("DoorObj 접근");
-        if (PhotonNetwork.IsMasterClient)
+        for (int i = 0; i < objectList.Count * 0.5f; i++)
         {
-            int rand = Random.Range(0, 4);
-            Transform targetDoorSet = objectList[rand];
-            targetDoorSet.GetComponentsInChildren<Transform>();
-            targetDoorSet.GetComponent<Rigidbody>().isKinematic = false;
-            foreach (Transform tf in targetDoorSet)
-            {
-                tf.GetComponent<Rigidbody>().isKinematic = false;
-            }
+            int rand = Random.Range(0, 2);
+            objectList[i * 2 + rand].GetComponent<Collider>().isTrigger = true;
+            objectList[i * 2 + rand].gameObject.layer = 0;
+            Debug.Log("trigger : " + objectList[i * 2 + rand]);
         }
-
     }
 
+
+    private void DoorObj()
+    {
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            pv.RPC("KinematicOffFunc", RpcTarget.All);
+        }
+
+        
+    }
+
+    [PunRPC]
+    private void KinematicOffFunc()
+    {
+        int rand = Random.Range(0, 4);
+        Transform targetDoorSet = objectList[rand];
+        targetDoorSet.GetComponentsInChildren<Transform>();
+        targetDoorSet.GetComponent<Rigidbody>().isKinematic = false;
+
+        foreach (Transform tf in targetDoorSet)
+        {
+            tf.GetComponent<Rigidbody>().isKinematic = false;
+        }
+
+        Obstacle[] obs = objectList[rand].gameObject.GetComponentsInChildren<Obstacle>();
+        
+        foreach (Obstacle ob in obs)
+        {
+            Destroy(ob);
+        }
+
+
+    }
 
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

@@ -710,7 +710,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (Physics.CheckSphere(hipBones.position, groundRadious, groundMask))
         {
             getupTimer += Time.deltaTime;
-            if (getupTimer > 1f)
+            if (getupTimer > 0.5f)
             {
                 GetUp();
             }

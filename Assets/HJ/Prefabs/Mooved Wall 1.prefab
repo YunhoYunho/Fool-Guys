@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 6091328571189075570}
   - component: {fileID: 6091328571189075573}
   - component: {fileID: 3057897974774889193}
+  - component: {fileID: 2805157411042812139}
   m_Layer: 6
   m_Name: Mooved Wall 1
   m_TagString: Untagged
@@ -130,6 +131,24 @@ MonoBehaviour:
   randParticles:
   - {fileID: 4516916531100022188}
   - {fileID: 9199015187527923876}
+--- !u!114 &2805157411042812139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6091328571189075575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters: []
+  m_SynchronizeLayers:
+  - SynchronizeType: 1
+    LayerIndex: 0
 --- !u!1 &7457714644316134595
 GameObject:
   m_ObjectHideFlags: 0

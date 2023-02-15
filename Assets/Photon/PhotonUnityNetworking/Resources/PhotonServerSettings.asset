@@ -73,6 +73,9 @@ MonoBehaviour:
   - ReadyToCreateBall
   - DoorObj
   - SteppingObj
+  - DelayInit
+  - KinematicOffFunc
+  - TriggerOnFunc
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
