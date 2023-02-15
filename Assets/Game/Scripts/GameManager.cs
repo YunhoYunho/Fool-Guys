@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private PhotonView pv;
 
     public GameObject NowRespawnArea;
+    public GameObject TestRespawnArea;
 
     public LoadScreenScript loadscreen;
 
@@ -31,6 +32,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     public Team team;
     public string myTeam;
 
+    public List<string> Red_TeamList;
+    public List<string> Blue_TeamList;
+
     public int RedTeamNeedGoalPoint = 0;
     public int BlueTeamNeedGoalPoint = 0;
 
@@ -39,6 +43,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     public bool isTestGame;
 
     public int GoalInCount;
+
+    public string WinTeam;
+
+    public GameObject GameOverSTAGE;
+
+    public List<string> Winner;
+    public List<string> Loser;
 
     Vector3 spawn_1p_Pos, spawn_2p_Pos, spawn_3p_Pos, spawn_4p_Pos;
 
@@ -70,12 +81,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        if (!pv.IsMine) return;
-
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            pv.RPC("GoalPointChange", RpcTarget.All, "Red", 1);
-        }
+        //if (Input.GetKeyDown(KeyCode.G))
+        //{
+        //    pv.RPC("GoalPointChange", RpcTarget.All, "Red", 1);
+        //}
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -108,10 +117,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         switch (area)
         {
-            case 1: NowRespawnArea = Left_1; break;
-            case 2: NowRespawnArea = Left_2; break;
-            case 3: NowRespawnArea = Left_3; break;
-            case 4: NowRespawnArea = Left_4; break;
+            case 1: TestRespawnArea = Left_1; break;
+            case 2: TestRespawnArea = Left_2; break;
+            case 3: TestRespawnArea = Left_3; break;
+            case 4: TestRespawnArea = Left_4; break;
             default: break;
         }
     }
@@ -192,6 +201,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         PrintInfo("");
 
         int PlayerNum = PhotonNetwork.LocalPlayer.ActorNumber;
+
         Vector3 position;
         Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
 
@@ -201,7 +211,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 case 1: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
                 case 2: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
-                default: position = spawn_3p_Pos; break;
+                default: position = spawn_2p_Pos; break;
             }
         }
 
@@ -213,7 +223,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 case 2: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
                 case 3: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
                 case 4: position = spawn_4p_Pos; team = Team.Blue; myTeam = "Blue"; break;
-                default: position = spawn_3p_Pos; break;
+                default: position = spawn_1p_Pos; break;
             }
         }
 
@@ -240,6 +250,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     }
 
+    
 
     private void TestGameStart()
     {
@@ -331,24 +342,46 @@ public class GameManager : MonoBehaviourPunCallbacks
         DetectGameOver();
     }
 
+    [PunRPC]
+    public void AddTeamList(string team, string nick)
+    {
+        switch (team)
+        {
+            case "Red": Red_TeamList.Add(nick); break;
+            case "Blue": Blue_TeamList.Add(nick); break;
+            default: break;
+        }
+
+    }
+
     private void DetectGameOver()
     {
         if (!PhotonNetwork.IsMasterClient || !onGameStart) return;
 
         if (!isTestGame)
         {
-            if (RedTeamNeedGoalPoint <= 0 || BlueTeamNeedGoalPoint <= 0)
+            if (GoalInCount != 0)
             {
-                if (GoalInCount != 0)
+                if (RedTeamNeedGoalPoint <= 0)
                 {
-                    pv.RPC("GameOver", RpcTarget.All, myTeam);
+                    WinTeam = "Red";
+                    pv.RPC("GameOver", RpcTarget.All, WinTeam);
+
+                }
+
+                else if (BlueTeamNeedGoalPoint <= 0)
+                {
+                    WinTeam = "Blue";
+                    pv.RPC("GameOver", RpcTarget.All, WinTeam);
+
                 }
             }
         }
+
         else
         {
             if (RedTeamNeedGoalPoint <= 0)
-                pv.RPC("GameOver", RpcTarget.All, myTeam);
+                pv.RPC("GameOver", RpcTarget.All);
         }
 
     }
@@ -359,12 +392,56 @@ public class GameManager : MonoBehaviourPunCallbacks
         onGameStart = true;
     }
 
+    //public void TeamListADD()
+    //{
+    //    foreach (Player player in PhotonNetwork.PlayerList)
+    //    {
+    //        //switch
+    //    }
+
+    //    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+    //    foreach (GameObject player in players)
+    //    {
+    //        if (player.GetComponent<PhotonView>().IsMine)
+    //        {
+    //            string team = player.GetComponent<PlayerController>().Team;
+                
+    //            switch (team)
+    //            {
+    //                case "Red": Red_TeamList()
+    //            }
+
+    //            break;
+    //        }
+    //    }
+    //}
+
     [PunRPC]
     public void GameOver(string team)
     {
+        //GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        //foreach (GameObject player in players)
+        //{
+        //    if (player.GetComponent<PhotonView>().IsMine)
+        //    {
+        //        player.GetComponent<PlayerController>().SendMyInfo();
+        //        break;
+        //    }
+        //}
+        GameOverSTAGE.SetActive(true);
+        playerCam.LookAt = GameOverSTAGE.transform;
+
         PrintInfo("게임 끝");
         Time.timeScale = 0;
         // TODO: 게임오버 로직 ex) 게임오버 씬 이동 or 시상식, etc...
+    }
+
+    [PunRPC]
+    public void AddWinnerNicknameList(string name)
+    {
+        Winner.Add(name);
     }
 
     public void SetCheckPoint(GameObject area)

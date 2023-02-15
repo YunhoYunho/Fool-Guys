@@ -137,6 +137,7 @@ MonoBehaviour:
   inMidAir: 0
   isAttacking: 0
   nickName: {fileID: 8880946947825570597}
+  Team: 
   TeamText: {fileID: 927496042498081563}
   collisionEffect: {fileID: 7056034314479340020}
 --- !u!114 &-9071977975041651335

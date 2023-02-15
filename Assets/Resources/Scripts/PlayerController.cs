@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField]
     private TMP_Text nickName;
 
-    private string Team;
+    public string Team;
 
     private PhotonView pv;
 
@@ -475,6 +475,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             Respawn();
         }
 
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            TestRespawn();
+        }
+
     }
 
     private void Respawn()
@@ -483,6 +488,15 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         rigid.velocity = Vector3.zero;
         Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
         gameObject.transform.position = gameManager.NowRespawnArea.transform.position;
+        gameObject.transform.rotation = rotation;
+    }
+
+    private void TestRespawn()
+    {
+        moveVec = Vector3.zero;
+        rigid.velocity = Vector3.zero;
+        Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+        gameObject.transform.position = gameManager.TestRespawnArea.transform.position;
         gameObject.transform.rotation = rotation;
     }
 
@@ -756,7 +770,9 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public void SetNickname()
     {
         Player player = gameObject.GetComponent<PhotonView>().Owner;
-        nickName.text = player.NickName + "\n<size=0.1>¡å";
+        int rnd = Random.Range(1000, 9999);
+
+        nickName.text = player.NickName != "" ? player.NickName + "\n<size=0.1>¡å" : "Tester" + rnd + "\n<size=0.1>¡å"; 
     }
 
 
@@ -771,7 +787,20 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             case "Blue": TeamText.text = "<color=blue>[BLUE]</color>"; gameManager.GoalPointChange("Blue", 1); break;
             default: break;
         }
+
+        if (pv.IsMine)
+            gameManager.GetComponent<PhotonView>().RPC("AddTeamList", RpcTarget.All, Team, nickName.text);
     }
+
+    //public void SendMyInfo()
+    //{
+    //    if (gameManager.WinTeam == Team)
+    //    {
+    //        gameManager.GetComponent<PhotonView>().RPC("AddWinnerNicknameList", RpcTarget.All, PhotonNetwork.LocalPlayer.NickName);
+    //        //gameManager.Winner.Add(PhotonNetwork.LocalPlayer.NickName);
+    //    }
+
+    //}
 
     class BoneTransform
     {

@@ -85,6 +85,8 @@ MonoBehaviour:
   - SetCloseDoor
   - SetOpenDoor
   - StartAnimation
+  - AddWinnerNicknameList
+  - AddTeamList
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
