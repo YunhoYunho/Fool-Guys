@@ -53,7 +53,7 @@
     <UnityVersion>2021.3.14f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="D:\Visual Studio\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
@@ -61,6 +61,7 @@
     <Compile Include="Assets\Resources\Scripts\Respawn.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Scripts\CFX_LightIntensityFade.cs" />
     <Compile Include="Assets\Mini UI\Script\SlideAnimation.cs" />
+    <Compile Include="Assets\HJ\Scripts\Console.cs" />
     <Compile Include="Assets\Photon\PhotonLibs\WebSocket\SocketWebTcp.cs" />
     <Compile Include="Assets\Lobby\Scripts\RoomPanel.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Object\PatrolObject.cs" />
@@ -131,9 +132,11 @@
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs" />
     <Compile Include="Assets\Lobby\Scripts\LobbyPanel.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Object\InteractionAdapter.cs" />
+    <Compile Include="Assets\HJ\Scripts\GroupController.cs" />
     <Compile Include="Assets\Mini UI\Script\Map.cs" />
     <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Demo\Scripts\WNDDisabler.cs" />
     <Compile Include="Assets\HJ\Scripts\ColorSelector.cs" />
+    <Compile Include="Assets\HJ\Scripts\BigFan.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_Demo_RandomDirectionTranslate.cs" />
     <Compile Include="Assets\HJ\Scripts\FlowZone.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\IgnoreUiRaycastWhenInactive.cs" />
@@ -141,7 +144,6 @@
     <Compile Include="Assets\Mini UI\Script\Notification.cs" />
     <Compile Include="Assets\Mini UI\Script\Menus.cs" />
     <Compile Include="Assets\HJ\Scripts\PoolManager.cs" />
-    <Compile Include="Assets\HJ\Scripts\Console.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_Demo_Translate.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\FriendItem.cs" />
     <Compile Include="Assets\Mini UI\Script\CloseButton.cs" />
@@ -162,6 +164,7 @@
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Object\Rotater.cs" />
     <Compile Include="Assets\HJ\Scripts\Swamp.cs" />
+    <Compile Include="Assets\HJ\Scripts\MissingPlatform.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -474,12 +477,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Android.Types">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.14f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Android.Gradle">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.14f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Gradle.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.14f1\Editor\Data\NetStandard\ref\2.1.0\netstandard.dll</HintPath>

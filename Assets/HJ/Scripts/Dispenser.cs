@@ -145,12 +145,15 @@ namespace HJ
             Debug.Log("발사 속도 빠르게");
             float originalEndDelay = endDelay;
             float originalShootingDelay = shootingDelay;
-
             endDelay *= 0.5f;
             shootingDelay *= 0.5f;
+
             yield return new WaitForSeconds(duration);
             endDelay = originalEndDelay;
             shootingDelay = originalShootingDelay;
+
+            yield return new WaitForSeconds(coolTime);
+            controlling = null;
         }
     }
 }

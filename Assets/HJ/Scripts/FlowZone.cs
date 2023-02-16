@@ -6,6 +6,7 @@ public class FlowZone : MonoBehaviour
 {
     [SerializeField]
     private float power;
+    public float Power { get { return power; } set { power = value; } }
 
     private void OnTriggerStay(Collider other)
     {

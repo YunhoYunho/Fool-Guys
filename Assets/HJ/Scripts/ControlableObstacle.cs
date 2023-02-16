@@ -1,8 +1,9 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ControlableObstacle : MonoBehaviour, IControllable
+public class ControlableObstacle : MonoBehaviourPun, IControllable
 {
     protected Coroutine controlling;
     public virtual void Control(float duration, float coolTime)

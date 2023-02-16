@@ -1,3 +1,4 @@
+using HJ;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,12 +46,14 @@ public class PlayerPunch : MonoBehaviour
 
                 }
             }
-
         }
 
-        
-
-        
+        if (collision.gameObject.CompareTag("Console"))
+        {
+            Debug.Log("¡¯¿‘");
+            Console console = collision.gameObject.GetComponentInParent<Console>();
+            console.InterAction(null);
+        }
     }
 
     IEnumerator DelayAddForce(Rigidbody target)
@@ -58,7 +61,6 @@ public class PlayerPunch : MonoBehaviour
         int Force = 2000, radius = 20;
         yield return new WaitForSeconds(0.1f);
         target.AddExplosionForce(Force, transform.position, radius);
-
 
     }
 

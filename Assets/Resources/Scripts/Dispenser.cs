@@ -141,6 +141,9 @@ namespace SW
             yield return new WaitForSeconds(duration);
             endDelay = originalEndDelay;
             shootingDelay = originalShootingDelay;
+
+            yield return new WaitForSeconds(coolTime);
+            controlling = null;
         }
     }
 }
