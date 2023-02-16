@@ -1,3 +1,4 @@
+using Cinemachine;
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
@@ -8,6 +9,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 public enum PlayerState { Idle, GetDown, GetUp, GettingUp, Jump }
 
+[RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviourPun, IPunObservable
 {
     //============= Player Move ===============
@@ -108,7 +110,23 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public Vector3 myColor;
 
+
+    private CinemachineFreeLook playerCam;
+    private CinemachineVirtualCamera freeCam;
+
+
+    //=============== Photon ==================
     [SerializeField] private ParticleSystem collisionEffect;
+
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip bodyHit;
+    [SerializeField] private AudioClip punch;
+    [SerializeField] private AudioClip jump;
+    [SerializeField] private AudioClip falling;
+    [SerializeField] private AudioClip respawn;
+
+
+    //private CinemachineFreeLook freeCam;
 
     private void Awake()
     {
@@ -135,6 +153,10 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         playercol = GetComponent<CapsuleCollider>();
         playerColliders = normalModel.GetComponentsInChildren<Collider>();
         joint = GetComponentsInChildren<CharacterJoint>();
+        playerCam = GameObject.Find("PlayerCamera").GetComponent<CinemachineFreeLook>();
+        //freeCam = GameObject.Find("FreeCamera").GetComponent<CinemachineFreeLook>();
+        freeCam = GameObject.Find("FreeCamera").GetComponent<CinemachineVirtualCamera>();
+        audioSource = GetComponent<AudioSource>();
         //=========================
 
         //=== Bone Transform Set ===
@@ -190,7 +212,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         switch (state)
         {
-
             case PlayerState.Idle:
                 //MoveDetect();
                 Move();
@@ -739,7 +760,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (Physics.CheckSphere(hipBones.position, groundRadious, groundMask))
         {
             getupTimer += Time.deltaTime;
-            if (getupTimer > 0.5f)
+            if (getupTimer > 1f)
             {
                 GetUp();
             }
@@ -849,8 +870,10 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             { 
                 gameManager.GetComponent<PhotonView>().RPC("GoalPointChange", RpcTarget.All, Team, -1);
                 gameManager.GetComponent<PhotonView>().RPC("CheckGoalIn", RpcTarget.All, 1);
+                playerCam.gameObject.SetActive(false);
+                freeCam.gameObject.SetActive(true);
+                PhotonNetwork.Destroy(gameObject);
             }
-            //PhotonNetwork.Destroy(gameObject);
         }
     }
 
