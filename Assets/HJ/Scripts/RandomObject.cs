@@ -30,14 +30,13 @@ public class RandomObject : MonoBehaviourPun ,IPunObservable
 
     IEnumerator DelayInit()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(5f);
         switch (type)
         {
             case Type.Step:
                 SteppingObj();
                 break;
             case Type.Door:
-                SetKinematic();
                 DoorObj();
                 break;
             default:
@@ -45,22 +44,8 @@ public class RandomObject : MonoBehaviourPun ,IPunObservable
         }
     }
 
-
-    private void SetKinematic()
-    {
-        for (int index = 0; index < objectList.Count; index++)
-        {
-            Transform[] trans = objectList[index].GetComponentsInChildren<Transform>();
-            foreach (Transform tf in trans)
-            {
-                tf.GetComponent<Rigidbody>().isKinematic = true;
-            }
-        }
-    }
-
     private void SteppingObj()
     {
-
         if (PhotonNetwork.IsMasterClient)
         {
             for (int i = 0; i < objectList.Count * 0.5f; i++)
@@ -69,7 +54,6 @@ public class RandomObject : MonoBehaviourPun ,IPunObservable
                 pv.RPC("TriggerOnFunc", RpcTarget.All, rand, i);
             }
         }
-        
     }
 
     [PunRPC]
@@ -83,27 +67,25 @@ public class RandomObject : MonoBehaviourPun ,IPunObservable
 
     private void DoorObj()
     {
-
         if (PhotonNetwork.IsMasterClient)
         {
             int rand = Random.Range(0, 4);
             pv.RPC("KinematicOffFunc", RpcTarget.All, rand);
-
+            Debug.Log("KinematicOffFunc µé¾î°¨");
         }
 
-        
     }
 
     [PunRPC]
     private void KinematicOffFunc(int rand)
     {
         Transform targetDoorSet = objectList[rand];
-        targetDoorSet.GetComponentsInChildren<Transform>();
-        targetDoorSet.GetComponent<Rigidbody>().isKinematic = false;
+        targetDoorSet.gameObject.GetComponent<Rigidbody>().isKinematic = false;
 
         foreach (Transform tf in targetDoorSet)
         {
-            tf.GetComponent<Rigidbody>().isKinematic = false;
+            tf.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+            Debug.Log("Å°³×¸¶Æ½ false·Î ¸¸µë");
         }
 
         Obstacle[] obs = objectList[rand].gameObject.GetComponentsInChildren<Obstacle>();
@@ -112,7 +94,6 @@ public class RandomObject : MonoBehaviourPun ,IPunObservable
         {
             Destroy(ob);
         }
-
 
     }
 

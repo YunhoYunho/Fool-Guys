@@ -51,7 +51,10 @@ public class Ball : MonoBehaviourPun, IPunObservable
     {
         if (other.gameObject.tag.Equals("RespawnPlane"))
         {
-            PhotonNetwork.Destroy(gameObject);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
     }
 

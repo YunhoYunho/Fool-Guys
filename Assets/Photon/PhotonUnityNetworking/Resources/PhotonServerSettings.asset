@@ -87,6 +87,13 @@ MonoBehaviour:
   - StartAnimation
   - AddWinnerNicknameList
   - AddTeamList
+  - GameOverFirst
+  - PlayLoseAni
+  - PlayWinAni
+  - PlayLoseAnim
+  - PlayWinAnim
+  - GameOverCoroutineOn
+  - BGM_CHANGE
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

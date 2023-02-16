@@ -19,6 +19,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private CinemachineFreeLook playerCam;
 
+    [SerializeField]
+    private CinemachineVirtualCamera freeCam;
+    //private CinemachineFreeLook freeCam;
+
     private PhotonView pv;
 
     public GameObject NowRespawnArea;
@@ -26,7 +30,11 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public LoadScreenScript loadscreen;
 
+    public WinAndLoseScript winAndLoseScreen;
+
     public GetSetGoScript countdown;
+
+    public GameObject GoToTheEnd_UI;
 
     public enum Team { None, Red, Blue };
     public Team team;
@@ -44,7 +52,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public int GoalInCount;
 
-    public string WinTeam;
+    public string WinTeam;  
 
     public GameObject GameOverSTAGE;
     public GameObject Winner1;
@@ -53,6 +61,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject Winner2;
     public TMP_Text Winner2_Team;
     public TMP_Text Winner2_Nickname;
+
+    public GameObject GameBGM;
+    public GameObject VictoryBGM;
 
     public List<string> Winner;
     public List<string> Loser;
@@ -130,7 +141,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        PhotonNetwork.JoinOrCreateRoom("TestRoomSW_0215", new RoomOptions() { MaxPlayers = 4 }, null);
+        PhotonNetwork.JoinOrCreateRoom("TestRoomSW_20215fafseee", new RoomOptions() { MaxPlayers = 4 }, null);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
@@ -180,6 +191,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     IEnumerator AllReady()
     {
         yield return new WaitForSeconds(1f);
+        freeCam.gameObject.SetActive(false);
         loadscreen.gameObject.GetComponent<PhotonView>().RPC("SetOpenDoor", RpcTarget.All);
         yield return new WaitForSeconds(1f);
         StartCoroutine(CountDown());
@@ -392,13 +404,82 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public void GameOverFunc()
     {
+        
+        StartCoroutine(GameOverCloseDoor());
+
+        //pv.RPC("GameOverCoroutineOn", RpcTarget.All);
+    }
+
+    [PunRPC]
+    public void GameOverCoroutineOn()
+    {
         StartCoroutine(GameOverCloseDoor());
     }
+
+
+    [PunRPC]
+    public void GameOverFirst(string Winteam)
+    {
+        
+        switch (Winteam)
+        {
+            case "Red":
+
+                for (int i = 0; i < Red_TeamList.Count; i++)
+                {
+                    if (PhotonNetwork.LocalPlayer.NickName == Red_TeamList[i])
+                    {
+                        // RPC win animation
+                        //winAndLoseScreen.GetComponent<PhotonView>().RPC("PlayWinAnim", RpcTarget.All);
+                        winAndLoseScreen.PlayWinAnim();
+                    }
+
+                    else
+                    {
+                        // RPC lose animation
+                        //winAndLoseScreen.GetComponent<PhotonView>().RPC("PlayLoseAnim", RpcTarget.All);
+                        winAndLoseScreen.PlayLoseAnim();
+                    }
+                }
+                break;
+
+            case "Blue":
+
+                for (int i = 0; i < Blue_TeamList.Count; i++)
+                {
+                    if (PhotonNetwork.LocalPlayer.NickName == Blue_TeamList[i])
+                    {
+                        // RPC win animation
+                        //winAndLoseScreen.GetComponent<PhotonView>().RPC("PlayWinAnim", RpcTarget.All);
+                        winAndLoseScreen.PlayWinAnim();
+                    }
+
+                    else
+                    {
+                        // RPC lose animation
+                        //winAndLoseScreen.GetComponent<PhotonView>().RPC("PlayLoseAnim", RpcTarget.All);
+                        winAndLoseScreen.PlayLoseAnim();
+                    }
+                }
+
+                break;
+
+            default: break;
+
+        }
+
+        //Time.timeScale = 0;
+    }
+
 
     [PunRPC]
     public void GameOver(string team)
     {
+        GoToTheEnd_UI.SetActive(false);
+        freeCam.enabled = false;
+        playerCam.gameObject.SetActive(false);
         GameOverSTAGE.SetActive(true);
+        Debug.Log("GameOver Á¢±Ù");
 
         switch (team)
         {
@@ -482,7 +563,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                     }
                 }
 
-                if (Red_TeamList.Count >= 2)
+                if (Blue_TeamList.Count >= 2)
                 {
                     Winner2_Team.text = "<color=blue>[BLUE]</color>";
                     Winner2_Nickname.text = Blue_TeamList[1] + "\n<size=0.1>¡å";
@@ -513,7 +594,8 @@ public class GameManager : MonoBehaviourPunCallbacks
                 break;
         }
 
-        playerCam.enabled = false;
+        freeCam.enabled = false;
+        //Time.timeScale = 1;
 
     }
 
@@ -542,6 +624,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         infoText.text = info;
     }
 
+    [PunRPC]
+    public void BGM_CHANGE()
+    {
+        GameBGM.SetActive(false);
+        VictoryBGM.SetActive(true);
+    }
+
     private IEnumerator DelayGameStart()
     {
         yield return new WaitForSeconds(0.1f);
@@ -551,10 +640,17 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private IEnumerator GameOverCloseDoor()
     {
+        pv.RPC("GameOverFirst", RpcTarget.All, WinTeam);
+        //GameOverFirst(WinTeam);
+        yield return new WaitForSecondsRealtime(2f);
         loadscreen.gameObject.GetComponent<PhotonView>().RPC("SetCloseDoor", RpcTarget.All);
-        yield return new WaitForSeconds(2f);
+        //loadscreen.SetCloseDoor();
+        yield return new WaitForSecondsRealtime(2f);
+        //GameOver(WinTeam);
         pv.RPC("GameOver", RpcTarget.All, WinTeam);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSecondsRealtime(3f);
+        //loadscreen.SetOpenDoor();
+        pv.RPC("BGM_CHANGE", RpcTarget.All);
         loadscreen.gameObject.GetComponent<PhotonView>().RPC("SetOpenDoor", RpcTarget.All);
     }
 

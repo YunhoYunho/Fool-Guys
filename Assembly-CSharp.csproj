@@ -117,6 +117,7 @@
     <Compile Include="Assets\HJ\Scripts\Bouncer.cs" />
     <Compile Include="Assets\Mini UI\Script\CustomButton.cs" />
     <Compile Include="Assets\HJ\Scripts\PointObstacle.cs" />
+    <Compile Include="Assets\YH_Scene\Scripts\Sound\AudioPlayer.cs" />
     <Compile Include="Assets\Mini UI\Script\ItemDescription.cs" />
     <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDPrefabVariator.cs" />
     <Compile Include="Assets\Mini UI\Script\Switch_Slide.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatGui.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_Demo_New.cs" />
     <Compile Include="Assets\HJ\Scripts\CycleRotator.cs" />
+    <Compile Include="Assets\Lim\WinAndLose\WinAndLoseScript.cs" />
     <Compile Include="Assets\Resources\Scripts\NickNameUI.cs" />
     <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDDispenser.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Scripts\CFX_LightFlicker.cs" />

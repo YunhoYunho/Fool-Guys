@@ -120,7 +120,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private AudioSource audioSource;
     [SerializeField] private AudioClip bodyHit;
-    [SerializeField] private AudioClip punch;
     [SerializeField] private AudioClip jump;
     [SerializeField] private AudioClip falling;
     [SerializeField] private AudioClip respawn;
@@ -191,7 +190,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         SetJointProjection();
         Cursor.lockState = CursorLockMode.Locked;
 
-        
+
 
         // =========================
     }
@@ -334,7 +333,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     //private void MoveDetect()
     //{
     //    if (pv.IsMine == false) return;
-        
+
     //    pv.RPC("Move", RpcTarget.All);
     //}
 
@@ -429,6 +428,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             pv.RPC("JumpDetect", RpcTarget.All, true);
             //isJumping = true;
+            audioSource.clip = jump;
+            audioSource.Play();
             isLanding = false;
             jumpOrder = false;
         }
@@ -468,6 +469,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         yield return new WaitForSeconds(0.5f);
         attackCollider.GetComponent<BoxCollider>().enabled = false;
+        //audioSource.clip = punch;
+        //audioSource.Play();
         yield return new WaitForSeconds(0.2f);
         //attackOrder = false;
         pv.RPC("AttackAnimDetect", RpcTarget.All, false);
@@ -512,6 +515,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
         gameObject.transform.position = gameManager.NowRespawnArea.transform.position;
         gameObject.transform.rotation = rotation;
+        audioSource.clip = respawn;
+        audioSource.Play();
     }
 
     private void TestRespawn()
@@ -547,6 +552,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         getUp = false;
         ragdoll = true;
         getupTimer = 0;
+        audioSource.clip = bodyHit;
+        audioSource.Play();
         //gameObject.GetComponent<PhotonAnimatorView>().enabled = getUp;
         gameObject.GetComponent<Animator>().enabled = getUp;
         OnRagDoll();
@@ -718,6 +725,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
                 inMidAir = false;
                 isFalling = true;
                 fallTimer = 0;
+                audioSource.clip = falling;
+                audioSource.Play();
             }
         }
         //else if (isFalling)
@@ -796,7 +805,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         Player player = gameObject.GetComponent<PhotonView>().Owner;
         int rnd = Random.Range(1000, 9999);
 
-        nickName.text = player.NickName != "" ? player.NickName + "\n<size=0.1>¡å" : "Tester" + rnd + "\n<size=0.1>¡å"; 
+        nickName.text = player.NickName != "" ? player.NickName + "\n<size=0.1>¡å" : "Tester" + rnd + "\n<size=0.1>¡å";
     }
 
 
@@ -867,7 +876,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (other.gameObject.CompareTag("Finish"))
         {
             if (pv.IsMine)
-            { 
+            {
                 gameManager.GetComponent<PhotonView>().RPC("GoalPointChange", RpcTarget.All, Team, -1);
                 gameManager.GetComponent<PhotonView>().RPC("CheckGoalIn", RpcTarget.All, 1);
                 playerCam.gameObject.SetActive(false);
@@ -882,5 +891,5 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     }
 
-    
+
 }

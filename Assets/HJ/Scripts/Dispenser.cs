@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace HJ
 {
+    [RequireComponent(typeof(AudioSource))]
     public class Dispenser : ControlableObstacle
     {
         private enum State { Idle, Create, Preparing, Ready, Shoot, Rest }
@@ -14,6 +15,10 @@ namespace HJ
         [Header("Setting")]
         [SerializeField] private GameObject projectilePrefab;
         [SerializeField] private Transform projectPosition;
+
+        // =============== Sound ==================
+        private AudioSource audioSource;
+        [SerializeField] private AudioClip shotClip;
 
         //================ Value =================
         [SerializeField] private float power = 30f;
@@ -31,6 +36,8 @@ namespace HJ
 
         //================ Photon =================
         private PhotonView pv;
+
+        
 
 
         public void ReadyToCreateDetect()
@@ -50,6 +57,7 @@ namespace HJ
         private void Start()
         {
             pv = GetComponent<PhotonView>();
+            audioSource = GetComponent<AudioSource>();
         }
 
 
@@ -130,6 +138,8 @@ namespace HJ
             curProjectile.transform.parent = null;
             curProjectile.GetComponent<Rigidbody>().isKinematic = false;
             curProjectile.GetComponent<Rigidbody>().AddForce(transform.up * power, ForceMode.VelocityChange);
+
+            audioSource.Play();
 
             endTimer = endDelay;
             state = State.Rest;

@@ -54,6 +54,7 @@ public class LoadScreenScript : MonoBehaviour
     [PunRPC]
     public void SetCloseDoor()
     {
+        Debug.Log("Close Door Á¢±Ù");
         canvas.planeDistance = 1;
         canvas.sortingLayerName = "On";
         anim.SetTrigger(Started);
