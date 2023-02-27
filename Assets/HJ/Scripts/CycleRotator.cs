@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class CycleRotator : ControlableObstacle
+public class CycleRotator : ConsoleObject
 {
     [SerializeField] private float limitAngle = 45f;
     [SerializeField] private float speed = 2f;

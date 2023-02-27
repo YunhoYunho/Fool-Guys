@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SW
 {
-    public class Dispenser : ControlableObstacle
+    public class Dispenser : ConsoleObject
     {
         private enum State { Idle, Create, Preparing, Ready, Shoot, Rest }
 

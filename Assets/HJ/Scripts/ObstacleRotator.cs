@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObstacleRotator : ControlableObstacle
+public class ObstacleRotator : ConsoleObject
 {
     public enum Type { Stick, Fan, Circle }
     public Type type;

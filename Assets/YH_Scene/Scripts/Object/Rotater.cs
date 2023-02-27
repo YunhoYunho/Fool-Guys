@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Rotater : ControlableObstacle
+public class Rotater : ConsoleObject
 {
     [SerializeField] private Vector3 rotationSpeed;
     [SerializeField] private Vector3 controlSpeed;
