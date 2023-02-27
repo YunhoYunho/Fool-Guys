@@ -33,19 +33,14 @@ namespace HJ
             //Control(duration, coolTime);
         }
 
-        public void Activate()
-        {
-            Debug.Log("동작");
-            OnActivate?.Invoke(duration, coolTime);
-        }
-
         [PunRPC]
         public void Control(float duration, float coolTime)
         {
             if (coolTimeCoroutine != null)
                 return;
 
-            Activate();
+            Debug.Log("동작");
+            OnActivate?.Invoke(duration, coolTime);
             anim.SetBool("Activate", true);
             if (buttonDownParticle != null) buttonDownParticle.Play();
             // TODO: 버튼 동작음 추가
