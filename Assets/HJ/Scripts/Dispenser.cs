@@ -6,7 +6,7 @@ using UnityEngine;
 namespace HJ
 {
     [RequireComponent(typeof(AudioSource))]
-    public class Dispenser : ControlableObstacle
+    public class Dispenser : ConsoleObject
     {
         private enum State { Idle, Create, Preparing, Ready, Shoot, Rest }
 
