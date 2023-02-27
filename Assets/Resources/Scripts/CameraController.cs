@@ -96,7 +96,7 @@ public class CameraController : MonoBehaviour
             if (m_Input.magnitude != 0)
             {
                 Quaternion q = follow.rotation;
-                q.eulerAngles = new Vector3(q.eulerAngles.x + m_Input.y * 1f, q.eulerAngles.y + m_Input.x * -1f, q.eulerAngles.z);
+                q.eulerAngles = new Vector3(q.eulerAngles.x + m_Input.y * -1f, q.eulerAngles.y + m_Input.x * 1f, q.eulerAngles.z);
                 follow.rotation = q;
 
             }

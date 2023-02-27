@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField] private bool isMoving;
     [SerializeField] private bool jumpOrder;
     [SerializeField] private bool attackOrder;
-    [SerializeField] private bool getUp;
+    [SerializeField] public bool getUp;
     [SerializeField] private bool playstandup;
     [SerializeField] private bool ragdoll;
     [SerializeField] private bool isJumping;
@@ -235,6 +235,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         CheckLanding();
         HitTest();
         AnimationUpdate();
+        DebugTest();
 
     }
 
@@ -348,7 +349,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
         moveVec = fowardVec * moveInput.z + rightVec * moveInput.x;
 
-        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, 0.4f);
+        if (moveVec.sqrMagnitude != 0) transform.forward = Vector3.Lerp(transform.forward, moveVec, 0.5f);
         //transform.forward = Vector3.Lerp(transform.forward, moveVec, Time.fixedDeltaTime * 10);
 
 
@@ -512,6 +513,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         moveVec = Vector3.zero;
         rigid.velocity = Vector3.zero;
+        Rigidbody[] ragRigid = GetComponentsInChildren<Rigidbody>();
+        foreach (Rigidbody rb in ragRigid)
+        {
+            rb.velocity = Vector3.zero;
+        }
+
         Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
         gameObject.transform.position = gameManager.NowRespawnArea.transform.position;
         gameObject.transform.rotation = rotation;
@@ -548,14 +555,17 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void OnHit()
     {
+        Debug.Log("OnHit 들어감");
+        //isJumping = false;
         isFalling = false;
         getUp = false;
         ragdoll = true;
         getupTimer = 0;
         audioSource.clip = bodyHit;
         audioSource.Play();
+        collisionEffect.Play();
         //gameObject.GetComponent<PhotonAnimatorView>().enabled = getUp;
-        gameObject.GetComponent<Animator>().enabled = getUp;
+        //gameObject.GetComponent<Animator>().enabled = getUp;
         OnRagDoll();
         rigid.velocity = Vector3.zero;
         state = PlayerState.GetDown;
@@ -678,7 +688,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         if (standupPer >= 1.0f)
         {
-
             OutRagDoll();
             anim.Play(getupAnim);
             playstandup = false;
@@ -699,6 +708,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private void IsGrounded()
     {
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
+
+        if (isGrounded)
+        {
+            if (fallTimer != 0) fallTimer = 0;
+        }
     }
 
     private void CheckFalling()
@@ -713,6 +727,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             {
                 isFalling = true;
                 pv.RPC("JumpDetect", RpcTarget.All, false);
+                audioSource.clip = falling;
+                audioSource.Play();
                 fallTimer = 0;
             }
         }
@@ -720,7 +736,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         {
             inMidAir = true;
             fallTimer += Time.deltaTime;
-            if (fallTimer > 0.75f)
+            if (fallTimer > 0.7f)
             {
                 inMidAir = false;
                 isFalling = true;
@@ -768,6 +784,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (Physics.CheckSphere(hipBones.position, groundRadious, groundMask))
         {
+            fallTimer = 0;
             getupTimer += Time.deltaTime;
             if (getupTimer > 1f)
             {
@@ -816,10 +833,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         switch (team)
         {
-            //case "Red": TeamText.text = "<color=red>[RED]</color>"; gameManager.GoalPointChange("Red", 1); break;
             case "Red": TeamText.text = "<color=red>[RED]</color>"; if (pv.IsMine) gameManager.GetComponent<PhotonView>().RPC("GoalPointChange", RpcTarget.All, "Red", 1); break;
             case "Blue": TeamText.text = "<color=blue>[BLUE]</color>"; if (pv.IsMine) gameManager.GetComponent<PhotonView>().RPC("GoalPointChange", RpcTarget.All, "Blue", 1); break;
-            //case "Blue": TeamText.text = "<color=blue>[BLUE]</color>"; gameManager.GoalPointChange("Blue", 1); break;
             default: break;
         }
 
@@ -828,6 +843,51 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             Player player = gameObject.GetComponent<PhotonView>().Owner;
             gameManager.GetComponent<PhotonView>().RPC("AddTeamList", RpcTarget.All, Team, player.NickName);
 
+        }
+    }
+
+    [PunRPC]
+    public void BlowAway(float x, float y, float z)
+    {
+        Debug.Log("BlowAway 접근");
+        StartCoroutine(DelayKnockBack(x, y, z));
+    }
+
+    public void DebugTest()
+    {
+        if (pv.IsMine)
+        {
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                gameManager.GetComponent<PhotonView>().RPC("GoalPointChange", RpcTarget.All, Team, -1);
+                gameManager.GetComponent<PhotonView>().RPC("CheckGoalIn", RpcTarget.All, 1);
+                playerCam.gameObject.SetActive(false);
+                freeCam.gameObject.SetActive(true);
+                PhotonNetwork.Destroy(gameObject);
+            }
+        }
+    }
+
+    public void DestroyPlayer()
+    {
+        if (gameManager.onGameStart == false)
+        {
+            if (pv.IsMine)
+                PhotonNetwork.Destroy(gameObject);
+        }
+    }
+
+    IEnumerator DelayKnockBack(float x, float y, float z)
+    {
+        int Force = 100, radius = 10;
+        Vector3 Dir = new Vector3(x, y, z);
+        Rigidbody[] rig = gameObject.GetComponentsInChildren<Rigidbody>();
+
+        yield return new WaitForSeconds(0.2f);
+
+        foreach (Rigidbody r in rig)
+        {
+            r.AddExplosionForce(Force, Dir, radius, 0f, ForceMode.Impulse);
         }
     }
 
@@ -857,9 +917,14 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             pv.RPC("OnHit", RpcTarget.All);
         }
 
+        //if (collision.gameObject.CompareTag("Punch"))
+        //{
+        //    int Force = 2000, radius = 20;
+        //    rigid.AddExplosionForce(Force, transform.position, radius);
+        //}
+
         if (collision.gameObject.CompareTag("Obstacle"))
         {
-            collisionEffect.Play();
             Debug.Log("Effect");
         }
     }
@@ -885,6 +950,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             }
         }
     }
+
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

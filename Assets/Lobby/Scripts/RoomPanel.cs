@@ -36,6 +36,11 @@ public class RoomPanel : MonoBehaviour
         loadScene = GameObject.Find("LoadingCanvas").GetComponent<LoadScreenScript>();
     }
 
+    private void Start()
+    {
+        UpdateRoomState();
+    }
+
     public void UpdateRoomState()
     {
         foreach (PlayerEntry entry in playerEntries) 
@@ -113,8 +118,9 @@ public class RoomPanel : MonoBehaviour
     public IEnumerator DelayStart()
     {
         loadScene.LoadNextLevel();
-        yield return new WaitForSeconds(3f);
         PhotonNetwork.CurrentRoom.IsOpen = false;
+        PhotonNetwork.CurrentRoom.IsVisible = false;
+        yield return new WaitForSeconds(3f);
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.LoadLevel("Test_Map");
 

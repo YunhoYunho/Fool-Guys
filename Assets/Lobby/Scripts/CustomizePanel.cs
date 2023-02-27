@@ -20,7 +20,7 @@ public class CustomizePanel : MonoBehaviour
 
     private SkinnedMeshRenderer[] Skincolor;
 
-    public Color playerColor = new Color(1f,1f,1f);
+    public Color playerColor;
 
     [SerializeField]
     private LobbyManager lobbyManager;

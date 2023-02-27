@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Bullet
   - RespawnPlane
+  - Obstacle
+  - FxTemporaire
+  - Punch
   layers:
   - Default
   - TransparentFX

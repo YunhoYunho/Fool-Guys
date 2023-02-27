@@ -1,3 +1,4 @@
+using HJ;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ public class PlayerPunch : MonoBehaviour
     {
         pv = GetComponentInParent<PhotonView>();
 
-        //if (!pv.IsMine) Destroy(this);
     }
 
 
@@ -28,29 +28,54 @@ public class PlayerPunch : MonoBehaviour
                     PlayerController pc = collision.gameObject.GetComponent<PlayerController>();
                     Rigidbody rigid = collision.gameObject.GetComponent<Rigidbody>();
 
+                    Debug.Log(collision.gameObject.GetComponent<PhotonView>().Owner);
+
                     if (pc != null)
                     {
-                        pc.photonView.RPC("OnHit", RpcTarget.All);
 
                         if (rigid != null)
                         {
-                            Rigidbody[] rig = collision.gameObject.GetComponentsInChildren<Rigidbody>();
+                            //Vector3 punchDir = 
+                            float punchDirX = this.gameObject.transform.parent.transform.position.x;
+                            float punchDirY = this.gameObject.transform.parent.transform.position.y;
+                            float punchDirZ = this.gameObject.transform.parent.transform.position.z;
 
-                            foreach (Rigidbody r in rig)
-                            {
-                                StartCoroutine(DelayAddForce(r));
-                            }
+                            pc.photonView.RPC("OnHit", RpcTarget.All);
+                            otherPV.RPC("BlowAway", RpcTarget.All, punchDirX, punchDirX, punchDirZ);
+
+                            //int Force = 10000, radius = 50;
+                            //rigid.AddExplosionForce(Force, transform.position, radius);
+                            //Rigidbody[] rig = collision.gameObject.GetComponentsInChildren<Rigidbody>();
+
+                            //foreach (Rigidbody r in rig)
+                            //{
+                            //    StartCoroutine(DelayAddForce(r));
+                            //    //r.AddExplosionForce(Force, transform.position, radius);
+                            //}
                         }
+
+
                     }
+
 
                 }
             }
 
         }
 
-        
+        if (collision.gameObject.CompareTag("Console"))
+        {
+            Debug.Log("¡¯¿‘");
+            Console console = collision.gameObject.GetComponentInParent<Console>();
+            //console.InterAction(null);
+            StartCoroutine(DelayInterAction(console));
+        }
+    }
+    IEnumerator DelayInterAction(IInteractable interactable)
+    {
+        yield return new WaitForSeconds(0.1f);
+        interactable.InterAction(null);
 
-        
     }
 
     IEnumerator DelayAddForce(Rigidbody target)
@@ -59,7 +84,11 @@ public class PlayerPunch : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         target.AddExplosionForce(Force, transform.position, radius);
 
+    }
 
+    IEnumerator DelayOnHit()
+    {
+        yield return new WaitForSeconds(0.2f);
     }
 
 }

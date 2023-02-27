@@ -22,13 +22,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        if (PhotonNetwork.IsConnected) 
+        //if (PhotonNetwork.IsConnected) 
+        //{
+        //    OnConnectedToMaster();
+        //}
+        if (PhotonNetwork.InRoom)
         {
-            OnConnectedToMaster();
-        }
-        else if (PhotonNetwork.InRoom)
-        {
+            //SetActivePanel(Panel.Room);
+            ColorGet();
             OnJoinedRoom();
+            print("·ë Âü¿©");
         }
         else if (PhotonNetwork.InLobby)
         {
@@ -49,6 +52,19 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void ColorGet()
+    {
+        object R, G, B;
+
+        Player player = PhotonNetwork.LocalPlayer;
+
+        if (player.CustomProperties.TryGetValue("R", out R) &&
+            player.CustomProperties.TryGetValue("G", out G) &&
+            player.CustomProperties.TryGetValue("B", out B))
+        {
+            PlayerColor = new Color((float)R, (float)G, (float)B);
+        }
+    }
     public override void OnConnectedToMaster()
     {
         SetActivePanel(Panel.Lobby);

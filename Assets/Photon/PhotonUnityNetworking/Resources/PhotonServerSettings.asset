@@ -94,6 +94,12 @@ MonoBehaviour:
   - PlayWinAnim
   - GameOverCoroutineOn
   - BGM_CHANGE
+  - DelayAddForce
+  - DelayAddForceFunc
+  - BlowAway
+  - playerNumCount
+  - SetRandomAnim
+  - Control
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

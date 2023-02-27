@@ -37,11 +37,12 @@ namespace HJ
         //================ Photon =================
         private PhotonView pv;
 
-        
+        private bool isActivated;
 
 
         public void ReadyToCreateDetect()
         {
+            if (isActivated) return;
             pv.RPC("ReadyToCreateBall", RpcTarget.All);
         }
 
@@ -50,7 +51,7 @@ namespace HJ
         public void ReadyToCreateBall()
         {
             state = State.Create;
-
+            isActivated = true;
         }
 
 

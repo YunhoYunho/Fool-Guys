@@ -65,14 +65,22 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject GameBGM;
     public GameObject VictoryBGM;
 
+    private PlayerNumbering playerNumbering;
+
     public List<string> Winner;
     public List<string> Loser;
 
+    private GameObject myPlayer; 
+
     Vector3 spawn_1p_Pos, spawn_2p_Pos, spawn_3p_Pos, spawn_4p_Pos;
+
+    //public int PlayerNum;
 
     private void Awake()
     {
         pv = GetComponent<PhotonView>();
+        //PlayerNum = (int)PhotonNetwork.CurrentRoom.PlayerCount;
+
     }
 
     private void Start()
@@ -94,6 +102,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         spawn_2p_Pos = GameObject.Find("Start Point 2P").transform.position;
         spawn_3p_Pos = GameObject.Find("Start Point 3P").transform.position;
         spawn_4p_Pos = GameObject.Find("Start Point 4P").transform.position;
+        playerNumbering = GameObject.Find("PlayerNumbering").GetComponent<PlayerNumbering>();
+
     }
 
     private void Update()
@@ -118,6 +128,16 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             TestRespawnPointSet(4);
         }
+
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            TestRespawnPointSet(5);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            Debug.Log(PhotonNetwork.LocalPlayer.GetPlayerNumber());
+        }
     }
 
     public void TestRespawnPointSet(int area)
@@ -126,6 +146,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         GameObject Left_2 = GameObject.Find("RespawnArea2_Left");
         GameObject Left_3 = GameObject.Find("RespawnArea3");
         GameObject Left_4 = GameObject.Find("RespawnArea4");
+        GameObject Left_5 = GameObject.Find("RespawnArea5");
 
 
         switch (area)
@@ -134,6 +155,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             case 2: TestRespawnArea = Left_2; break;
             case 3: TestRespawnArea = Left_3; break;
             case 4: TestRespawnArea = Left_4; break;
+            case 5: TestRespawnArea = Left_5; break;
             default: break;
         }
     }
@@ -141,7 +163,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        PhotonNetwork.JoinOrCreateRoom("TestRoomSW_20215fafseee", new RoomOptions() { MaxPlayers = 4 }, null);
+        PhotonNetwork.JoinOrCreateRoom("TestRoom" + Random.Range(1000,10000), new RoomOptions() { MaxPlayers = 4 }, null);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
@@ -214,17 +236,22 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         PrintInfo("");
 
-        int PlayerNum = PhotonNetwork.LocalPlayer.ActorNumber;
+        //int PlayerNum = PhotonNetwork.LocalPlayer.ActorNumber;
+        //int PlayerNum = PlayerNumbering.RoomPlayerIndexedProp;
+        //string PlayerNum = PlayerNumbering.RoomPlayerIndexedProp;
+        int PlayerNum = PhotonNetwork.LocalPlayer.GetPlayerNumber();
+        
 
         Vector3 position;
         Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+
 
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
         {
             switch (PlayerNum)
             {
-                case 1: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
-                case 2: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                case 0: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 1: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
                 default: position = spawn_2p_Pos; break;
             }
         }
@@ -233,38 +260,49 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             switch (PlayerNum)
             {
-                case 1: position = spawn_1p_Pos; team = Team.Red; myTeam = "Red"; break;
-                case 2: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
-                case 3: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
-                case 4: position = spawn_4p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                case 0: position = spawn_1p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 1: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 2: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                case 3: position = spawn_4p_Pos; team = Team.Blue; myTeam = "Blue"; break;
                 default: position = spawn_1p_Pos; break;
             }
         }
 
         GameObject Player = PhotonNetwork.Instantiate("Player", position, rotation, 0);
+        //pv.RPC("playerNumCount", RpcTarget.All, -1);
         playerCam.LookAt = Player.transform;
         playerCam.Follow = Player.transform;
 
-        Player.gameObject.GetComponent<PhotonView>().RPC("SetColor", RpcTarget.AllViaServer);
-        Player.gameObject.GetComponent<PhotonView>().RPC("SetNickname", RpcTarget.AllViaServer);
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetColor", RpcTarget.All);
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetNickname", RpcTarget.All);
 
         if (team == Team.Red)
         {
-            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Red");
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.All, "Red");
 
         }
         else
         {
-            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Blue");
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.All, "Blue");
         }
 
+        myPlayer = Player;
+
     }
+
+    //[PunRPC]
+    //public void playerNumCount(int val)
+    //{
+    //    PlayerNum += val;
+    //}
+
 
     private void TestGameStart()
     {
         PrintInfo("");
 
-        int PlayerNum = PhotonNetwork.LocalPlayer.ActorNumber;
+        int PlayerNum = PhotonNetwork.LocalPlayer.GetPlayerNumber();
+
         Vector3 position;
         Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
 
@@ -272,8 +310,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             switch (PlayerNum)
             {
-                case 1: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
-                case 2: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                case 0: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 1: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
                 default: position = spawn_3p_Pos; break;
             }
         }
@@ -281,29 +319,30 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             switch (PlayerNum)
             {
-                case 1: position = spawn_1p_Pos; team = Team.Red; myTeam = "Red"; break;
-                case 2: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
-                case 3: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
-                case 4: position = spawn_4p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                case 0: position = spawn_1p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 1: position = spawn_2p_Pos; team = Team.Red; myTeam = "Red"; break;
+                case 2: position = spawn_3p_Pos; team = Team.Blue; myTeam = "Blue"; break;
+                case 3: position = spawn_4p_Pos; team = Team.Blue; myTeam = "Blue"; break;
                 default: position = spawn_3p_Pos; break;
             }
         }
 
         GameObject Player = PhotonNetwork.Instantiate("Player", position, rotation, 0);
+        //pv.RPC("playerNumCount", RpcTarget.All, -1);
         playerCam.LookAt = Player.transform;
         playerCam.Follow = Player.transform;
 
-        Player.gameObject.GetComponent<PhotonView>().RPC("SetColor", RpcTarget.AllViaServer);
-        Player.gameObject.GetComponent<PhotonView>().RPC("SetNickname", RpcTarget.AllViaServer);
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetColor", RpcTarget.All);
+        Player.gameObject.GetComponent<PhotonView>().RPC("SetNickname", RpcTarget.All);
 
         if (team == Team.Red)
         {
-            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Red");
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.All, "Red");
 
         }
         else
         {
-            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.AllViaServer, "Blue");
+            Player.gameObject.GetComponent<PhotonView>().RPC("SetTeam", RpcTarget.All, "Blue");
         }
 
         if (PhotonNetwork.IsMasterClient)
@@ -468,6 +507,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         }
 
+        if (myPlayer != null)
+            myPlayer.GetComponent<PlayerController>().DestroyPlayer();
+
+        onGameStart = false;
         //Time.timeScale = 0;
     }
 

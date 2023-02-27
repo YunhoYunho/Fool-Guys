@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -9071977975041651335}
   - component: {fileID: -655998933165324182}
   - component: {fileID: 3406232087743577919}
-  - component: {fileID: 668735886752646226}
+  - component: {fileID: 5033998651006309762}
   - component: {fileID: 528904538470016153}
   m_Layer: 7
   m_Name: Player
@@ -168,7 +168,7 @@ MonoBehaviour:
   - {fileID: 3798815176527834315}
   - {fileID: -655998933165324182}
   - {fileID: 3406232087743577919}
-  - {fileID: 668735886752646226}
+  - {fileID: 5033998651006309762}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -226,7 +226,7 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
---- !u!114 &668735886752646226
+--- !u!114 &5033998651006309762
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -235,13 +235,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 2758366609545586539}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Script: {fileID: 11500000, guid: 8efc6b1d64977384eb3405357896c656, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
+  m_PositionModel:
+    SynchronizeEnabled: 1
+    TeleportEnabled: 1
+    TeleportIfDistanceGreaterThan: 3
+    InterpolateOption: 4
+    InterpolateMoveTowardsSpeed: 1
+    InterpolateLerpSpeed: 10
+    ExtrapolateOption: 0
+    ExtrapolateSpeed: 1
+    ExtrapolateIncludingRoundTripTime: 1
+    ExtrapolateNumberOfStoredPositions: 1
+  m_RotationModel:
+    SynchronizeEnabled: 1
+    InterpolateOption: 2
+    InterpolateRotateTowardsSpeed: 180
+    InterpolateLerpSpeed: 10
+  m_ScaleModel:
+    SynchronizeEnabled: 0
+    InterpolateOption: 0
+    InterpolateMoveTowardsSpeed: 1
+    InterpolateLerpSpeed: 0
 --- !u!82 &528904538470016153
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1033,6 +1050,10 @@ PrefabInstance:
     - target: {fileID: 1400089999487084, guid: 5f8511b9bd25448b4a59a7c1bbc0cf98, type: 3}
       propertyPath: m_Layer
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1400089999487084, guid: 5f8511b9bd25448b4a59a7c1bbc0cf98, type: 3}
+      propertyPath: m_TagString
+      value: Punch
       objectReference: {fileID: 0}
     - target: {fileID: 1415411110811872, guid: 5f8511b9bd25448b4a59a7c1bbc0cf98, type: 3}
       propertyPath: m_Layer
