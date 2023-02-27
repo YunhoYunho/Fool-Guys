@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.ParticleSystem;
 
-public class BigFan : ControlableObstacle
+public class BigFan : ConsoleObject
 {
     private ParticleSystem particle;
     private FlowZone flowZone;

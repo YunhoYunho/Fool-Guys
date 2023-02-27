@@ -74,7 +74,6 @@
     <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Scripts\CFX_AutoRotate.cs" />
     <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Scripts\WNDParticlesDestroyer.cs" />
     <Compile Include="Assets\HJ\Scripts\ParticleCreator.cs" />
-    <Compile Include="Assets\Resources\Scripts\GameOverInput.cs" />
     <Compile Include="Assets\Resources\Scripts\GamePlayerController.cs" />
     <Compile Include="Assets\Resources\Scripts\Ball.cs" />
     <Compile Include="Assets\Lobby\Scripts\CustomizePanel.cs" />
@@ -135,11 +134,9 @@
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs" />
     <Compile Include="Assets\Lobby\Scripts\LobbyPanel.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Object\InteractionAdapter.cs" />
-    <Compile Include="Assets\HJ\Scripts\GroupController.cs" />
     <Compile Include="Assets\Mini UI\Script\Map.cs" />
     <Compile Include="Assets\HYPEPOLY - Battle Royale Show\Demo\Scripts\WNDDisabler.cs" />
     <Compile Include="Assets\HJ\Scripts\ColorSelector.cs" />
-    <Compile Include="Assets\HJ\Scripts\BigFan.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_Demo_RandomDirectionTranslate.cs" />
     <Compile Include="Assets\Resources\Scripts\MovedWall.cs" />
     <Compile Include="Assets\HJ\Scripts\FlowZone.cs" />
@@ -153,7 +150,6 @@
     <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_Demo_Translate.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\FriendItem.cs" />
     <Compile Include="Assets\Mini UI\Script\CloseButton.cs" />
-    <Compile Include="Assets\HJ\Scripts\MissingPlatform.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatGui.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX (legacy)\Demo\Assets\CFX_Demo_New.cs" />
     <Compile Include="Assets\HJ\Scripts\CycleRotator.cs" />
@@ -172,6 +168,10 @@
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
     <Compile Include="Assets\YH_Scene\Scripts\Object\Rotater.cs" />
     <Compile Include="Assets\HJ\Scripts\Swamp.cs" />
+    <Compile Include="Assets\HJ\Scripts\GroupController.cs" />
+    <Compile Include="Assets\HJ\Scripts\MissingPlatform.cs" />
+    <Compile Include="Assets\HJ\Scripts\BigFan.cs" />
+    <Compile Include="Assets\Resources\Scripts\GameOverInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -484,12 +484,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Android.Types">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.14f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Android.Gradle">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.14f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Gradle.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.14f1\Editor\Data\NetStandard\ref\2.1.0\netstandard.dll</HintPath>
@@ -893,14 +887,14 @@
     <Reference Include="Unity.2D.Sprite.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Postprocessing.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.Postprocessing.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Flow">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
@@ -920,17 +914,11 @@
     <Reference Include="Unity.VisualScripting.Core">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
     <Reference Include="Cinemachine">
       <HintPath>Library\ScriptAssemblies\Cinemachine.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Services.Core.Analytics">
       <HintPath>Library\ScriptAssemblies\Unity.Services.Core.Analytics.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>Library\ScriptAssemblies\Unity.Postprocessing.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="com.unity.cinemachine.editor">
       <HintPath>Library\ScriptAssemblies\com.unity.cinemachine.editor.dll</HintPath>
@@ -952,6 +940,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
+      <Project>{F2308264-0774-6433-3A88-EC1EBD6CAE78}</Project>
+      <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>
+    </ProjectReference>
     <ProjectReference Include="PhotonChat.csproj">
       <Project>{07D9D363-1BFD-96D5-8757-6872995FA9B0}</Project>
       <Name>PhotonChat</Name>
@@ -980,13 +972,13 @@
       <Project>{8CDC224A-1332-437C-4ACB-FAA3B64E1D2A}</Project>
       <Name>CFXRDemo</Name>
     </ProjectReference>
-    <ProjectReference Include="PhotonRealtime.csproj">
-      <Project>{7C633B3D-8188-821F-C033-86BF229B8A28}</Project>
-      <Name>PhotonRealtime</Name>
-    </ProjectReference>
     <ProjectReference Include="PunDemos.DemoHubEditor.csproj">
       <Project>{E6ADAE84-9F5D-32AD-3C0F-DFF10E71AB46}</Project>
       <Name>PunDemos.DemoHubEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="PhotonRealtime.csproj">
+      <Project>{7C633B3D-8188-821F-C033-86BF229B8A28}</Project>
+      <Name>PhotonRealtime</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
       <Project>{50C8601B-2C84-4A95-9EE5-87009540F0A0}</Project>
@@ -1011,10 +1003,6 @@
     <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj">
       <Project>{A9CA9FD2-9587-2DC8-6474-9D366B030029}</Project>
       <Name>PunDemos.DemoSlotcarEditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
-      <Project>{F2308264-0774-6433-3A88-EC1EBD6CAE78}</Project>
-      <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

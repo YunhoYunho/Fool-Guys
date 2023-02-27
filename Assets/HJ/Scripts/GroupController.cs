@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class GroupController : MonoBehaviour, IControllable
 {
-    [SerializeField] private List<ControlableObstacle> obstacleList;
+    [SerializeField] private List<ConsoleObject> obstacleList;
 
     private void Awake()
     {
-        ControlableObstacle[] obstacles = GetComponentsInChildren<ControlableObstacle>();
-        foreach (ControlableObstacle obstacle in obstacles) 
+        ConsoleObject[] obstacles = GetComponentsInChildren<ConsoleObject>();
+        foreach (ConsoleObject obstacle in obstacles) 
         { 
             obstacleList.Add(obstacle);
         }
@@ -17,7 +17,7 @@ public class GroupController : MonoBehaviour, IControllable
 
     public void Control(float duration, float coolTime)
     {
-        foreach (ControlableObstacle controlable in obstacleList)
+        foreach (ConsoleObject controlable in obstacleList)
         {
             controlable.Control(duration, coolTime);
         }

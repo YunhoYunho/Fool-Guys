@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ControlableObstacle : MonoBehaviourPun, IControllable
+public abstract class ConsoleObject : MonoBehaviourPun, IControllable
 {
     protected Coroutine controlling;
     public virtual void Control(float duration, float coolTime)
@@ -14,8 +14,5 @@ public class ControlableObstacle : MonoBehaviourPun, IControllable
         controlling = StartCoroutine(ControlCoroutine(duration, coolTime));
     }
 
-    protected virtual IEnumerator ControlCoroutine(float duration, float coolTime)
-    {
-        yield return null;
-    }
+    protected abstract IEnumerator ControlCoroutine(float duration, float coolTime);
 }
